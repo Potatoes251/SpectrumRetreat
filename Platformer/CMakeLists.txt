@@ -87,7 +87,6 @@ set(BUILD_UNIT_TEST OFF)
 # FetchContent_MakeAvailable(LibMath)
 target_include_directories(${EXE_NAME} PRIVATE ${LIB_INCLUDE_DIR})
 target_link_libraries(${EXE_NAME} PRIVATE ${LIB_NAME})
-message(STATUS "LIB_INCLUDE_DIR is: ${LIB_INCLUDE_DIR}")
 
 add_custom_command(TARGET ${EXE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
