@@ -1,5 +1,3 @@
-#Lib
-
 set(LIB_NAME LibMath) #Local variable only
 
 file(GLOB_RECURSE PROJECT_FILES

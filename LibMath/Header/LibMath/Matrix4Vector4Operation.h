@@ -6,7 +6,7 @@
 
 namespace LibMath
 {
-	Vector4 operator*(Matrix4&, Vector4&);
+	Vector4 operator*(Matrix4 const&, Vector4 const&);
 }
 
 #endif // !LIBMATH_MATRIX4VECTOR4OPERATION_H_
