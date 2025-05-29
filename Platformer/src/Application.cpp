@@ -148,6 +148,29 @@ void Application::renderFrame()
     bindTextureForRendering(); // Bind texture and tell shader to use it
     configureCulling();     // Enable face culling (to improve performance)
 
+    // ---- IMGUI TEST BEGIN ---------------
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+
+    // Draw a small square
+    ImGui::Begin("Square Window");
+
+    ImVec2 p = ImGui::GetCursorScreenPos(); // top-left corner
+    float size = 50.0f; // 50x50 pixel square
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    draw_list->AddRectFilled(p, ImVec2(p.x + size, p.y + size), IM_COL32(255, 0, 0, 255)); // Red square
+
+    ImGui::Dummy(ImVec2(size, size)); // reserve space
+
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // ---- IMGUI TEST END -------------------
+
     updateSceneGraph();     
     drawSceneGraph();       // Draw the whole scene graph recursively
 }

@@ -15,6 +15,7 @@ private:
 	LibMath::Capsule collider;
 	CameraFPS camera;
 
+
 	float yVelocity = 0.0f;
 	bool isJumping = false;
 

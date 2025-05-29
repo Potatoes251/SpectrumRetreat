@@ -30,6 +30,10 @@ public:
         if (shaderProgram) delete shaderProgram;
         if (window) glfwDestroyWindow(window);
         glfwTerminate();
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 
     bool init();
