@@ -1,72 +1,61 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "iostream"
-#include "LibMath/Arithmetic.h"
+#include "./LibMath/Arithmetic.h"
 
-bool LibMath::almostEqual(float val1, float val2)
+// Function to check if two floating-point numbers are almost equal
+bool LibMath::almostEqual(float x, float y)
 {
-    return fabs(val1 - val2) < g_tolerance;
+	const float epsilon = 1e-6f; // Change this value based on wanted precision
+
+	return std::fabs(x - y) < epsilon;
 }
 
-float LibMath::ceiling(float value)
+// Function to get the ceiling of a value (smallest integer >= value)
+float LibMath::ceiling(float x)
 {
-    int intPart = static_cast<int> (value);
-    return (value == static_cast<float>(intPart)) ? value : ++intPart;
+	return std::ceil(x);
 }
 
-float LibMath::clamp(float value, float lowRange, float highRange)
+// Function to clamp a value between a minimum and maximum range
+float LibMath::clamp(float value, float min, float max)
 {
-    return (value < lowRange) ? lowRange : ((value > highRange) ? highRange : value);
+	return std::fmax(min, std::fmin(value, max));
 }
 
-float LibMath::floor(float value)
+// Function to get the floor of a value (largest integer <= value)
+float LibMath::floor(float x)
 {
-    int intPart = static_cast<int> (value);
-    return (value == static_cast<float>(intPart)) ? value : intPart;
+	return std::floor(x);
 }
 
-float LibMath::squareRoot(float value)
+// Function to return the square root of a value
+float LibMath::squareRoot(float x)
 {
-    if (value < 0)
-    {
-        return 0.f;
-    }
-    if (value == 0.f || value == 1.f)
-    {
-        return value;
-    }
-    int	maxIterations = 100;        // set a maximum to the amount of iterations possible
-
-    int iterations = 0;
-    float root = value > 0 ? value * 0.5f : value;
-
-    while (std::fabs(root * root - value) > g_tolerance &&
-        iterations < maxIterations)
-    {
-        root = static_cast<float>(0.5 * (root + value / root));
-        ++iterations;
-    }
-
-    return root;
+	if (x < 0.0f)
+	{
+		//throw std::logic_error("Cannot take the square root of a negative number.");
+	}
+	return std::sqrt(x); // Standard library sqrt function
 }
 
-float LibMath::wrap(float value, float lowRange, float highRange)
+// Function to wrap a value inside a specified range 
+float LibMath::wrap(float value, float min, float max)
 {
-    float rangeSize = highRange - lowRange;
+	if (min >= max)
+	{
+		//throw std::logic_error("Invalid range: min must be less than max.");
+	}
 
-    if (rangeSize < g_tolerance)
-    {
-        return lowRange;
-    }
-
-    while (value >= highRange)
-    {
-        value -= rangeSize;
-    }
-    while (value < lowRange)
-    {
-        value += rangeSize;
-    }
-
-    return value;
+	float range = max - min;
+	while (value < min)
+	{
+		value += range;
+	}
+		
+	while (value >= max)
+	{
+		value -= range;
+	}
+		
+	return value; 
 }

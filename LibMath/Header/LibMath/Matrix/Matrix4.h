@@ -1,65 +1,72 @@
 #ifndef LIBMATH_MATRIX_MATRIX4_H_
 #define LIBMATH_MATRIX_MATRIX4_H_
 
-#include "Matrix3.h"
-#include "../Vector/Vector3.h"
-#include "../Angle/Radian.h"
-
+#include "../Vector/Vector4.h"
 namespace LibMath
 {
 	class Matrix4
 	{
 	public:
-		Matrix4();														// default constructor
-		Matrix4(float);													// construct a matrix with diagonal
-		Matrix4(float, float, float, float,								// construct a matrix with all components
-			float, float, float, float,
-			float, float, float, float,
-			float, float, float, float);
 
-		float*			data();
+		Matrix4();
+		Matrix4(float value);
+		Matrix4(float nb1, float nb2, float nb3, float nb4, 
+			    float nb5, float nb6, float nb7, float nb8, 
+			    float nb9, float nb10, float nb11, float nb12,
+				float nb13, float nb14, float nb15, float nb16);
 
-		Matrix4&		operator=(Matrix4 const);						// copy asignement
+		Matrix4(const Matrix4& other);
+		~Matrix4() = default;
 
-		float*			operator[](int);
+		float		operator[](int nb) const;
+		float*		operator[](int nb);
 
-		Matrix4			operator+(Matrix4 const) const;
-		Matrix4			operator*(float const) const;
-		Matrix4			operator*(Matrix4 const) const;
+		Matrix4&	operator=(Matrix4 other);
 
-		bool			operator==(Matrix4 const) const;
+		static Matrix4		createTransform(Radian rad, Vector4 scale);
+		static Matrix4		createTransform(float x, float y, float z, float degree);
+		static Matrix4		createTransform(LibMath::Vector3 translate, LibMath::Radian rotation, LibMath::Vector3 scale, LibMath::Vector3 axis);
+			   Matrix4      Transform(LibMath::Vector3 translate, LibMath::Radian rotation, LibMath::Vector3 scale, LibMath::Vector3 axis);
+		static Matrix4		createTranslation(Vector3 v);
 
-		Matrix3x3		getMinor(int, int);			// get the 3X3 minor matrix by excluding the given row and column
+		static Matrix4		createRotationX(Vector4 origin, float rad);
+		static Matrix4		createRotationY(Vector4 origin, float rad);
+		static Matrix4		createRotationY(float rad);
+		static Matrix4		createRotationZ(Vector4 origin, float rad);
 
-		void			transpose();				// transpose the matrix
-		float			determinant();				// return the determinant of the matrix
-		void			minors();					// change the matrix into a minor matrix
-		void			cofactors();				// change the matrix into a cofactor matrix
-		void			adjugate();					// change the matrix into the adjugate matrix
-		void			inverse();					// inverse the matrix
+		static Matrix4		createScale(Vector3 v);
 
-		Matrix4&		identity();												// create an identity matrix
+		static Matrix4     perspectiveProjection(float fovy, float aspect, float near, float far);
+		static LibMath::Matrix4 createViewMatrix(const LibMath::Vector3& eye, const LibMath::Vector3& target, const LibMath::Vector3& up);
+		
 
-		Matrix4&		createScale(Vector3);									// return a scaling matrix
+		static Matrix4		lookAt(const Vector3& eye, const Vector3& center, const Vector3& up);
 
-		static Matrix4		createTranslation(Vector3);							// return a translation matrix
-		static Matrix4		createRotation(Vector3, Radian);					// return a rotation matrix
-		static Matrix4		createTransform(Vector3, Vector3, Radian, Vector3);	// return a transformation matrix
+		Matrix4		transpose();
 
-		static Matrix4		createRotationX(Radian);
-		static Matrix4		createRotationY(Radian);
-		static Matrix4		createRotationZ(Radian);
+		float		determinant() const;
 
-		static Matrix4		perspective(float, float, float, float);
-		static Matrix4		lookAt(Vector3, Vector3, Vector3);
+		Matrix4		minors();
+		Matrix4		cofactors();
+		Matrix4		adjugate();
+		Matrix4		inverse();
 
-	private:
+		bool		isIdentity();
+		static		Matrix4 getIdentity();
+
+	//private:
+
 		float m_values[4][4];
 	};
+
+	Matrix4	operator+(Matrix4 m, Matrix4 other);
+	Vector4	operator*(Matrix4 m, Vector4 v);
+	Matrix4	operator*(Matrix4 m, float nb);
+	Matrix4	operator*(Matrix4 m, Matrix4 other);
 }
 
 #ifdef LIBMATH_VECTOR_VECTOR4_H_
-#include "Matrix4Vector4Operation.h"
+//#include "../Matrix4Vector4Operation.h"
 #endif // LIBMATH_MATRIX_H_
 
 #endif // !LIBMATH_MATRIX_MATRIX4_H_

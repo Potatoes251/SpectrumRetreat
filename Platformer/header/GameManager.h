@@ -15,7 +15,6 @@ private:
 	void update();
 	void render();
 
-	//Player player;
 	SceneGraph<GameObject> scene;
 	bool isRunning;
 };

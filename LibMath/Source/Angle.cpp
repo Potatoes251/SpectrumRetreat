@@ -1,190 +1,238 @@
-#include "LibMath/Angle.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "./LibMath/Angle.h"
 
-LibMath::Degree::Degree() : m_value(0) {}
-
-LibMath::Degree::Degree(float val) : m_value(val) {}
-
-LibMath::Degree::Degree(Degree const& other) : m_value(other.m_value) {}
-
+#pragma region Degree
 LibMath::Degree::operator LibMath::Radian() const
 {
-	return Radian(m_value * (3.14159265358979323f / 180.0f));
+	return Radian(m_value * ((float)M_PI / 180.0f));
 }
 
-LibMath::Degree& LibMath::Degree::operator=(Degree const& other)
+LibMath::Degree&	LibMath::Degree::operator=(Degree other)
 {
 	m_value = other.m_value;
+
 	return *this;
 }
 
-LibMath::Degree& LibMath::Degree::operator+=(Degree other)
+LibMath::Degree&	LibMath::Degree::operator+=(Degree other)
 {
 	m_value += other.m_value;
+
 	return *this;
 }
 
-LibMath::Degree& LibMath::Degree::operator-=(Degree other)
+LibMath::Degree&	LibMath::Degree::operator-=(Degree other)
 {
 	m_value -= other.m_value;
+
 	return *this;
 }
 
-LibMath::Degree& LibMath::Degree::operator*=(float val)
+LibMath::Degree&	LibMath::Degree::operator*=(float x)
 {
-	m_value *= val;
+	m_value *= x;
+
 	return *this;
 }
 
-LibMath::Degree& LibMath::Degree::operator/=(float val)
+LibMath::Degree&	LibMath::Degree::operator/=(float x)
 {
-	m_value /= val;
+	m_value /= x;
+
 	return *this;
 }
 
-void LibMath::Degree::wrap(bool boolean)
+void	LibMath::Degree::wrap(bool value)
 {
-	while (m_value >= 360)
+	if (value)
 	{
-		m_value -= 360;
+		m_value = range_to_wrap(m_value, -180.0f, 180.0f);
 	}
-	while (m_value < 0)
+	else
 	{
-		m_value += 360;
-	}
-	if (boolean && m_value >= 180)
-	{
-		m_value -= 360;
+		m_value = range_to_wrap(m_value, 0.0f, 360.0f);
 	}
 }
 
-float LibMath::Degree::degree(bool boolean) const
+float	LibMath::Degree::degree(bool value)
 {
-	float val = m_value;
-	while (val >= 360)
+	float deg = m_value;
+
+	if (value)
 	{
-		val -= 360;
+		return range_to_wrap(deg, -180.0f, 180.0f);
 	}
-	while (val < 0)
+
+	return range_to_wrap(deg, 0.0f, 360.0f);
+}
+
+float	LibMath::Degree::radian(bool value) 
+{
+	float radians = m_value * ((float)M_PI / 180.0f);
+
+	if (value)
 	{
-		val += 360;
+		return range_to_wrap(radians, (float)-M_PI, (float)M_PI);
 	}
-	if (boolean && val >= 180)
-	{
-		val -= 360;
+
+	return range_to_wrap(radians, 0.0f, 2 * (float)M_PI);
+}
+
+float LibMath::Degree::range_to_wrap(float value, float min, float max)
+{
+	float range = max - min;
+
+	while (value < min)
+	{ // increase until in interval
+		value += range;
 	}
-	return val;
+
+	while (value >= max)
+	{ // decrease until in interval
+		value -= range;
+	}
+
+	return value;
 }
 
-float LibMath::Degree::radian(bool boolean) const
+void LibMath::Degree::set(float value)
 {
-	return degree(boolean) * 3.1415927f / 180;
+	m_value = value;
 }
 
-bool LibMath::operator==(Degree a1, Degree a2)
+bool	LibMath::operator==(LibMath::Degree x, LibMath::Degree y)
 {
-	return a1.degree() == a2.degree();
+	float tempX = x.range_to_wrap(x.raw(), 0, 360);
+	float tempY = y.range_to_wrap(y.raw(), 0, 360);
+
+	return tempX == tempY;
 }
 
-bool LibMath::operator==(Degree a1, Radian const& a2)
+bool	LibMath::operator==(LibMath::Degree x, LibMath::Radian y)
 {
-	return a1.raw() == a2.raw();
+	return x.radian() == y.radian();
 }
 
-LibMath::Degree LibMath::operator-(Degree other)
+LibMath::Degree LibMath::operator-(LibMath::Degree x)
 {
-	return Degree(-other.raw());
+	return LibMath::Degree{ -x.raw() };
 }
 
-LibMath::Degree LibMath::operator+(Degree a1, Degree a2)
+LibMath::Degree LibMath::operator+(LibMath::Degree x, LibMath::Degree y)
 {
-	return Degree(a1.raw() + a2.raw());
+	return LibMath::Degree{ x.raw() + y.raw() };
 }
 
-LibMath::Degree LibMath::operator-(Degree a1, Degree a2)
+LibMath::Degree LibMath::operator-(LibMath::Degree x, LibMath::Degree y)
 {
-	return Degree(a1.raw() - a2.raw());
+	return LibMath::Degree{ x.raw() - y.raw() };
 }
 
-LibMath::Degree LibMath::operator*(Degree angle, float val)
+LibMath::Degree LibMath::operator*(LibMath::Degree x, float y)
 {
-	return Degree(angle.raw() * val);
+	return LibMath::Degree{ x.raw() * y };
 }
 
-LibMath::Degree LibMath::operator/(Degree angle, float val)
+LibMath::Degree LibMath::operator/(LibMath::Degree x, float y)
 {
-	return Degree(angle.raw() / val);
+	return LibMath::Degree{ x.raw() / y };
 }
 
-LibMath::Degree LibMath::Literal::operator""_deg(long double value)
-{
-	return Degree(static_cast<float>(value));
-}
+#pragma endregion All functions for Degree
 
-LibMath::Degree LibMath::Literal::operator""_deg(unsigned long long int value)
-{
-	return LibMath::Degree(static_cast<float>(value));
-}
-
-
-
-
-LibMath::Radian::Radian() : m_value(0) {}
-
-LibMath::Radian::Radian(float val) : m_value(val) {}
-
-LibMath::Radian::Radian(Radian const& other) : m_value(other.m_value) {}
-
+#pragma region Radian
 LibMath::Radian::operator LibMath::Degree() const
 {
-	return Degree(m_value * 180.0f / 3.14159265358979323f);
+	return Degree(m_value * 180.0F / (float)M_PI);
 }
 
 LibMath::Radian& LibMath::Radian::operator=(Radian other)
 {
 	m_value = other.m_value;
+
 	return *this;
 }
 
 LibMath::Radian& LibMath::Radian::operator+=(Radian other)
 {
 	m_value += other.m_value;
+
 	return *this;
 }
 
 LibMath::Radian& LibMath::Radian::operator-=(Radian other)
 {
 	m_value -= other.m_value;
+
 	return *this;
 }
 
-LibMath::Radian& LibMath::Radian::operator*=(float val)
+LibMath::Radian& LibMath::Radian::operator*=(float x)
 {
-	m_value *= val;
+	m_value *= x;
+
 	return *this;
 }
 
-LibMath::Radian& LibMath::Radian::operator/=(float val)
+LibMath::Radian& LibMath::Radian::operator/=(float x)
 {
-	m_value /= val;
+	m_value /= x;
+
 	return *this;
 }
 
-// Wrap function
-void LibMath::Radian::wrap(bool rangePi)
+void LibMath::Radian::wrap(bool value)
 {
-	m_value = rangePi ? wrapWithinRange(m_value, -g_Pi, g_Pi)
-					: wrapWithinRange(m_value, 0.0f, g_twoPi);
+	if (value)
+	{
+		m_value = range_to_wrap(m_value, (float)-M_PI, (float)M_PI);
+	}
+	else
+	{
+		m_value = range_to_wrap(m_value, 0.0f, (float)M_PI * 2.0f);
+	}
 }
 
-float LibMath::Radian::degree(bool boolean) const
+float LibMath::Radian::degree(bool value) 
 {
-	return radian(boolean) * 180 / 3.14159265358979323f;
+	float deg = m_value * 180.0f / (float)M_PI;
+
+	if (value)
+	{
+		return range_to_wrap(deg, -180.0f, 180.0f);
+	}
+
+	return range_to_wrap(deg, 0.0f, 360.0f);
 }
 
-float LibMath::Radian::radian(bool rangePi) const
+float LibMath::Radian::radian(bool value)
 {
-	float rad = wrapWithinRange(m_value, 0.0f, g_twoPi);
-	return (rangePi && rad >= g_Pi) ? rad - g_twoPi : rad;
+	float rad = m_value;
+
+	if (value)
+	{
+		return range_to_wrap(rad, (float)-M_PI, (float)M_PI);
+	}
+
+	return range_to_wrap(rad, 0.0f, (float)M_PI * 2);
+}
+
+float LibMath::Radian::range_to_wrap(float value, float min, float max)
+{
+	float range = max - min;
+
+	while (value < min)
+	{ // increase until in interval
+		value += range;
+	}
+
+	while (value >= max)
+	{ // decrease until in interval
+		value -= range;
+	}
+
+	return value;
 }
 
 float LibMath::Radian::raw() const
@@ -192,62 +240,42 @@ float LibMath::Radian::raw() const
 	return m_value;
 }
 
-bool LibMath::operator==(Radian a1, Radian a2)
+bool LibMath::operator==(LibMath::Radian x, LibMath::Radian y)
 {
-	return std::fabs(a1.radian() - a2.radian()) < g_epsilon;
+	float tempX = x.range_to_wrap(x.raw(), 0.0f, (float)M_PI * 2.0f);
+	float tempY = y.range_to_wrap(y.raw(), 0.0f, (float)M_PI * 2.0f);
+
+	return (tempX - tempY < 0.000001 && tempX - tempY > -0.000001);	// Approx
 }
 
-bool LibMath::operator==(Radian a1, Degree const& a2)
+bool LibMath::operator==(LibMath::Radian x, LibMath::Degree y)
 {
-	return a1.radian() == a2.radian();
+	return x == static_cast<Radian>(y);
 }
 
-LibMath::Radian LibMath::operator-(Radian other)
+LibMath::Radian LibMath::operator-(LibMath::Radian x)
 {
-	return Radian(-other.raw());
+	return Radian{ -x.raw() };
 }
 
-LibMath::Radian LibMath::operator+(Radian a1, Radian a2)
+LibMath::Radian LibMath::operator+(LibMath::Radian x, LibMath::Radian y)
 {
-	return Radian(a1.raw() + a2.raw());
+	return Radian{ x.raw() + y.raw() };
 }
 
-LibMath::Radian LibMath::operator-(Radian a1, Radian a2)
+LibMath::Radian LibMath::operator-(LibMath::Radian x, LibMath::Radian y)
 {
-	return Radian(a1.raw() - a2.raw());
+	return Radian{ x.raw() - y.raw() };
 }
 
-LibMath::Radian LibMath::operator*(Radian angle, float val)
+LibMath::Radian LibMath::operator*(LibMath::Radian x, float y)
 {
-	return Radian(angle.raw() * val);
+	return Radian{ x.raw() * y };
 }
 
-LibMath::Radian LibMath::operator/(Radian angle, float val)
+LibMath::Radian LibMath::operator/(LibMath::Radian x, float y)
 {
-	return Radian(angle.raw() / val);
+	return Radian{ x.raw() / y };
 }
 
-LibMath::Radian LibMath::Literal::operator""_rad(long double value)
-{
-	return LibMath::Radian(static_cast<float>(value));
-}
-
-LibMath::Radian LibMath::Literal::operator""_rad(unsigned long long int value)
-{
-	return LibMath::Radian(static_cast<float>(value));
-}
-
-
-float wrapWithinRange(float value, float min, float max)
-{
-	float range = max - min;
-
-	value = std::fmod(value - min, range);
-	if (value < 0.0f)
-	{
-		value += range;
-	}
-
-	return value + min;
-
-}
+#pragma endregion All functions for Radian

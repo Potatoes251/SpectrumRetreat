@@ -1,8 +1,8 @@
 #include "Model.h"
-#include "../header/Collider.h"
+//#include "../header/Collider.h"
 
 class GameObject
 {
 	Model model;
-	Collider collider;
+	//Collider collider;
 };

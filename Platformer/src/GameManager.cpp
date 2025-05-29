@@ -6,10 +6,7 @@ GameManager::GameManager()
 
 GameManager::~GameManager() {}
 
-void GameManager::init()
-{
-	//player = new Player() = ;
-}
+void GameManager::init() {}
 
 void GameManager::run() 
 {
@@ -33,6 +30,6 @@ void GameManager::update()
 void GameManager::render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    scene.draw();
+    //scene.draw();
     glfwSwapBuffers(glfwGetCurrentContext());
 }

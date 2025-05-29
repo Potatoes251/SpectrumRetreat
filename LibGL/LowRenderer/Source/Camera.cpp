@@ -9,7 +9,7 @@ LibMath::Matrix4 CameraFPS::GetViewMatrix()
 }
 LibMath::Matrix4 CameraFPS::GetProjectionMatrix(float aspectRatio)
 {
-    return LibMath::Matrix4::perspective(fov.radian(), aspectRatio, 0.1f, 100.0f);
+    return LibMath::Matrix4::perspectiveProjection(fov.radian(), aspectRatio, 0.1f, 100.0f);
 }
 
 CameraFPS::CameraFPS(LibMath::Vector3 startPosition, LibMath::Vector3 startUp, float startYaw, float startPitch)
