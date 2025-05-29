@@ -14,7 +14,7 @@ bool	LibMath::collisionTwoPlane(Plane plane1, Plane plane2)
 
 bool	LibMath::collisionPointSphere(Point3D point, Sphere sphere)
 {
-	return sphere.getCenter().distanceSquare(point) - sphere.getRadius() > g_epsilon;
+	return sphere.getCenter().distanceSquare(point) - sphere.getRadius() > 1e-6;
 }
 
 bool	LibMath::collisionRaySphere(Line3D line3D, Sphere sphere)
@@ -33,7 +33,7 @@ bool	LibMath::collisionPlaneSphere(Plane plane, Sphere sphere)
 
 bool	LibMath::collisionTwoSphere(Sphere sphere1, Sphere sphere2)
 {
-	return sphere1.getCenter().distanceSquare(sphere2.getCenter()) - (sphere1.getRadius() + sphere2.getRadius()) > g_epsilon;
+	return sphere1.getCenter().distanceSquare(sphere2.getCenter()) - (sphere1.getRadius() + sphere2.getRadius()) > 1e-6;
 }
 
 bool	LibMath::collisionPointCapsule(Point3D point, Capsule capsule)

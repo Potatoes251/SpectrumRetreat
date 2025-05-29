@@ -6,7 +6,7 @@
 
 namespace LibMath
 {
-	float g_epsilon = 1e-6;
+	//float g_epsilon = 1e-6;
 	//3D collision
 
 	bool			collisionLinePlane(Line3D, Plane);
