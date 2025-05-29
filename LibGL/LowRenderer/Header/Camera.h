@@ -12,13 +12,18 @@ public:
     LibMath::Vector3 right;
     LibMath::Vector3 worldUp;
 
-    LibMath::Degree yaw;   // rotation horizontale
-    LibMath::Degree pitch; // rotation verticale
+    LibMath::Degree yaw;   // rotation horizontal
+    LibMath::Degree pitch; // rotation vertical
+
+    float yVelocity = 0.0f;
+    bool isJumping = false;
+
+    const float gravity = -9.8f;
+    const float jumpStrength = 5.0f;
 
     float movementSpeed;
     float mouseSensitivity;
-    LibMath::Degree fov; // champ de vision en degrés
-
+    LibMath::Degree fov; 
     CameraFPS(
         LibMath::Vector3 startPosition,
         LibMath::Vector3 startUp,
@@ -31,6 +36,7 @@ public:
 
     void ProcessKeyboard(char direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset);
+    void Update(float deltaTime);
 
 private:
     void UpdateCameraVectors();

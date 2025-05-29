@@ -52,6 +52,7 @@ public:
     void setupOpenGLStates();
     void bindTexture();
 
+
     float lastX = 800.0f / 2.0f;
     float lastY = 600.0f / 2.0f;
     bool firstMouse = true;

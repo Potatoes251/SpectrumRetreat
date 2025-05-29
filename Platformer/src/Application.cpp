@@ -100,7 +100,8 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) // Main render loop until window is closed
     {
         updateDeltaTime(); 
-        processInput();   
+        processInput();  
+        camera.Update(m_deltaTime);
         clearScreen();    // Clear color and depth buffers
 
         renderFrame();    
@@ -170,9 +171,10 @@ void Application::updateSceneGraph()
 {
     float angle = glfwGetTime(); 
 
-    rootNode->localTransform = LibMath::Matrix4::createRotationY(angle);
+    rootNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0,0,0), LibMath::Vector3(0, 1, 0), LibMath::Radian(angle),LibMath::Vector3(1, 1, 1));
 
-    childNode->localTransform = LibMath::Matrix4::createScale(LibMath::Vector3(0.5f, 0.5f, 0.5f));
+    childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
+
 
     // Update transforms of all nodes recursively (propagate changes to children)
     rootNode->updateTransform();
@@ -231,6 +233,12 @@ void Application::processInput()
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         camera.ProcessKeyboard('D', m_deltaTime);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !camera.isJumping)
+    {
+        camera.yVelocity = camera.jumpStrength;
+        camera.isJumping = true;
     }
 }
 
@@ -343,11 +351,9 @@ void Application::buildSceneGraph()
 
     rootNode -> addChild(childNode); // Attach child node to root node
 
-    rootNode -> localTransform = LibMath::Matrix4::createScale(LibMath::Vector3(1.0f, 1.0f, 1.0f));
+    rootNode -> localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(1, 1, 1));
 
-    childNode -> localTransform =
-        LibMath::Matrix4::createTranslation(LibMath::Vector3(4.0f, 0, 0)) *
-        LibMath::Matrix4::createScale(LibMath::Vector3(0.5f, 0.5f, 0.5f));
+    childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
 }
 
 void Application::setupOpenGLStates()
