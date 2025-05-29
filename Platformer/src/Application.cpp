@@ -9,7 +9,9 @@ bool Application::init()
     if (!createWindow()) // Create the actual GLFW window
         return false;
 
+
     initGLContext(); // Setup OpenGL context, input modes, and callbacks
+    initImGuiContext(); // Setup imgui context, input modes 
 
     if (!initGLAD()) // Initialize GLAD for OpenGL function loading
         return false;
@@ -34,6 +36,17 @@ bool Application::initGLFW()
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
     return true;
+}
+
+void Application::initImGuiContext()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    io = &ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("version 330");
+
 }
 
 void Application::initGLContext()

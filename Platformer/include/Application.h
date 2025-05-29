@@ -1,5 +1,9 @@
 #pragma once
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -30,6 +34,7 @@ public:
 
     bool init();
     bool initGLFW();
+    void initImGuiContext();
     void initGLContext();
     bool createWindow();
     bool initGLAD();
@@ -77,6 +82,7 @@ private:
     int windowHeight;
     const char* windowTitle;
     GLFWwindow* window;
+    ImGuiIO* io;
 
     Shader* shaderProgram;
 
