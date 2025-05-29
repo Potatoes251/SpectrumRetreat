@@ -119,7 +119,7 @@ bool Shader::Link()
 
 void Shader::setMat4(const std::string& name, LibMath::Matrix4& mat)
 {
-    glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1, GL_FALSE, mat.data());
+    glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1, GL_FALSE, &mat.m_values[0][0]);
 }
 
 void Shader::Use() const 

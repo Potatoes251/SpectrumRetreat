@@ -1,53 +1,54 @@
 #ifndef LIBMATH_VECTOR_VECTOR4_H_
 #define LIBMATH_VECTOR_VECTOR4_H_
 
-#include "Vector2.h"
-#include "Vector3.h"
-
 namespace LibMath
 {
 	class Vector4
 	{
 	public:
-						Vector4();										// set all component to 0
-		explicit		Vector4(float);									// set all component to the same value
-						Vector4(float, float, float, float);			// set all component individually
-						Vector4(Vector3 const&, float);					// copy all component
-						Vector4(Vector4 const&);						// copy all component
-						~Vector4() = default;
+						Vector4() : m_x(0), m_y(0), m_z(0), m_w(1) {};														// set all component to 0
+		explicit		Vector4(float nb) : m_x(nb), m_y(nb), m_z(nb), m_w(nb) {}											// set all component to the same value
+						Vector4(float nb1, float nb2, float nb3, float nb4) : m_x(nb1), m_y(nb2), m_z(nb3), m_w(nb4) {}		// set all component individually
+						Vector4(Vector4 const& other) : m_x(other.m_x), m_y(other.m_y), m_z(other.m_z), m_w(other.m_w) {} 	// copy all component
+						Vector4(Vector3 const& other, float w) : m_x(other.m_x), m_y(other.m_y), m_z(other.m_z), m_w(w) {}
+						~Vector4() {};
 
-		Vector4&		operator=(Vector4 const&);
+		Vector4&		operator=(Vector4 const& other);
 
-		Vector4			operator+(Vector4 const&) const;
-		Vector4			operator*(float) const;
-		Vector4			operator/(float) const;
+		float&			operator[](int index);								// return this vector component value
+		float			operator[](int index) const;						// return this vector component value
 
-		Vector4&		operator+=(Vector4 const&);
-		Vector4&		operator*=(float);
-		Vector4&		operator/=(float);
+		float			dotProduct(Vector4 const& other) const;				// return dot product result
 
-		float&			operator[](int);								// return this vector component value
-		float			operator[](int) const;							// return this vector component value
-
-		float			dot(Vector4 const&) const;						// return dot product result
-
-		float			magnitude() const;								// return vector magnitude
-		float			magnitudeSquared() const;						// return square value of the vector magnitude
+		float			magnitude() const;									// return vector magnitude
+		float			magnitudeSquared() const;							// return square value of the vector magnitude
 
 		void			homogenize();
-
-		bool			operator==(Vector4 const&) const;
-		bool			operator!=(Vector4 const&) const;
 
 		float m_x;
 		float m_y;
 		float m_z;
 		float m_w;
 	};
+
+	bool		operator==(Vector4 const& v1, Vector4 const& v2);		
+	bool		operator!=(Vector4 const& v1, Vector4 const& v2);		
+
+	Vector4		operator+(Vector4 v1, Vector4 const& v2);				
+	Vector4		operator-(Vector4 v1, Vector4 const& v2);				
+	Vector4		operator*(Vector4 v1, Vector4 const& v2);				
+	Vector4		operator/(Vector4 v1, Vector4 const& v2);				
+
+	Vector4&	operator+=(Vector4& v1, Vector4 const& v2);				// addition component wise
+	Vector4&	operator-=(Vector4& v1, Vector4 const& v2);				// subtraction component wise
+	Vector4&	operator*=(Vector4& v1, Vector4 const& v2);				// multiplication component wise
+	Vector4&	operator/=(Vector4& v1, Vector4 const& v2);				// division component wise
+
+	Vector4		operator*(Vector4 const& v, float nb);
 }
 
 #ifdef LIBMATH_MATRIX_MATRIX4_H_
-#include "Matrix4Vector4Operation.h"
+//#include "Matrix4Vector4Operation.h"
 #endif // LIBMATH_MATRIX_MATRIX4_H_
 
 #endif // !LIBMATH_VECTOR_VECTOR4_H_

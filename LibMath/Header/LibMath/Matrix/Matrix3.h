@@ -1,57 +1,58 @@
 #ifndef LIBMATH_MATRIX_MATRIX3_H_
 #define LIBMATH_MATRIX_MATRIX3_H_
 
-#include "Matrix2.h"
-#include "../Vector/Vector2.h"
-#include "../Angle/Radian.h"
-
 namespace LibMath
 {
-	class Matrix3x3
+	class Matrix3
 	{
 	public:
-		Matrix3x3();														// default constructor
-		Matrix3x3(float);													// construct a matrix with diagonal
-		Matrix3x3(float, float, float,										// construct a matrix with all components
-			float, float, float,
-			float, float, float);
 
-		Matrix3x3& operator=(Matrix3x3 const);								// copy asignement
+		Matrix3();
+		Matrix3(float value);
+		Matrix3(float nb1, float nb2, float nb3, float nb4, float nb5, float nb6, float nb7, float nb8, float nb9);
+		Matrix3(const Matrix3& other);
+		~Matrix3() = default;
 
-		float* operator[](int);
+		float   operator[](int nb) const;
+		float* operator[](int nb);
 
-		Matrix3x3		operator+(Matrix3x3 const) const;
-		Matrix3x3		operator*(float const) const;
-		//Vector3			operator*(Vector3 const);
-		Matrix3x3		operator*(Matrix3x3 const) const;
+		Matrix3& operator=(Matrix3 other);
 
-		bool			operator==(Matrix3x3 const) const;
+		Matrix3		createTransform2D(Radian rad = 0_rad, Vector2 scale = Vector2(1, 1));
+		Matrix3		createTranslation2D(Vector2 v);
+		Matrix3		createTranslation3D(Vector3 v);
 
-		Matrix2x2		getMinor(int, int);			// get the 2X2 minor matrix by excluding the given row and column
+		Matrix3		createRotation(Point2D point, float rad);
 
-		void			transpose();				// transpose the matrix
-		float			determinant();				// return the determinant of the matrix
-		void			minors();					// change the matrix into a minor matrix
-		void			cofactors();				// change the matrix into a cofactor matrix
-		void			adjugate();					// change the matrix into the adjugate matrix
-		void			inverse();					// inverse the matrix
+		Matrix3		createRotationX(Vector3 origin, float rad);
+		Matrix3		createRotationY(Vector3 origin, float rad);
+		Matrix3		createRotationZ(Vector3 origin, float rad);
 
-		Matrix3x3&		identity();												// create an identity matrix
+		Matrix3		createScale2D(Vector2 v);
+		Matrix3		createScale3D(Vector3 v);
 
-		Matrix3x3&		createScale(Vector2);									// return a scaling matrix
+		Matrix3		transpose();
 
-		static Matrix3x3		createTranslation(Vector2);					// return a translation matrix
-		static Matrix3x3		createRotation(Point2D, Radian);			// return a rotation matrix
-		static Matrix3x3		createTransform(Vector2, Radian, Vector2);	// return a transformation matrix
+		float		determinant() const;
 
-		static Matrix3x3		createRotationX(Radian);
-		static Matrix3x3		createRotationY(Radian);
-		static Matrix3x3		createRotationZ(Radian);
+		Matrix3		minors();
+		Matrix3		cofactors();
+		Matrix3		adjugate();
+		Matrix3		inverse();
 
+		bool		identity();
 
 	private:
+
 		float m_values[3][3];
 	};
+
+	Matrix3	operator+(Matrix3 m, Matrix3 other);
+	Vector2	operator*(Matrix3 m, Vector2 v);
+	Vector3	operator*(Matrix3 m, Vector3 v);
+	Matrix3	operator*(Matrix3 m, float nb);
+	Matrix3	operator*(Matrix3 m, Matrix3 other);
+
 }
 
 #endif // !LIBMATH_MATRIX_MATRIX3_H_
