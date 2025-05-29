@@ -100,8 +100,7 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) // Main render loop until window is closed
     {
         updateDeltaTime(); 
-        processInput();  
-        camera.Update(m_deltaTime);
+        player.processInput(window, m_deltaTime);  
         clearScreen();    // Clear color and depth buffers
 
         renderFrame();    
@@ -143,8 +142,8 @@ void Application::renderFrame()
 void Application::setMatrices()
 {
     // Calculate the view, projection, and model matrices
-    LibMath::Matrix4 view = camera.GetViewMatrix();
-    LibMath::Matrix4 projection = camera.GetProjectionMatrix((float)windowWidth / windowHeight);
+    LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
+    LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)windowWidth / windowHeight);
     LibMath::Matrix4 model = LibMath::Matrix4::getIdentity(); // Identity for root
 
     // Upload matrices to shader uniforms
@@ -201,7 +200,7 @@ void Application::setLightUniforms()
 
 void Application::setCameraUniforms()
 {
-    LibMath::Vector3 camPos = camera.position;
+    LibMath::Vector3 camPos = player.getCamera().position;
 
     GLint viewPosLoc = glGetUniformLocation(shaderProgram->GetID(), "viewPos");
 
@@ -209,38 +208,7 @@ void Application::setCameraUniforms()
     glUniform3fv(viewPosLoc, 1, &camPos.m_x);
 }
 
-void Application::processInput()
-{
-    // Check for escape key to close the window
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
 
-    // WASD movement controls - move camera depending on keys pressed and delta time for smooth movement
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        camera.ProcessKeyboard('W', m_deltaTime);
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        camera.ProcessKeyboard('S', m_deltaTime);
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        camera.ProcessKeyboard('A', m_deltaTime);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        camera.ProcessKeyboard('D', m_deltaTime);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !camera.isJumping)
-    {
-        camera.yVelocity = camera.jumpStrength;
-        camera.isJumping = true;
-    }
-}
 
 unsigned int Application::loadTexture(const char* path)
 {
@@ -398,8 +366,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     app -> lastX = (float)xpos;
     app -> lastY = (float)ypos;
 
-    app -> camera.ProcessMouseMovement(
-        xoffset * app -> camera.mouseSensitivity,
-        yoffset * app -> camera.mouseSensitivity
+    app -> player.getCamera().ProcessMouseMovement(
+        xoffset * app -> player.getCamera().mouseSensitivity,
+        yoffset * app -> player.getCamera().mouseSensitivity
     );
 }

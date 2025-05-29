@@ -15,13 +15,6 @@ public:
     LibMath::Degree yaw;   // rotation horizontal
     LibMath::Degree pitch; // rotation vertical
 
-    float yVelocity = 0.0f;
-    bool isJumping = false;
-
-    const float gravity = -9.8f;
-    const float jumpStrength = 5.0f;
-
-    float movementSpeed;
     float mouseSensitivity;
     LibMath::Degree fov; 
     CameraFPS(
@@ -34,9 +27,8 @@ public:
     LibMath::Matrix4 GetViewMatrix();
     LibMath::Matrix4 GetProjectionMatrix(float aspectRatio);
 
-    void ProcessKeyboard(char direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset);
-    void Update(float deltaTime);
+    float GetSensitivity();
 
 private:
     void UpdateCameraVectors();

@@ -11,6 +11,8 @@
 #include "Model.h"
 #include "light.h"
 #include "SceneNode.h"
+#include "LibMath/Geometry3D.h"
+#include "Player.h"
 
 class Application
 {
@@ -52,7 +54,6 @@ public:
     void setupOpenGLStates();
     void bindTexture();
 
-
     float lastX = 800.0f / 2.0f;
     float lastY = 600.0f / 2.0f;
     bool firstMouse = true;
@@ -61,11 +62,7 @@ public:
 
     float sensitivity = 0.1f;
 
-    CameraFPS camera = CameraFPS(
-        LibMath::Vector3(0.0f, 0.0f, 3.0f),
-        LibMath::Vector3(0.0f, 1.0f, 0.0f)
-    );
-
+    Player player;
     Model model3D;
     PointLight pointLight;
     SpotLight spotLight;
@@ -75,7 +72,6 @@ public:
     float m_rotationAngle = 0.0f;
 
 private:
-    void processInput();
 
     int windowWidth;
     int windowHeight;

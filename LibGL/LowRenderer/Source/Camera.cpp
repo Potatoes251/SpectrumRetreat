@@ -19,40 +19,9 @@ CameraFPS::CameraFPS(LibMath::Vector3 startPosition, LibMath::Vector3 startUp, f
     yaw = LibMath::Degree(startYaw);
     pitch = LibMath::Degree(startPitch);
     fov = LibMath::Degree(90);
-
-    movementSpeed = 2.5f;
     mouseSensitivity = 0.4f;
 
     UpdateCameraVectors();
-}
-
-void CameraFPS::ProcessKeyboard(char direction, float deltaTime)
-{
-    float velocity = movementSpeed * deltaTime;
-
-    // Project front and right onto the XZ plane
-    LibMath::Vector3 flatFront = front;
-    flatFront.m_y = 0;
-    flatFront.normalize();
-
-    LibMath::Vector3 flatRight = right;
-    flatRight.m_y = 0;
-    flatRight.normalize();
-
-    if (direction == 'W') position += flatFront * velocity;
-    if (direction == 'S') position -= flatFront * velocity;
-    if (direction == 'A') position -= flatRight * velocity;
-    if (direction == 'D') position += flatRight * velocity;
-
-    // Jump
-    if (direction == ' ') // Space key
-    {
-        if (!isJumping)
-        {
-            yVelocity = jumpStrength;
-            isJumping = true;
-        }
-    }
 }
 
 void CameraFPS::ProcessMouseMovement(float xoffset, float yoffset) 
@@ -93,20 +62,11 @@ void CameraFPS::UpdateCameraVectors()
     up.normalize();
 }
 
-void CameraFPS::Update(float deltaTime)
-{
-    if (isJumping)
-    {
-        yVelocity += gravity * deltaTime;
-        position.m_y += yVelocity * deltaTime;
 
-        if (position.m_y <= 0.0f)
-        {
-            position.m_y = 0.0f;
-            yVelocity = 0.0f;
-            isJumping = false;
-        }
-    }
+
+float CameraFPS::GetSensitivity()
+{
+    return mouseSensitivity;
 }
 
 
