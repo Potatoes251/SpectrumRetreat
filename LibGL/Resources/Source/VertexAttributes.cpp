@@ -1,5 +1,5 @@
 #include "VertexAttributes.h"
-
+#include <iostream>
 VertexAttributes::VertexAttributes()
     : m_id(0)
 {
@@ -12,11 +12,14 @@ VertexAttributes::~VertexAttributes()
 
 void VertexAttributes::init()
 {
+    std::cout << "Before VAO init, m_id = " << m_id << std::endl;
     glGenVertexArrays(1, &m_id);
+    std::cout << "After VAO init, m_id = " << m_id << std::endl;
 }
 
 void VertexAttributes::bind() const
 {
+    std::cout << m_id << std::endl;
     glBindVertexArray(m_id);
 }
 

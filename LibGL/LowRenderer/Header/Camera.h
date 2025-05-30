@@ -32,6 +32,6 @@ public:
     void ProcessKeyboard(char direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset);
 
-private:
     void UpdateCameraVectors();
+private:
 };

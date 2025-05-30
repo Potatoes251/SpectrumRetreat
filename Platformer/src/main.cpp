@@ -9,7 +9,9 @@
 
 int main()
 {
-    Application app(2560, 1440, "wfgewaydshbjxnkm");
+    //Application app(2560, 1600, "wfgewaydshbjxnkm");
+
+    Application app;
 
     if (!app.init())
     {
