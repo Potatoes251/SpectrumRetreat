@@ -9,13 +9,14 @@ void checkWalls(Player& player, const std::vector<GameObject>& gameObjectList)
 
     LibMath::Capsule playerCollider (capsuleStart, capsuleEnd, player.getCapsule().getRadius());
 
-    LibMath::Vector3 correction;
+    LibMath::Vector3 normal;
 
     for (int i = 0; i < gameObjectList.size(); ++i)
     {
-        if (LibMath::intersectionCapsulePrism(player.getCapsule(), gameObjectList[i].box, correction))
+        if (LibMath::intersectionCapsulePrism(player.getCapsule(), gameObjectList[i].box, normal))
         {
-            player.move(correction);
+            //player.move(normal);
+            // todo set the normal to
         }
     }
 }

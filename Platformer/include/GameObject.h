@@ -1,6 +1,7 @@
 #include "Model.h"
 //#include "GLTexture.h"
-#include "../../LibMath/Header/LibMath/Matrix.h"
+#include "LibMath/Matrix.h"
+#include "LibMath/Geometry3D.h"
 
 #include <string>
 
@@ -26,5 +27,5 @@ public:
 private:
 	std::string name;
 	std::shared_ptr<Model> model;
-	//LibMath::Prism collider;
+	LibMath::Prism collider;
 };
