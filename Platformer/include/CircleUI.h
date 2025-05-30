@@ -14,6 +14,7 @@ public:
     void setPosition(const LibMath::Vector2& position);
     void setRadius(float radius);
     void setColor(const ImColor& color);
+    ImColor getColor();
 
 private:
     LibMath::Vector2 m_center;

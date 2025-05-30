@@ -32,3 +32,8 @@ void CircleUI::setColor(const ImColor& color)
 {
     m_color = color;
 }
+
+ImColor CircleUI::getColor()
+{
+    return m_color;
+}
