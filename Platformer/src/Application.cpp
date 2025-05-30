@@ -45,7 +45,7 @@ void Application::initImGuiContext()
     io = &ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("version 330");
+    ImGui_ImplOpenGL3_Init("#version 330");
 
 }
 
@@ -148,31 +148,22 @@ void Application::renderFrame()
     bindTextureForRendering(); // Bind texture and tell shader to use it
     configureCulling();     // Enable face culling (to improve performance)
 
-    // ---- IMGUI TEST BEGIN ---------------
+
+    updateSceneGraph();     
+    drawSceneGraph();       // Draw the whole scene graph recursively
+    drawUI();
+}
+
+void Application::drawUI()
+{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-
-    // Draw a small square
-    ImGui::Begin("Square Window");
-
-    ImVec2 p = ImGui::GetCursorScreenPos(); // top-left corner
-    float size = 50.0f; // 50x50 pixel square
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-    draw_list->AddRectFilled(p, ImVec2(p.x + size, p.y + size), IM_COL32(255, 0, 0, 255)); // Red square
-
-    ImGui::Dummy(ImVec2(size, size)); // reserve space
-
-    ImGui::End();
+    uiManager.drawAll(); // Draws all elements
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    // ---- IMGUI TEST END -------------------
-
-    updateSceneGraph();     
-    drawSceneGraph();       // Draw the whole scene graph recursively
 }
 
 void Application::setMatrices()
@@ -358,6 +349,12 @@ void Application::buildSceneGraph()
     rootNode -> localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(1, 1, 1));
 
     childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
+
+
+    uiManager.addElement(std::make_unique<CircleUI>(
+        LibMath::Vector2(200.0f, 300.0f), 30.0f, ImColor(255, 0, 0, 255)
+    ));
+
 }
 
 void Application::setupOpenGLStates()

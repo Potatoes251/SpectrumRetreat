@@ -8,7 +8,7 @@
 
 int main()
 {
-    Application app(2560, 1440, "wfgewaydshbjxnkm");
+    Application app(1920, 1080, "wfgewaydshbjxnkm");
 
     if (!app.init())
     {

@@ -1,0 +1,12 @@
+#pragma once
+
+
+#include <imgui.h>
+
+class UIElement
+{
+public:
+    virtual ~UIElement() = default;
+
+    virtual void draw() const = 0;
+};

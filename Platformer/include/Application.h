@@ -17,6 +17,8 @@
 #include "SceneNode.h"
 #include "LibMath/Geometry3D.h"
 #include "Player.h"
+#include "UIManager.h"
+#include "CircleUI.h"
 
 class Application
 {
@@ -46,6 +48,7 @@ public:
     void run();
     void updateDeltaTime();
     void renderFrame();
+    void drawUI();
     void setMatrices();
     void bindTextureForRendering();
     void configureCulling();
@@ -89,7 +92,7 @@ private:
     ImGuiIO* io;
 
     Shader* shaderProgram;
-
+    UIManager uiManager;
     Buffer m_VBO;               // Vertex Buffer Object
     Buffer m_EBO;               // Element Buffer Object
     VertexAttributes m_VAO;     // Vertex Array Object
