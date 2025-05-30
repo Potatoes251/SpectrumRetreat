@@ -15,6 +15,12 @@ LibMath::Point3D::Point3D(float x, float y, float z) :
 	m_z(z) 
 {}
 
+LibMath::Point3D::Point3D(Vector3 const& other)	:
+	m_x(other.m_x),
+	m_y(other.m_y),
+	m_z(other.m_z)
+{}
+
 LibMath::Point3D::Point3D(Point3D const& other) : 
 	m_x(other.m_x), 
 	m_y(other.m_y), 

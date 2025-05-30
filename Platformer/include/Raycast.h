@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LibMath/Geometry3D.h"
+#include "LibMath/Colision3D.h"
 #include <vector>
 
 struct GameObject
@@ -10,10 +10,11 @@ struct GameObject
 
 struct RaycastHit 
 {
-	RaycastHit(GameObject, LibMath::Point3D);
+	RaycastHit();
+	RaycastHit(GameObject, LibMath::Vector3);
 
-	GameObject* m_gameObject;
-	LibMath::Point3D m_intersectionPoint;
+	GameObject m_gameObject;
+	LibMath::Vector3 m_intersectionPoint;
 };
 
-RaycastHit raycast(LibMath::Line3D line, std::vector<GameObject> gameObjectList);
+bool raycast(LibMath::Line3D line, const std::vector<GameObject>& gameObjectList, RaycastHit& hit);

@@ -30,6 +30,13 @@ void Player::Update(float deltaTime)
             isJumping = false;
         }
     }
+    position = camera.position;
+}
+
+void Player::move(LibMath::Vector3 movement)
+{
+    camera.position += movement;
+    position = camera.position;
 }
 
 void Player::processInput(GLFWwindow* window, float deltaTime)

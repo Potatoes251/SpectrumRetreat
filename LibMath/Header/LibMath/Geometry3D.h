@@ -13,6 +13,7 @@ namespace LibMath
 	public:
 		Point3D();
 		Point3D(float, float, float);					// parametrized constructor
+		Point3D(Vector3 const&);						// copy constructor
 		Point3D(Point3D const&);						// copy constructor
 		Point3D(Point3D const&&) noexcept;				// move constructor
 
