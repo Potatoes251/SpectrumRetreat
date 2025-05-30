@@ -1,4 +1,4 @@
-#include "../header/GameManager.h"
+#include "GameManager.h"
 #include "GLTexture.h"
 #include <GLFW/glfw3.h>
 
@@ -8,14 +8,13 @@ GameManager::~GameManager() {}
 void GameManager::init() 
 {
     // Load shader
-    shader = std::make_unique<Shader>();
+    //shader = std::make_unique<Shader>();
+        std::cout << "fdgsfyzhuxjbfdscx" << std::endl;
+    shader = new Shader();
     shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
     shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
     shader->Link();
-
-    // Load model
-    //model = std::make_shared<Model>("../../Assets/Meshes/bunny.obj");
-    //model->uploadToGPU();
+    std::cout << "fwsdCXHYUijnkewmfsd" << std::endl;
 
     auto bunnyModel = resourceManager.Create<Model>("../../Assets/Meshes/bunny.obj");
     bunnyModel->uploadToGPU();
@@ -38,7 +37,7 @@ void GameManager::init()
     auto bunnyGO = std::make_shared<GameObject>("Lapinou", bunnyModelShared/*, johnTex*/);
     bunnyGO->position = LibMath::Vector3(0, 0, 0);
 
-    auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader.get());
+    auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
     scene.addNode(bunnyNode);
 
 
@@ -51,32 +50,32 @@ void GameManager::init()
     auto floorGO = std::make_shared<GameObject>("Sol", floorModelShared/*, johnTex*/);
     floorGO->position = LibMath::Vector3(0, 0, 0);
 
-    auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader.get());
+    auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
     scene.addNode(floorNode);
 }
 
 void GameManager::update(float deltaTime) 
 {
-    // Update camera (if needed)
-    camera.UpdateCameraVectors();
+    player.Update(deltaTime);
 
     // Update scene (logic + transform)
-    scene.update(deltaTime);
+    scene.update();
 }
 
 void GameManager::draw()
 {
     // Activate shader and set camera matrices
-    LibMath::Matrix4 view = camera.GetViewMatrix();
-    LibMath::Matrix4 projection = camera.GetProjectionMatrix((float)2560 / 1440);
+    LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
+    LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
     shader->Use();
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
 
     // Render scene graph
-    scene.draw(shader.get());
+    scene.draw(shader);
 }
 
-void GameManager::processMouseMovement(double xpos, double ypos) {
-    camera.ProcessMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
+void GameManager::processMouseMovement(double xpos, double ypos) 
+{
+    player.getCamera().ProcessMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }

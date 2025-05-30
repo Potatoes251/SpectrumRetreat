@@ -1,5 +1,5 @@
 #include "VertexAttributes.h"
-#include <iostream>
+
 VertexAttributes::VertexAttributes()
     : m_id(0)
 {

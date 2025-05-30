@@ -1,6 +1,9 @@
 #ifndef LIBMATH_MATRIX_MATRIX3_H_
 #define LIBMATH_MATRIX_MATRIX3_H_
 
+#include "../Vector/Vector2.h"
+#include "../Object2D.h"
+
 namespace LibMath
 {
 	class Matrix3

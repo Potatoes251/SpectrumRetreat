@@ -1,5 +1,9 @@
 #pragma once
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -11,7 +15,11 @@
 #include "Model.h"
 #include "light.h"
 #include "SceneNode.h"
-#include "../../Platformer/header/GameManager.h"
+#include "LibMath/Geometry3D.h"
+#include "Player.h"
+#include "UIManager.h"
+#include "CircleUI.h"
+#include "GameManager.h"
 
 //class Application
 //{
@@ -25,96 +33,35 @@
 //        if (shaderProgram) delete shaderProgram;
 //        if (window) glfwDestroyWindow(window);
 //        glfwTerminate();
+//
+//        ImGui_ImplOpenGL3_Shutdown();
+//        ImGui_ImplGlfw_Shutdown();
+//        ImGui::DestroyContext();
 //    }
-//
-//    bool init();
-//    bool initGLFW();
-//    void initGLContext();
-//    bool createWindow();
-//    bool initGLAD();
-//    bool initShaderAndResources();
-//    void run();
-//    void updateDeltaTime();
-//    void renderFrame();
-//    void setMatrices();
-//    void bindTextureForRendering();
-//    void configureCulling();
-//    void updateSceneGraph();
-//    void drawSceneGraph();
-//    void clearScreen();
-//    void setLightUniforms();
-//    void setCameraUniforms();
-//    unsigned int loadTexture(const char* path);
-//    bool setupResources();
-//    void setupLighting();
-//    bool loadShaders();
-//    bool loadModel();
-//    void buildSceneGraph();
-//    void setupOpenGLStates();
-//    void bindTexture();
-//
-//    float lastX = 800.0f / 2.0f;
-//    float lastY = 600.0f / 2.0f;
-//    bool firstMouse = true;
-//    float yaw = -90.0f;
-//    float pitch = 0.0f;
-//
-//    float sensitivity = 0.1f;
-//
-//    CameraFPS camera = CameraFPS(
-//        LibMath::Vector3(0.0f, 0.0f, 3.0f),
-//        LibMath::Vector3(0.0f, 1.0f, 0.0f)
-//    );
-//
-//    GameManager gameManager;
-//
-//    Model model3D;
-//    PointLight pointLight;
-//    SpotLight spotLight;
-//
-//    ResourceManager resourceManager;
-//
-//    float m_rotationAngle = 0.0f;
-//
-//private:
-//    void processInput();
-//
-//    int windowWidth;
-//    int windowHeight;
-//    const char* windowTitle;
-//    GLFWwindow* window;
-//
-//    Shader* shaderProgram;
-//
-//    Buffer m_VBO;               // Vertex Buffer Object
-//    Buffer m_EBO;               // Element Buffer Object
-//    VertexAttributes m_VAO;     // Vertex Array Object
-//
-//    SceneNode<Model>::Ptr rootNode;
-//    SceneNode<Model>::Ptr childNode;
-//
-//    unsigned int texture1;
-//    unsigned int texture2;
-//
-//
-//    float m_deltaTime = 0.0f;
-//    float m_lastFrame = 0.0f;
-//
-//    
-//};
-//
-//    void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
-
-class Application 
+class Application
 {
 public:
     bool init();
+    bool setupResources();
+    bool initShaderAndResources();
     void run();
+    void initImGuiContext();
+    void drawUI();
+    void setMatrices();
+    void bindTexture();
+    void configureCulling();
+    void setLightUniforms();
+    void setCameraUniforms();
+    void setupLighting();
+    void setupOpenGLStates();
+    unsigned int loadTexture(const char* path);
 
 private:
     GLFWwindow* window = nullptr;
     GameManager gameManager;
+    ImGuiIO* io;
+    UIManager uiManager;
 
     // Timing
     float lastFrame = 0.0f;
@@ -122,6 +69,19 @@ private:
 
     bool firstMouse = true;
     float lastX = 0.0f, lastY = 0.0f;
+
+    float sensitivity = 0.1f;
+
+    PointLight pointLight;
+    SpotLight spotLight;
+
+    float m_rotationAngle = 0.0f;
+
+    unsigned int texture1;
+    unsigned int texture2;
+
+    int windowWidth;
+    int windowHeight;
 
     // Callbacks
     static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -131,7 +91,6 @@ private:
     bool createWindow();
     bool initGLAD();
     void initGLContext();
-    void bindTexture();
     void processInput();
     void updateDeltaTime();
     void updateSceneGraph();

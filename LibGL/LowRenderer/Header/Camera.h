@@ -15,7 +15,6 @@ public:
     LibMath::Degree yaw;
     LibMath::Degree pitch;
 
-    float movementSpeed;
     float mouseSensitivity;
     LibMath::Degree fov;
 
@@ -29,9 +28,9 @@ public:
     LibMath::Matrix4 GetViewMatrix();
     LibMath::Matrix4 GetProjectionMatrix(float aspectRatio);
 
-    void ProcessKeyboard(char direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset);
+    float GetSensitivity();
 
-    void UpdateCameraVectors();
 private:
+    void UpdateCameraVectors();
 };

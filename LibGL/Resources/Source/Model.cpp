@@ -1,10 +1,5 @@
 #include "Model.h"
 
-Model::Model(const std::string& filename)
-{
-    load(filename);
-}
-
 bool Model::load(const std::string& filename)
 {
     std::ifstream file(filename);
@@ -131,7 +126,6 @@ void Model::uploadToGPU()
     m_vertexBuffer.unbind();
 
     // 2) Setup VAO
-    //std::cout << "Before VAO init, m_id = " << m_id << std::endl;
     m_vertexArray.init();
     m_vertexArray.bind();
     m_vertexBuffer.bind();

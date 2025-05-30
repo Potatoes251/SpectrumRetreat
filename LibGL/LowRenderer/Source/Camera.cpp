@@ -19,21 +19,9 @@ CameraFPS::CameraFPS(LibMath::Vector3 startPosition, LibMath::Vector3 startUp, f
     yaw = LibMath::Degree(startYaw);
     pitch = LibMath::Degree(startPitch);
     fov = LibMath::Degree(90);
-
-    movementSpeed = 2.5f;
     mouseSensitivity = 0.4f;
 
     UpdateCameraVectors();
-}
-
-void CameraFPS::ProcessKeyboard(char direction, float deltaTime)
-{
-    float velocity = movementSpeed * deltaTime;
-
-    if (direction == 'W') position += front * velocity;
-    if (direction == 'S') position -= front * velocity;
-    if (direction == 'A') position -= right * velocity;
-    if (direction == 'D') position += right * velocity;
 }
 
 void CameraFPS::ProcessMouseMovement(float xoffset, float yoffset) 
@@ -72,6 +60,13 @@ void CameraFPS::UpdateCameraVectors()
     right.normalize();
     up = right.cross(front);
     up.normalize();
+}
+
+
+
+float CameraFPS::GetSensitivity()
+{
+    return mouseSensitivity;
 }
 
 

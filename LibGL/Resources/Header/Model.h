@@ -14,15 +14,8 @@
 #include "../../LibMath/Header/LibMath/Matrix.h"
 #include "Shader.h"
 
-class Model : public IResource 
-{
+class Model : public IResource {
 public:
-    Model() {};
-    Model(const std::string& filename);
-
-    Model(const Model&) = delete;
-    Model& operator=(const Model&) = delete;
-
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
 

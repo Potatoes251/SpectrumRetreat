@@ -23,6 +23,8 @@ namespace LibMath
 
 		Matrix4&	operator=(Matrix4 other);
 
+		static Matrix4	    createRotation(Vector3 axis, Radian angle);
+		static Matrix4		createTransform(Vector3 position, Vector3 axis, Radian angle, Vector3 scale);
 		static Matrix4		createTransform(Radian rad, Vector4 scale);
 		static Matrix4		createTransform(float x, float y, float z, float degree);
 		static Matrix4		createTransform(LibMath::Vector3 translate, LibMath::Radian rotation, LibMath::Vector3 scale, LibMath::Vector3 axis);
@@ -30,7 +32,6 @@ namespace LibMath
 		static Matrix4		createTranslation(Vector3 v);
 
 		static Matrix4		createRotationX(Vector4 origin, float rad);
-		static Matrix4		createRotationY(Vector4 origin, float rad);
 		static Matrix4		createRotationY(float rad);
 		static Matrix4		createRotationZ(Vector4 origin, float rad);
 
@@ -63,6 +64,7 @@ namespace LibMath
 	Vector4	operator*(Matrix4 m, Vector4 v);
 	Matrix4	operator*(Matrix4 m, float nb);
 	Matrix4	operator*(Matrix4 m, Matrix4 other);
+	Matrix4 operator*=(Matrix4 m, Matrix4 other);
 }
 
 #ifdef LIBMATH_VECTOR_VECTOR4_H_

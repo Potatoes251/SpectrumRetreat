@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "ResourceManager.h"
+#include "Player.h"
 
 class GameManager 
 {
@@ -22,11 +23,9 @@ public:
     void processMouseMovement(double xpos, double ypos);
 
     SceneGraph<GameObject> scene;
+    Player player;
+    /*std::unique_ptr<Shader>*/Shader* shader;
+
 private:
     ResourceManager resourceManager;
-
-    std::unique_ptr<Shader> shader;
-    CameraFPS camera = CameraFPS(
-        LibMath::Vector3(0.0f, 0.0f, 3.0f),
-        LibMath::Vector3(0.0f, 1.0f, 0.0f));
 };

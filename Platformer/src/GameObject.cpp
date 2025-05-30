@@ -1,4 +1,4 @@
-#include "../header/GameObject.h"
+#include "GameObject.h"
 //#include "GameObject.h"
 //#include "GLTexture.h"
 

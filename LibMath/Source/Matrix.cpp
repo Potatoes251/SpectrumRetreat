@@ -761,6 +761,39 @@ LibMath::Matrix4 LibMath::Matrix4::createTransform(float x, float y, float z, fl
 	transformMatrix.m_values[1][1] *= cosRad;
 
 	return transformMatrix;
+
+}
+
+LibMath::Matrix4 LibMath::Matrix4::createRotation(Vector3 axis, Radian angle)
+{
+	axis.normalize();
+
+	float cosTheta = cos(angle.raw());
+	float sinTheta = sin(angle.raw());
+	float k = 1.0f - cosTheta;
+
+	float x = axis.m_x;
+	float y = axis.m_y;
+	float z = axis.m_z;
+
+	return Matrix4(
+		cosTheta + x * x * k, x * y * k + z * sinTheta, x * z * k - y * sinTheta, 0.0f,
+		y * x * k - z * sinTheta, cosTheta + y * y * k, y * z * k + x * sinTheta, 0.0f,
+		z * x * k + y * sinTheta, z * y * k - x * sinTheta, cosTheta + z * z * k, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+}
+
+LibMath::Matrix4 LibMath::Matrix4::createTransform(Vector3 position, Vector3 axis, Radian angle, Vector3 scale)
+{
+	Matrix4 rotationMatrix = createRotation(axis, angle);
+
+	return Matrix4(
+		scale[0] * rotationMatrix[0][0], scale[0] * rotationMatrix[0][1], scale[0] * rotationMatrix[0][2], 0.f,
+		scale[1] * rotationMatrix[1][0], scale[1] * rotationMatrix[1][1], scale[1] * rotationMatrix[1][2], 0.f,
+		scale[2] * rotationMatrix[2][0], scale[2] * rotationMatrix[2][1], scale[2] * rotationMatrix[2][2], 0.f,
+		position[0], position[1], position[2], 1.0f
+	);
 }
 
 LibMath::Matrix4 LibMath::Matrix4::createTransform(LibMath::Vector3 translate, LibMath::Radian rotation, LibMath::Vector3 scale, LibMath::Vector3 axis)
@@ -826,9 +859,9 @@ LibMath::Matrix4 LibMath::Matrix4::createTranslation(Vector3 v)
 	Matrix4 translationMatrix = Matrix4::getIdentity();
 
 	// Set translation in last column for column-major
-	translationMatrix.m_values[0][3] = v.m_x;
-	translationMatrix.m_values[1][3] = v.m_y;
-	translationMatrix.m_values[2][3] = v.m_z;
+	translationMatrix.m_values[3][0] = v.m_x;
+	translationMatrix.m_values[3][1] = v.m_y;
+	translationMatrix.m_values[3][2] = v.m_z;
 
 	return translationMatrix;
 }
@@ -850,30 +883,13 @@ LibMath::Matrix4 LibMath::Matrix4::createRotationX(Vector4 origin, float rad)
 }
 
 // Create rotation matrix around the Y-axis
-LibMath::Matrix4 LibMath::Matrix4::createRotationY(Vector4 origin, float rad)
-{
-	Matrix4 rotationMatrix = Matrix4::getIdentity();
-
-	rotationMatrix.m_values[0][0] = cos(rad);
-	rotationMatrix.m_values[0][2] = sin(rad);
-	rotationMatrix.m_values[2][0] = -sin(rad);
-	rotationMatrix.m_values[2][2] = cos(rad);
-
-	// Translation in last column (column-major)
-	rotationMatrix.m_values[0][3] = origin.m_x;
-	rotationMatrix.m_values[1][3] = origin.m_y;
-	rotationMatrix.m_values[2][3] = origin.m_z;
-
-	return rotationMatrix;
-}
-
 LibMath::Matrix4 LibMath::Matrix4::createRotationY(float rad)
 {
 	Matrix4 rotationMatrix = Matrix4::getIdentity();
 
 	rotationMatrix.m_values[0][0] = cos(rad);
-	rotationMatrix.m_values[0][2] = sin(rad);
-	rotationMatrix.m_values[2][0] = -sin(rad);
+	rotationMatrix.m_values[2][0] = sin(rad);
+	rotationMatrix.m_values[0][2] = -sin(rad);
 	rotationMatrix.m_values[2][2] = cos(rad);
 
 	return rotationMatrix;
@@ -1162,6 +1178,25 @@ LibMath::Matrix4 LibMath::operator*(Matrix4 m, Matrix4 other)
 			for (int k = 0; k < 4; ++k)
 			{
 				result[i][j] += m[i][k] * other[k][j];
+			}
+		}
+	}
+	return result;
+}
+
+LibMath::Matrix4 LibMath::operator*=(Matrix4 m, Matrix4 other)
+{
+	Matrix4 result;
+
+	for (int col = 0; col < 4; ++col)         // column of result
+	{
+		for (int row = 0; row < 4; ++row)     // row of result
+		{
+			result[col][row] = 0.0f;
+			for (int k = 0; k < 4; ++k)
+			{
+				// Remember: m[col][row] means "column-major"
+				result[col][row] += m[k][row] * other[col][k];
 			}
 		}
 	}
