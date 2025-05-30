@@ -1,47 +1,92 @@
 #include "Application.h"
 #include "GLTexture.h"
+#include "Player.h"
 
-bool Application::init()
+bool Application::init() 
 {
-    if (!initGLFW()) // Initialize GLFW and set window hints
+    if (!initGLFW()) return false;
+    if (!createWindow()) return false;
+    if (!initGLAD()) return false;
+    initGLContext();
+    initImGuiContext();
+
+    // Initialize scene and game objects
+    gameManager.init();
+
+    if (!initShaderAndResources())
         return false;
 
-    if (!createWindow()) // Create the actual GLFW window
-        return false;
-
-    initGLContext(); // Setup OpenGL context, input modes, and callbacks
-
-    if (!initGLAD()) // Initialize GLAD for OpenGL function loading
-        return false;
-
-    if (!initShaderAndResources()) 
-        return false;
 
     return true;
 }
 
-bool Application::initGLFW()
+bool Application::initGLFW() 
 {
-    if (!glfwInit())
+    if (!glfwInit()) 
     {
         std::cerr << "Failed to initialize GLFW\n";
+
         return false;
     }
-
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
+    return true;
+}
+
+void Application::initImGuiContext()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    io = &ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+}
+
+bool Application::createWindow() 
+{
+    GLFWmonitor* primary = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primary);
+
+    windowWidth = 1920;
+    windowHeight = 1200;
+
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
+
+    if (!window) 
+    {
+        std::cerr << "Failed to create GLFW window\n";
+        glfwTerminate();
+        return false;
+    }
+
+    glfwMakeContextCurrent(window);
 
     return true;
 }
 
-void Application::initGLContext()
+bool Application::initGLAD() 
 {
-    glfwMakeContextCurrent(window); 
-    glfwSetWindowUserPointer(window, this); 
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
+    {
+        std::cerr << "Failed to initialize GLAD\n";
 
-    glfwSwapInterval(0); 
+        return false;
+    }
+
+    return true;
+}
+
+void Application::initGLContext() 
+{
+    //Set callbacks
+    glfwMakeContextCurrent(window);
+    glfwSetWindowUserPointer(window, this);
+
+    glfwSwapInterval(0);
 
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -54,38 +99,9 @@ void Application::initGLContext()
     glfwSetCursorPosCallback(window, mouse_callback);
 }
 
-bool Application::createWindow()
-{
-    GLFWmonitor* primary = glfwGetPrimaryMonitor(); 
-    const GLFWvidmode* mode = glfwGetVideoMode(primary); // Get video mode (resolution, refresh rate)
-
-
-    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, primary, nullptr);
-
-    if (!window)
-    {
-        std::cerr << "Failed to create GLFW window\n";
-        glfwTerminate(); // Cleanup GLFW before exiting
-        return false;
-    }
-
-    return true;
-}
-
-bool Application::initGLAD()
-{
-    // Load OpenGL functions using GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cerr << "Failed to initialize GLAD\n";
-        return false;
-    }
-    return true;
-}
-
 bool Application::initShaderAndResources()
 {
-    shaderProgram = new Shader();
+    //gameManager.shader = new Shader();
 
     if (!setupResources()) // Load shaders, model, textures, set lighting and OpenGL states
     {
@@ -95,66 +111,92 @@ bool Application::initShaderAndResources()
     return true;
 }
 
-void Application::run()
+void Application::run() 
 {
-    while (!glfwWindowShouldClose(window)) // Main render loop until window is closed
+    while (!glfwWindowShouldClose(window)) 
     {
-        updateDeltaTime(); 
-        player.processInput(window, m_deltaTime);  
-        clearScreen();    // Clear color and depth buffers
+        updateDeltaTime();
+        gameManager.player.processInput(window, deltaTime);
 
-        renderFrame();    
+        // Update game logic
+        updateSceneGraph();
+        gameManager.update(deltaTime);
 
-        glfwSwapBuffers(window); // Present backbuffer to screen
-        glfwPollEvents();        // Process window events 
+        // Render
+        clearScreen();
+        gameManager.draw();
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
+    glfwTerminate();
 }
 
-void Application::updateDeltaTime()
+void Application::updateDeltaTime() 
 {
-    float currentFrame = glfwGetTime(); 
-
-    m_deltaTime = currentFrame - m_lastFrame; // Time difference between frames
-    m_lastFrame = currentFrame;
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 }
 
-void Application::clearScreen()
+void Application::updateSceneGraph()
 {
-    // Set clear color to black and clear color and depth buffers
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    float angle = glfwGetTime();
+
+    auto node = gameManager.scene.findNodeByName("Lapinou");
+    
+    if (node) 
+    {
+        node->localTransform =
+            LibMath::Matrix4::createTranslation({ 0,10,0 }) *
+            LibMath::Matrix4::createRotationY(angle) *
+            LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+    }
+
+    gameManager.scene.root->updateTransform();
+}
+
+void Application::processInput() 
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    // ... camera or player input could go here or inside GameManager
+}
+
+void Application::clearScreen() 
+{
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Application::renderFrame()
+void Application::drawUI()
 {
-    shaderProgram->Use(); // Bind shader program
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-    setMatrices();          // Send model/view/projection matrices to shader
-    setCameraUniforms();    // Send camera position to shader for lighting calculations
-    setLightUniforms();     // Send lighting parameters to shader
-    bindTextureForRendering(); // Bind texture and tell shader to use it
-    configureCulling();     // Enable face culling (to improve performance)
+    uiManager.drawAll(); // Draws all elements
 
-    updateSceneGraph();     
-    drawSceneGraph();       // Draw the whole scene graph recursively
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Application::setMatrices()
 {
     // Calculate the view, projection, and model matrices
-    LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
-    LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)windowWidth / windowHeight);
+    LibMath::Matrix4 view = gameManager.player.getCamera().GetViewMatrix();
+    LibMath::Matrix4 projection = gameManager.player.getCamera().GetProjectionMatrix((float)windowWidth / windowHeight);
     LibMath::Matrix4 model = LibMath::Matrix4::getIdentity(); // Identity for root
-
+    
     // Upload matrices to shader uniforms
-    shaderProgram -> setMat4("view", view);
-    shaderProgram -> setMat4("projection", projection);
-    shaderProgram -> setMat4("model", model);
+    gameManager.shader->setMat4("view", view);
+    gameManager.shader->setMat4("projection", projection);
+    gameManager.shader->setMat4("model", model);
 }
 
-void Application::bindTextureForRendering()
+void Application::bindTexture()
 {
-    glUniform1i(glGetUniformLocation(shaderProgram -> GetID(), "useTexture"), true); // Tell shader to use texture
+    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), true); // Tell shader to use texture
     glActiveTexture(GL_TEXTURE0);      // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, texture1); // Bind texture to unit 0
 }
@@ -166,27 +208,32 @@ void Application::configureCulling()
     glFrontFace(GL_CCW);     // Define front face as counter-clockwise winding order
 }
 
-void Application::updateSceneGraph()
+void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
-    float angle = glfwGetTime(); 
+    Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+    if (!app) return;
 
-    rootNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0,0,0), LibMath::Vector3(0, 1, 0), LibMath::Radian(angle),LibMath::Vector3(1, 1, 1));
+    if (app->firstMouse) 
+    {
+        app->lastX = (float)xpos;
+        app->lastY = (float)ypos;
+        app->firstMouse = false;
 
-    childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
+        return;
+    }
 
+    float xoffset = (float)xpos - app->lastX;
+    float yoffset = app->lastY - (float)ypos;
 
-    // Update transforms of all nodes recursively (propagate changes to children)
-    rootNode->updateTransform();
-}
+    app->lastX = (float)xpos;
+    app->lastY = (float)ypos;
 
-void Application::drawSceneGraph()
-{
-    rootNode->draw(shaderProgram); // Draw root node, which recursively draws all children
+    app->gameManager.processMouseMovement(xoffset, yoffset);
 }
 
 void Application::setLightUniforms()
 {
-    GLuint shaderID = shaderProgram->GetID();
+    GLuint shaderID = gameManager.shader->GetID();
 
     // Pass all point light parameters to shader uniforms
     glUniform3fv(glGetUniformLocation(shaderID, "pointLight.position"), 1, &pointLight.position.m_x);
@@ -200,15 +247,13 @@ void Application::setLightUniforms()
 
 void Application::setCameraUniforms()
 {
-    LibMath::Vector3 camPos = player.getCamera().position;
+    LibMath::Vector3 camPos = gameManager.player.getCamera().position;
 
-    GLint viewPosLoc = glGetUniformLocation(shaderProgram->GetID(), "viewPos");
+    GLint viewPosLoc = glGetUniformLocation(gameManager.shader->GetID(), "viewPos");
 
     // Pass camera position to shader for specular lighting calculations
     glUniform3fv(viewPosLoc, 1, &camPos.m_x);
 }
-
-
 
 unsigned int Application::loadTexture(const char* path)
 {
@@ -251,23 +296,24 @@ bool Application::setupResources()
 {
     setupLighting();  // Initialize lighting parameters
 
-    if (!loadShaders()) // Load vertex and fragment shaders
-    {
-        return false;
-    }
+    //if (!loadShaders()) // Load vertex and fragment shaders
+    //{
+    //    return false;
+    //}
 
-    if (!loadModel())   // Load 3D model from file
-    {
-        return false;
-    }
+    //if (!loadModel())   // Load 3D model from file
+    //{
+    //    return false;
+    //}
 
-    buildSceneGraph();  
-    model3D.uploadToGPU(); // Upload mesh data (vertices, indices) to GPU buffers
-    setupOpenGLStates();   
+    //buildSceneGraph();
+    //model3D.uploadToGPU(); // Upload mesh data (vertices, indices) to GPU buffers
+    setupOpenGLStates();
     bindTexture();         // Load and bind texture for rendering
 
     return true;
 }
+
 
 void Application::setupLighting()
 {
@@ -281,93 +327,8 @@ void Application::setupLighting()
     pointLight.quadratic = 0.032f;
 }
 
-bool Application::loadShaders()
-{
-    // Load vertex and fragment shaders from files and link them into a program
-    if (!shaderProgram -> SetVertexShader("../../Assets/Shaders/vertex.glsl")) return false;
-    if (!shaderProgram -> SetFragmentShader("../../Assets/Shaders/fragment.glsl")) return false;
-    return shaderProgram -> Link();
-}
-
-bool Application::loadModel()
-{
-    if (!model3D.load("../../Assets/Meshes/bunny.obj"))
-    {
-        std::cerr << "Failed to load model\n";
-
-        return false;
-    }
-    return true;
-}
-
-void Application::buildSceneGraph()
-{
-    // Create two separate shader programs for root and child nodes
-    Shader* shader1 = new Shader();
-    shader1 -> SetVertexShader("../../Assets/Shaders/vertex.glsl");
-    shader1 -> SetFragmentShader("../../Assets/Shaders/fragment.glsl");
-    shader1 -> Link();
-
-    Shader* shader2 = new Shader();
-    shader2->SetVertexShader("../../Assets/Shaders/vertex.glsl");
-    shader2->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
-    shader2->Link();
-
-    // Create root and child scene graph nodes with models and shaders
-    rootNode = std::make_shared<SceneNode<Model>>(&model3D, shader1);
-    childNode = std::make_shared<SceneNode<Model>>(&model3D, shader2);
-
-    rootNode -> addChild(childNode); // Attach child node to root node
-
-    rootNode -> localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(1, 1, 1));
-
-    childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
-}
-
 void Application::setupOpenGLStates()
 {
     glEnable(GL_DEPTH_TEST);  // Enable depth testing (hidden surface removal)
     glDepthFunc(GL_LESS);     // Accept fragment if closer than existing one
-}
-
-void Application::bindTexture()
-{
-    GLTexture* texture = resourceManager.Create<GLTexture>("../../Assets/Textures/john_smile.png");
-
-    shaderProgram -> Use();
-
-    // Tell shader that the texture sampler "texture1" corresponds to texture unit 0
-    glUniform1i(glGetUniformLocation(shaderProgram -> GetID(), "texture1"), 0);
-
-    if (texture)
-    {
-        texture -> bind(0); 
-    }
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-
-    if (!app) return;
-
-    if (app -> firstMouse)
-    {
-    
-        app -> lastX = (float)xpos;
-        app -> lastY = (float)ypos;
-        app -> firstMouse = false;
-    }
-
-    // Calculate mouse movement offset since last frame
-    float xoffset = xpos - app -> lastX;
-    float yoffset = app->lastY - ypos;
-
-    app -> lastX = (float)xpos;
-    app -> lastY = (float)ypos;
-
-    app -> player.getCamera().ProcessMouseMovement(
-        xoffset * app -> player.getCamera().mouseSensitivity,
-        yoffset * app -> player.getCamera().mouseSensitivity
-    );
 }

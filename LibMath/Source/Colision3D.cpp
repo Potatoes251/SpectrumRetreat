@@ -76,6 +76,18 @@ bool	LibMath::collisionRayCapsule(Line3D ray, Capsule capsule)
 		collisionRaySphere(ray, Sphere(capsule.getEnd(), capsule.getRadius()));
 }
 
+bool	LibMath::collisionPlaneCapsule(Plane plane, Capsule capsule)
+{
+	Point3D planePoint = plane.getPointOnPlane();
+	Vector3 normal = plane.getNormal();
+	normal.normalize();
+
+	float da = (capsule.getStart() - planePoint).dot(plane.getNormal());
+	float db = (capsule.getEnd() - planePoint).dot(plane.getNormal());
+
+	return std::min(da, db) <= capsule.getRadius() && std::max(da, db) >= -capsule.getRadius();
+}
+
 bool	LibMath::collisionSphereCapsule(Sphere sphere, Capsule capsule)
 {
 	LibMath::Vector3 AB = capsule.getEnd() - capsule.getStart();
@@ -89,6 +101,46 @@ bool	LibMath::collisionSphereCapsule(Sphere sphere, Capsule capsule)
 	float radiusSum = capsule.getRadius() + sphere.getRadius();
 
 	return distance < radiusSum * radiusSum;
+}
+
+bool	LibMath::collisionTwoCapsule(Capsule cap1, Capsule cap2)
+{
+	Vector3 u = cap1.getEnd() - cap1.getStart();
+	Vector3 v = cap2.getEnd() - cap2.getStart();
+	Vector3 w = cap2.getStart() - cap1.getStart();
+
+	float a = u.dot(u);
+	float b = u.dot(v);
+	float c = v.dot(v);
+	float d = u.dot(w);
+	float e = v.dot(w);
+
+	float s = 0;
+	float t = 0;
+
+	float denom = (a * c - b * b);
+
+	if (denom < 1e-6)
+	{
+		s = 0.0f;
+		t = e / c;
+		t = (t < 0.0f) ? 0.0f : (t > 1.0f ? 1.0f : t);
+	}
+	else
+	{
+		s = (b * e - c * d) / denom;
+		t = (a * e - b * d) / denom;
+
+		s = clamp(s, 0.0f, 1.0f);
+		t = clamp(t, 0.0f, 1.0f);
+	}
+
+	Vector3 C1 = cap1.getStart() + u * s;
+	Vector3 C2 = cap2.getStart() + v * t;
+
+	float radiusSquared = (cap1.getRadius() + cap2.getRadius()) * (cap1.getRadius() + cap2.getRadius());
+
+	return C1.distanceSquaredFrom(C2) < radiusSquared;
 }
 
 bool	LibMath::collisionPointPrism(Point3D point, Prism prism)
@@ -252,7 +304,7 @@ bool	LibMath::collisionCapsulePrism(Capsule capsule, Prism prism)	// AABB collis
 	return distSq <= capsule.getRadius() * capsule.getRadius();
 }
 
-bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& outCorrection)	// AABB collision only
+bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& outPrismNormal)	// AABB collision only
 {
 	Point3D halfSize(prism.extentX(), prism.extentY(), prism.extentZ());
 
@@ -282,6 +334,7 @@ bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& ou
 	// Compute squared distance
 	Vector3 delta = closestPointOnSegment - clampedPoint;
 	float distSq = delta.dot(delta);
+	delta.normalize();
 
 	// Check collision
 	if (distSq <= capsule.getRadius() * capsule.getRadius())
@@ -290,23 +343,18 @@ bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& ou
 
 		if (dist > 1e-6f)
 		{
-			// Penetration depth
-			float penetrationDepth = capsule.getRadius() - dist;
-
-			// Normalize delta and multiply by penetration depth for correction
-			LibMath::Vector3 correction = delta * (penetrationDepth / dist);
-			outCorrection = correction;
+			outPrismNormal = delta;
 		}
 		else
 		{
 			// If distance is zero (exact overlap), push up arbitrarily (e.g. up)
-			outCorrection = LibMath::Vector3(0, capsule.getRadius(), 0);
+			outPrismNormal = LibMath::Vector3(0, 1, 0);
 		}
 
 		return true;
 	}
 
 	// No collision
-	outCorrection = LibMath::Vector3(0, 0, 0);
+	outPrismNormal = LibMath::Vector3(0, 0, 0);
 	return false;
 }
