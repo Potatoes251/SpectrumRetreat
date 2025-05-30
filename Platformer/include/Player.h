@@ -17,6 +17,7 @@ private:
 
 	LibMath::Vector3 position;
 
+	LibMath::Vector3 velocity;
 	float yVelocity = 0.0f;
 	bool isJumping = false;
 
