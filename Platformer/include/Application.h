@@ -55,6 +55,7 @@ public:
     void setCameraUniforms();
     void setupLighting();
     void setupOpenGLStates();
+    void renderFrame();
     unsigned int loadTexture(const char* path);
 
 private:

@@ -28,10 +28,12 @@ bool Application::initGLFW()
 
         return false;
     }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
+
     return true;
 }
 
@@ -125,10 +127,12 @@ void Application::run()
         // Render
         clearScreen();
         gameManager.draw();
+        renderFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     glfwTerminate();
 }
 
@@ -181,6 +185,24 @@ void Application::drawUI()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void Application::renderFrame()
+{
+    gameManager.shader->Use(); // Bind shader program
+
+    setMatrices();          // Send model/view/projection matrices to shader
+    setCameraUniforms();    // Send camera position to shader for lighting calculations
+    setLightUniforms();     // Send lighting parameters to shader
+    bindTexture(); // Bind texture and tell shader to use it
+    configureCulling();     // Enable face culling (to improve performance)
+
+
+    updateSceneGraph();
+    //drawSceneGraph();       // Draw the whole scene graph recursively
+    gameManager.scene.draw(gameManager.shader);
+    drawUI();
+}
+
+
 void Application::setMatrices()
 {
     // Calculate the view, projection, and model matrices
@@ -196,7 +218,7 @@ void Application::setMatrices()
 
 void Application::bindTexture()
 {
-    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), true); // Tell shader to use texture
+    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), false); // Tell shader to use texture
     glActiveTexture(GL_TEXTURE0);      // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, texture1); // Bind texture to unit 0
 }

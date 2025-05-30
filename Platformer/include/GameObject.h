@@ -1,5 +1,4 @@
 #include "Model.h"
-//#include "GLTexture.h"
 #include "../../LibMath/Header/LibMath/Matrix.h"
 
 #include <string>
