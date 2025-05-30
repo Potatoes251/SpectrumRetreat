@@ -12,12 +12,12 @@ public:
     LibMath::Vector3 right;
     LibMath::Vector3 worldUp;
 
-    LibMath::Degree yaw;   // rotation horizontale
-    LibMath::Degree pitch; // rotation verticale
+    LibMath::Degree yaw;
+    LibMath::Degree pitch;
 
     float movementSpeed;
     float mouseSensitivity;
-    LibMath::Degree fov; // champ de vision en degrés
+    LibMath::Degree fov;
 
     CameraFPS(
         LibMath::Vector3 startPosition,

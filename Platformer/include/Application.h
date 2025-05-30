@@ -106,7 +106,8 @@
 //    void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 
-class Application {
+class Application 
+{
 public:
     bool init();
     void run();
@@ -130,7 +131,9 @@ private:
     bool createWindow();
     bool initGLAD();
     void initGLContext();
+    void bindTexture();
     void processInput();
     void updateDeltaTime();
+    void updateSceneGraph();
     void clearScreen();
 };

@@ -1,16 +1,13 @@
 #include "Model.h"
+//#include "GLTexture.h"
+#include "../../LibMath/Header/LibMath/Matrix.h"
 
-#include <string.h>
+#include <string>
 
 class GameObject
 {
 public:
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
-
-	//void draw(const LibMath::Matrix4 worldTransform);
-
-	//void setCollisionBox(const LibMath::Prism box);
-	//const LibMath::Prism& getCollisionBox() const;
 
 	void update(float deltaTime);
 	void draw(Shader* shader);
@@ -22,6 +19,9 @@ public:
 	LibMath::Vector3 position;
 	LibMath::Vector3 rotation;
 	LibMath::Vector3 scale;
+
+	LibMath::Matrix4 localTransform = LibMath::Matrix4::getIdentity();
+	LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
 
 private:
 	std::string name;

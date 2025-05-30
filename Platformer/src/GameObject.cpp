@@ -1,11 +1,16 @@
-//#include "../header/GameObject.h"
-#include "GameObject.h"
+#include "../header/GameObject.h"
+//#include "GameObject.h"
+//#include "GLTexture.h"
 
-GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
-	: name(name), model(std::move(model)), position(0), rotation(0), scale(1) {}
+//GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
+//    : name(name), model(std::move(model)), position(0), rotation(0), scale(1) {}
+
+GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model/*,
+    std::shared_ptr<GLTexture> texture*/)
+	: name(name), model(std::move(model))/*, texture(std::move(texture))*/, position(0), rotation(0), scale(1) { }
 
 //void GameObject::draw(const LibMath::Matrix4 worldTransform)
-//{
+//{std::cou
 //	model->draw();
 //}
 

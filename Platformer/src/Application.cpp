@@ -402,7 +402,8 @@
 //}
 
 
-bool Application::init() {
+bool Application::init() 
+{
     if (!initGLFW()) return false;
     if (!createWindow()) return false;
     if (!initGLAD()) return false;
@@ -414,53 +415,68 @@ bool Application::init() {
     return true;
 }
 
-bool Application::initGLFW() {
-    if (!glfwInit()) {
+bool Application::initGLFW() 
+{
+    if (!glfwInit()) 
+    {
         std::cerr << "Failed to initialize GLFW\n";
+
         return false;
     }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
+
     return true;
 }
 
-bool Application::createWindow() {
+bool Application::createWindow() 
+{
     window = glfwCreateWindow(1920, 1200, "3D Game", nullptr, nullptr);
-    if (!window) {
+
+    if (!window) 
+    {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
         return false;
     }
+
     glfwMakeContextCurrent(window);
+
     return true;
 }
 
-bool Application::initGLAD() {
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+bool Application::initGLAD() 
+{
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
+    {
         std::cerr << "Failed to initialize GLAD\n";
+
         return false;
     }
+
     return true;
 }
 
-void Application::initGLContext() {
+void Application::initGLContext() 
+{
     // Set callbacks
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //glEnable(GL_DEPTH_TEST);
 }
 
-// -- Main Loop --
-
-void Application::run() {
-    while (!glfwWindowShouldClose(window)) {
+void Application::run() 
+{
+    while (!glfwWindowShouldClose(window)) 
+    {
         updateDeltaTime();
         processInput();
 
         // Update game logic
+        updateSceneGraph();
         gameManager.update(deltaTime);
 
         // Render
@@ -473,21 +489,39 @@ void Application::run() {
     glfwTerminate();
 }
 
-// -- Helpers --
-
-void Application::updateDeltaTime() {
+void Application::updateDeltaTime() 
+{
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 }
 
-void Application::processInput() {
+void Application::updateSceneGraph()
+{
+    float angle = glfwGetTime();
+
+    auto node = gameManager.scene.findNodeByName("Lapinou");
+    
+    if (node) 
+    {
+        node->localTransform =
+            LibMath::Matrix4::createTranslation({ 0,10,0 }) *
+            LibMath::Matrix4::createRotationY(angle) *
+            LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+    }
+
+    gameManager.scene.root->updateTransform();
+}
+
+void Application::processInput() 
+{
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     // ... camera or player input could go here or inside GameManager
 }
 
-void Application::clearScreen() {
+void Application::clearScreen() 
+{
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -495,25 +529,23 @@ void Application::clearScreen() {
 void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
     if (!app) return;
 
     if (app->firstMouse) 
     {
-        // Première fois : initialise lastX et lastY
         app->lastX = (float)xpos;
         app->lastY = (float)ypos;
         app->firstMouse = false;
-        return;   // pas de mouvement à traiter
+
+        return;
     }
 
-    // Calcul des offsets
     float xoffset = (float)xpos - app->lastX;
-    float yoffset = app->lastY - (float)ypos; // inversé : y va de bas en haut
+    float yoffset = app->lastY - (float)ypos;
 
-    // Met à jour pour le prochain appel
     app->lastX = (float)xpos;
     app->lastY = (float)ypos;
 
-    // Passe les deltas à la caméra via le GameManager
     app->gameManager.processMouseMovement(xoffset, yoffset);
 }

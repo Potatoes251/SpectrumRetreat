@@ -3,26 +3,8 @@
 #include "Camera.h"
 #include "ResourceManager.h"
 
-//class GameManager
-//{
-//public:
-//	GameManager();
-//	~GameManager();
-//
-//	void init();
-//	void run();
-//
-//	void update(float deltaTime);
-//	//void render();
-//
-//private:
-//	void processInput();
-//
-//	SceneGraph<GameObject> scene;
-//	bool isRunning;
-//};
-
-class GameManager {
+class GameManager 
+{
 public:
     GameManager();
     ~GameManager();
@@ -39,10 +21,10 @@ public:
     // Handle mouse movement for camera
     void processMouseMovement(double xpos, double ypos);
 
+    SceneGraph<GameObject> scene;
 private:
     ResourceManager resourceManager;
 
-    SceneGraph<GameObject> scene;
     std::unique_ptr<Shader> shader;
     CameraFPS camera = CameraFPS(
         LibMath::Vector3(0.0f, 0.0f, 3.0f),
