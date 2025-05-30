@@ -9,6 +9,9 @@ public:
     VertexAttributes();
     ~VertexAttributes();
 
+    VertexAttributes(const VertexAttributes&) = delete;
+    VertexAttributes& operator=(const VertexAttributes&) = delete;
+
     void init();
     void bind() const;
     void unbind() const;

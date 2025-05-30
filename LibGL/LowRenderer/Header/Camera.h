@@ -30,6 +30,6 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset);
     float GetSensitivity();
 
-private:
     void UpdateCameraVectors();
+private:
 };

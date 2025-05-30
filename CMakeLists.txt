@@ -1,4 +1,3 @@
-#Mother
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 set(USE_FOLDERS ON)
@@ -38,5 +37,5 @@ target_include_directories(${EXE_NAME} PRIVATE ${IMGUI_DIR}/backends)
 target_sources(${EXE_NAME} PRIVATE ${IMGUI_SOURCES})
 
 if (MSVC)
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Platformer)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Platformer)
 endif()

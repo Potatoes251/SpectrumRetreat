@@ -1,40 +1,29 @@
 #include "Application.h"
 #include "GLTexture.h"
+   
 
-bool Application::init()
-{
-    if (!initGLFW()) // Initialize GLFW and set window hints
-        return false;
-
-    if (!createWindow()) // Create the actual GLFW window
-        return false;
-
-
-    initGLContext(); // Setup OpenGL context, input modes, and callbacks
+bool Application::init() {
+    if (!initGLFW()) return false;
+    if (!createWindow()) return false;
+    if (!initGLAD()) return false;
+    initGLContext();
     initImGuiContext(); // Setup imgui context, input modes 
 
-    if (!initGLAD()) // Initialize GLAD for OpenGL function loading
-        return false;
-
-    if (!initShaderAndResources()) 
-        return false;
+    // Initialize scene and game objects
+    gameManager.init();
 
     return true;
 }
 
-bool Application::initGLFW()
-{
-    if (!glfwInit())
-    {
+bool Application::initGLFW() {
+    if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return false;
     }
-
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
-
     return true;
 }
 
@@ -67,45 +56,31 @@ void Application::initGLContext()
     glfwSetCursorPosCallback(window, mouse_callback);
 }
 
-bool Application::createWindow()
-{
-    GLFWmonitor* primary = glfwGetPrimaryMonitor(); 
-    const GLFWvidmode* mode = glfwGetVideoMode(primary); // Get video mode (resolution, refresh rate)
-
-
-    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, primary, nullptr);
-
-    if (!window)
-    {
+bool Application::createWindow() {
+    window = glfwCreateWindow(1920, 1200, "3D Game", nullptr, nullptr);
+    if (!window) {
         std::cerr << "Failed to create GLFW window\n";
-        glfwTerminate(); // Cleanup GLFW before exiting
+        glfwTerminate();
         return false;
     }
-
+    glfwMakeContextCurrent(window);
     return true;
 }
 
-bool Application::initGLAD()
-{
-    // Load OpenGL functions using GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+bool Application::initGLAD() {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD\n";
         return false;
     }
     return true;
 }
 
-bool Application::initShaderAndResources()
-{
-    shaderProgram = new Shader();
-
-    if (!setupResources()) // Load shaders, model, textures, set lighting and OpenGL states
-    {
-        std::cerr << "Failed to set up resources!\n";
-        return false;
-    }
-    return true;
+void Application::initGLContext() {
+    // Set callbacks
+    glfwSetWindowUserPointer(window, this);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glEnable(GL_DEPTH_TEST);
 }
 
 void Application::run()
@@ -199,30 +174,17 @@ void Application::updateSceneGraph()
 
     rootNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(0,0,0), LibMath::Vector3(0, 1, 0), LibMath::Radian(angle),LibMath::Vector3(1, 1, 1));
 
-    childNode->localTransform = LibMath::Matrix4::createTransform(LibMath::Vector3(5, 0, 0), LibMath::Vector3(0, 1, 0), LibMath::Radian(0), LibMath::Vector3(0.5, 0.5, 0.5));
+        // Update game logic
+        gameManager.update(deltaTime);
 
+        // Render
+        clearScreen();
+        gameManager.draw();
 
-    // Update transforms of all nodes recursively (propagate changes to children)
-    rootNode->updateTransform();
-}
-
-void Application::drawSceneGraph()
-{
-    rootNode->draw(shaderProgram); // Draw root node, which recursively draws all children
-}
-
-void Application::setLightUniforms()
-{
-    GLuint shaderID = shaderProgram->GetID();
-
-    // Pass all point light parameters to shader uniforms
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.position"), 1, &pointLight.position.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.ambient"), 1, &pointLight.ambient.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.diffuse"), 1, &pointLight.diffuse.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.specular"), 1, &pointLight.specular.m_x);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.constant"), pointLight.constant);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.linear"), pointLight.linear);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.quadratic"), pointLight.quadratic);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+    glfwTerminate();
 }
 
 void Application::setCameraUniforms()
@@ -231,8 +193,10 @@ void Application::setCameraUniforms()
 
     GLint viewPosLoc = glGetUniformLocation(shaderProgram->GetID(), "viewPos");
 
-    // Pass camera position to shader for specular lighting calculations
-    glUniform3fv(viewPosLoc, 1, &camPos.m_x);
+void Application::updateDeltaTime() {
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 }
 
 
@@ -363,41 +327,32 @@ void Application::setupOpenGLStates()
     glDepthFunc(GL_LESS);     // Accept fragment if closer than existing one
 }
 
-void Application::bindTexture()
-{
-    GLTexture* texture = resourceManager.Create<GLTexture>("../../Assets/Textures/john_smile.png");
-
-    shaderProgram -> Use();
-
-    // Tell shader that the texture sampler "texture1" corresponds to texture unit 0
-    glUniform1i(glGetUniformLocation(shaderProgram -> GetID(), "texture1"), 0);
-
-    if (texture)
-    {
-        texture -> bind(0); 
-    }
+void Application::clearScreen() {
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-
     if (!app) return;
 
-    if (app -> firstMouse)
+    if (app->firstMouse) 
     {
-    
-        app -> lastX = (float)xpos;
-        app -> lastY = (float)ypos;
-        app -> firstMouse = false;
+        // Première fois : initialise lastX et lastY
+        app->lastX = (float)xpos;
+        app->lastY = (float)ypos;
+        app->firstMouse = false;
+        return;   // pas de mouvement à traiter
     }
 
-    // Calculate mouse movement offset since last frame
-    float xoffset = xpos - app -> lastX;
-    float yoffset = app->lastY - ypos;
+    // Calcul des offsets
+    float xoffset = (float)xpos - app->lastX;
+    float yoffset = app->lastY - (float)ypos; // inversé : y va de bas en haut
 
-    app -> lastX = (float)xpos;
-    app -> lastY = (float)ypos;
+    // Met à jour pour le prochain appel
+    app->lastX = (float)xpos;
+    app->lastY = (float)ypos;
 
     app -> player.getCamera().ProcessMouseMovement(
         xoffset * app -> player.getCamera().mouseSensitivity,
