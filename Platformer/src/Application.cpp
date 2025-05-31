@@ -117,7 +117,7 @@ void Application::run()
         gameManager.player.processInput(window, deltaTime);
 
         // Update game logic
-        updateSceneGraph();
+        //updateSceneGraph();
         gameManager.update(deltaTime);
 
         // Render
