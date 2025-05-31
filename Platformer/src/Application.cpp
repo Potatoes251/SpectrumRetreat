@@ -16,7 +16,6 @@ bool Application::init()
     if (!initShaderAndResources())
         return false;
 
-
     return true;
 }
 
@@ -45,7 +44,6 @@ void Application::initImGuiContext()
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
 }
 
 bool Application::createWindow() 
@@ -90,9 +88,7 @@ void Application::initGLContext()
 
     glfwSwapInterval(0);
 
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 
     if (glfwRawMouseMotionSupported())
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -103,13 +99,13 @@ void Application::initGLContext()
 
 bool Application::initShaderAndResources()
 {
-    //gameManager.shader = new Shader();
-
     if (!setupResources()) // Load shaders, model, textures, set lighting and OpenGL states
     {
         std::cerr << "Failed to set up resources!\n";
+
         return false;
     }
+
     return true;
 }
 
@@ -126,7 +122,6 @@ void Application::run()
 
         // Render
         clearScreen();
-        gameManager.draw();
         renderFrame();
 
         glfwSwapBuffers(window);
@@ -145,16 +140,25 @@ void Application::updateDeltaTime()
 
 void Application::updateSceneGraph()
 {
-    float angle = glfwGetTime();
+    updateDeltaTime();
+    float angle = deltaTime * LibMath::Radian(LibMath::Degree(45.0f).radian()).raw();
 
-    auto node = gameManager.scene.findNodeByName("Lapinou");
-    
-    if (node) 
+    auto bunnyNode = gameManager.scene.findNodeByName("Blue Lapinou");
+
+    if (bunnyNode)
     {
-        node->localTransform =
-            LibMath::Matrix4::createTranslation({ 0,10,0 }) *
+        bunnyNode->localTransform =
+            LibMath::Matrix4::createTranslation({ 0, 5, 0 }) *
             LibMath::Matrix4::createRotationY(angle) *
-            LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+            LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
+        bunnyNode->object->color = LibMath::Vector4(0, 0, 1, 1);
+    }
+
+    auto floorNode = gameManager.scene.findNodeByName("Floor");
+
+    if (floorNode)
+    {
+        floorNode->object->color = LibMath::Vector4(1, 0, 0, 1);
     }
 
     gameManager.scene.root->updateTransform();
@@ -195,9 +199,7 @@ void Application::renderFrame()
     bindTexture(); // Bind texture and tell shader to use it
     configureCulling();     // Enable face culling (to improve performance)
 
-
     updateSceneGraph();
-    //drawSceneGraph();       // Draw the whole scene graph recursively
     gameManager.scene.draw(gameManager.shader);
     drawUI();
 }
@@ -304,6 +306,7 @@ unsigned int Application::loadTexture(const char* path)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
+
     else
     {
         std::cout << "Failed to load texture: " << path << std::endl;
@@ -317,19 +320,6 @@ unsigned int Application::loadTexture(const char* path)
 bool Application::setupResources()
 {
     setupLighting();  // Initialize lighting parameters
-
-    //if (!loadShaders()) // Load vertex and fragment shaders
-    //{
-    //    return false;
-    //}
-
-    //if (!loadModel())   // Load 3D model from file
-    //{
-    //    return false;
-    //}
-
-    //buildSceneGraph();
-    //model3D.uploadToGPU(); // Upload mesh data (vertices, indices) to GPU buffers
     setupOpenGLStates();
     bindTexture();         // Load and bind texture for rendering
 

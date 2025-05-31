@@ -18,7 +18,10 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
 
+uniform vec4 objectColor;
+
 out vec4 FragColor;
+in vec4 vertexColor;
 
 uniform sampler2D texture1;
 uniform bool useTexture;
@@ -50,11 +53,13 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 void main()
 {
+    FragColor = vertexColor;
+
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
     vec3 result = CalcPointLight(pointLight, norm, FragPos, viewDir);
 
     vec4 texColor = useTexture ? texture(texture1, TexCoords) : vec4(1.0);
-    FragColor = vec4(result, 1.0) * texColor;
+    FragColor = vec4(result, 1.0) * objectColor;
 }

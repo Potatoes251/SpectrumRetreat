@@ -22,6 +22,8 @@ public:
 	LibMath::Matrix4 localTransform = LibMath::Matrix4::getIdentity();
 	LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
 
+	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
+
 private:
 	std::string name;
 	std::shared_ptr<Model> model;

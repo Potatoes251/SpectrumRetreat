@@ -126,3 +126,8 @@ void Shader::Use() const
 {
     glUseProgram(m_programID);
 }
+
+void Shader::setVec4(const std::string& name, const LibMath::Vector4& value) const
+{
+    glUniform4fv(glGetUniformLocation(m_programID, name.c_str()), 1, (float*)&value);
+}
