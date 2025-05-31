@@ -8,7 +8,6 @@ GameManager::~GameManager() {}
 void GameManager::init() 
 {
     // Load shader
-    //shader = std::make_unique<Shader>();
     shader = new Shader();
     shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
     shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
@@ -17,23 +16,10 @@ void GameManager::init()
     auto bunnyModel = resourceManager.Create<Model>("../../Assets/Meshes/bunny.obj");
     bunnyModel->uploadToGPU();
 
-    //auto johnTex = resourceManager.Create<GLTexture>("../../Assets/Textures/john_smile.png");
-
-    //shader->Use();
-
-    //// Tell shader that the texture sampler "texture1" corresponds to texture unit 0
-    //glUniform1i(glGetUniformLocation(shader->GetID(), "texture1"), 0);
-
-    //if (johnTex)
-    //{
-    //    johnTex->bind(0);
-    //}
-
     auto bunnyModelShared = std::shared_ptr<Model>(bunnyModel, [](Model*) {});
 
     // Create GameObject and SceneNode
-    auto bunnyGO = std::make_shared<GameObject>("Lapinou", bunnyModelShared/*, johnTex*/);
-    bunnyGO->position = LibMath::Vector3(0, 0, 0);
+    auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", bunnyModelShared);
 
     auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
     bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
@@ -47,8 +33,7 @@ void GameManager::init()
     auto floorModelShared = std::shared_ptr<Model>(floorModel, [](Model*) {});
 
     // Create GameObject and SceneNode
-    auto floorGO = std::make_shared<GameObject>("Sol", floorModelShared/*, johnTex*/);
-    floorGO->position = LibMath::Vector3(0, 0, 0);
+    auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
     floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *

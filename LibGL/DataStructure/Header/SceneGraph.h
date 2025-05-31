@@ -34,12 +34,12 @@ public:
         target->addChild(node);
     }
 
-    //T* findObjectByName(const std::string& name) 
-    //{
-    //    if (!root) return nullptr;
+    T* findObjectByName(const std::string& name) 
+    {
+        if (!root) return nullptr;
 
-    //    return findRec(root, name);
-    //}
+        return findRec(root, name);
+    }
 
 
     Ptr findNodeByName(const std::string& name) {
@@ -48,19 +48,19 @@ public:
     }
 
 private:
-    //T* findRec(const typename SceneNode<T>::Ptr& node, const std::string& name) 
-    //{
-    //    if (node->object && node->object->getName() == name)
-    //        return node->object.get();
+    T* findRec(const typename SceneNode<T>::Ptr& node, const std::string& name) 
+    {
+        if (node->object && node->object->getName() == name)
+            return node->object.get();
 
-    //    for (auto& child : node->children) 
-    //    {
-    //        if (T* found = findRec(child, name))
-    //            return found;
-    //    }
+        for (auto& child : node->children) 
+        {
+            if (T* found = findRec(child, name))
+                return found;
+        }
 
-    //    return nullptr;
-    //}
+        return nullptr;
+    }
 
     Ptr findNodeRec(const Ptr& node, const std::string& name) {
         if (node->object && node->object->getName() == name)

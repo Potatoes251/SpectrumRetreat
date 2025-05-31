@@ -18,6 +18,7 @@ public:
     bool Link();
 
     void setMat4(const std::string& name, LibMath::Matrix4& mat);
+    void setVec4(const std::string& name, const LibMath::Vector4& value) const;
 
     void Use() const;
     GLuint GetID() const { return m_programID; }

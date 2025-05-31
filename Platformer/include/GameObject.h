@@ -29,6 +29,8 @@ public:
 
 	LibMath::Prism collider;
 
+	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
+
 private:
 	LibMath::Vector3 centerColliderOffset;
 	std::string name;

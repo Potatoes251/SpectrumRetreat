@@ -98,7 +98,7 @@ public:
         if (object && useShader)
         {
             shader->Use();
-            //useShader->setMat4("model", worldTransform);
+            shader->setVec4("objectColor", object->color);
             object->draw(useShader, worldTransform);
         }
 

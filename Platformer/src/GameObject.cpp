@@ -3,7 +3,7 @@
 
 
 GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
-	: name(name), model(std::move(model)), position(0), rotation(0), scale(1) 
+	: name(name), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
 {
     //this->model;
     LibMath::Vector3 minPointCollider = this->model->vertices[0].Position;
