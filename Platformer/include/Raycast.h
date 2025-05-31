@@ -1,12 +1,8 @@
 #pragma once
 
 #include "LibMath/Colision3D.h"
+#include "GameObject.h"
 #include <vector>
-
-struct GameObject
-{
-	LibMath::Prism box;
-};
 
 struct RaycastHit 
 {

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "ResourceManager.h"
 #include "Player.h"
+#include "Physics.h"
 
 class GameManager 
 {

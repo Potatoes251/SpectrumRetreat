@@ -9,12 +9,10 @@ void GameManager::init()
 {
     // Load shader
     //shader = std::make_unique<Shader>();
-        std::cout << "fdgsfyzhuxjbfdscx" << std::endl;
     shader = new Shader();
     shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
     shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
     shader->Link();
-    std::cout << "fwsdCXHYUijnkewmfsd" << std::endl;
 
     auto bunnyModel = resourceManager.Create<Model>("../../Assets/Meshes/bunny.obj");
     bunnyModel->uploadToGPU();
@@ -38,6 +36,8 @@ void GameManager::init()
     bunnyGO->position = LibMath::Vector3(0, 0, 0);
 
     auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
+    bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
+                                LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
     scene.addNode(bunnyNode);
 
 
@@ -51,13 +51,16 @@ void GameManager::init()
     floorGO->position = LibMath::Vector3(0, 0, 0);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
+    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
+        LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
     scene.addNode(floorNode);
 }
 
 void GameManager::update(float deltaTime) 
 {
     player.Update(deltaTime);
-
+    checkWalls(player, scene);
+    player.move(deltaTime);
     // Update scene (logic + transform)
     scene.update();
 }

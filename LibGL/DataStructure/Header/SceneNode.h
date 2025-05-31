@@ -28,7 +28,7 @@ public:
      * Construct a node with an object and optional shader
      */
     SceneNode(std::shared_ptr<T> obj, Shader* shader = nullptr)
-        : object(std::move(obj)), shader(shader) 
+        : object(obj), shader(shader) 
     {
     }
 
@@ -79,6 +79,7 @@ public:
     {
         if (dirty || (parent && parent->dirty))
         {
+            if(object)
             worldTransform = parent ? parent->worldTransform * localTransform : localTransform;
             dirty = false;
         }

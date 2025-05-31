@@ -12,7 +12,7 @@ bool raycast(LibMath::Line3D ray, const std::vector<GameObject>& gameObjectList,
 
     for (int i = 0; i < gameObjectList.size(); ++i)
     {
-        if (LibMath::intersectionRayPrism(ray, gameObjectList[i].box, intersectionPoint))
+        if (LibMath::intersectionRayPrism(ray, gameObjectList[i].collider, intersectionPoint))
         {
             float newDistance = intersectionPoint.distanceSquaredFrom(rayCenter);
             if (newDistance < distanceMin)
@@ -27,9 +27,9 @@ bool raycast(LibMath::Line3D ray, const std::vector<GameObject>& gameObjectList,
     return foundHit;
 }
 
-RaycastHit::RaycastHit() :
-    m_gameObject(),
-    m_intersectionPoint() {}
+//RaycastHit::RaycastHit() :
+//    //m_gameObject(),
+//    m_intersectionPoint() {}
 
 RaycastHit::RaycastHit(GameObject gameObject, LibMath::Vector3 point) :
     m_gameObject(gameObject), 

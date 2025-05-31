@@ -3,7 +3,7 @@
 Player::Player()
     : collider(
         LibMath::Point3D(0.0f, 1.0f, 0.0f), 
-        LibMath::Point3D(0.0f, 2.0f, 0.0f), 
+        LibMath::Point3D(0.0f, 0.1f, 0.0f), 
         0.5f                               
     ),
     camera(
@@ -28,7 +28,13 @@ void Player::Update(float deltaTime)
     // Apply vertical velocity (y-axis)
     velocity.m_y = yVelocity;
 
-    // Update position
+    // Damp horizontal movement
+    velocity.m_x *= 0.8f;
+    velocity.m_z *= 0.8f;
+}
+
+void Player::move(float deltaTime)
+{
     camera.position += velocity * deltaTime;
 
     if (camera.position.m_y <= 0.0f)
@@ -38,16 +44,6 @@ void Player::Update(float deltaTime)
         isJumping = false;
     }
 
-    // Damp horizontal movement
-    velocity.m_x = 0.0f;
-    velocity.m_z = 0.0f;
-
-    position = camera.position;
-}
-
-void Player::move(LibMath::Vector3 movement)
-{
-    camera.position += movement;
     position = camera.position;
 }
 

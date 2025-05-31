@@ -147,10 +147,10 @@ void Application::updateSceneGraph()
     
     if (node) 
     {
-        node->localTransform =
-            LibMath::Matrix4::createTranslation({ 0,10,0 }) *
-            LibMath::Matrix4::createRotationY(angle) *
-            LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+        //node->localTransform =
+        //    LibMath::Matrix4::createTranslation({ 0,10,0 }) *
+        //    LibMath::Matrix4::createRotationY(angle) *
+        //    LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
     }
 
     gameManager.scene.root->updateTransform();

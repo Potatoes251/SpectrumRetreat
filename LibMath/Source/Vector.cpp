@@ -467,6 +467,11 @@ void LibMath::Vector3::scale(Vector3 const& factor)
 	m_z *= factor.m_z;
 }
 
+std::string LibMath::Vector3::string() const
+{
+	return "{" + std::to_string(m_x) + "," + std::to_string(m_y) + "," + std::to_string(m_z) + "}";
+}
+
 //// String Representation
 //std::string LibMath::Vector3::string() const 
 //{
@@ -590,6 +595,12 @@ LibMath::Vector3	LibMath::operator*(Vector3 const& v, float nb)
 	result.m_z = v.m_z * nb;
 
 	return result;
+}
+
+std::ostream& LibMath::operator<<(std::ostream& os, Vector3 const& vec)
+{
+	os << vec.string();
+	return os;
 }
 
 //std::ostream& operator<<(std::ostream& os, LibMath::Vector3 const& vec) 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Model.h"
 //#include "GLTexture.h"
 #include "LibMath/Matrix.h"
@@ -11,6 +13,7 @@ public:
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
 
 	void update(float deltaTime);
+	void updateCollider();
 	void draw(Shader* shader);
 	void draw(Shader* shader, LibMath::Matrix4& worldTransform);
 
@@ -24,8 +27,10 @@ public:
 	LibMath::Matrix4 localTransform = LibMath::Matrix4::getIdentity();
 	LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
 
+	LibMath::Prism collider;
+
 private:
+	LibMath::Vector3 centerColliderOffset;
 	std::string name;
 	std::shared_ptr<Model> model;
-	LibMath::Prism collider;
 };
