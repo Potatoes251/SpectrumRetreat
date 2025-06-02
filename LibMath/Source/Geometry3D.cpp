@@ -284,3 +284,8 @@ LibMath::Point3D LibMath::Prism::getCenter() const
 {
 	return m_center;
 }
+
+void LibMath::Prism::setCenter(Point3D center)
+{
+	m_center = center;
+}

@@ -8,6 +8,8 @@
 
 #include "Camera.h"
 #include "LibMath/Geometry3D.h"
+#include "Raycast.h" 
+#include "SceneGraph.h"
 
 class Player
 {
@@ -17,19 +19,23 @@ private:
 
 	LibMath::Vector3 position;
 
-	LibMath::Vector3 velocity;
+	
 	float yVelocity = 0.0f;
 	bool isJumping = false;
 
 	const float gravity = -9.8f;
 	const float jumpStrength = 5.0f;
 	float movementSpeed = 2.5f;
+
 public:
+	LibMath::Vector3 velocity;
+
 	Player();
 	void Update(float deltaTime);
-	void move(LibMath::Vector3 movement);
-	void processInput(GLFWwindow* window, float deltaTime);
+	void move(float deltaTime);
+	void processInput(GLFWwindow* window, float deltaTime, const SceneGraph<GameObject>& scene);
 	void ProcessKeyboard(char direction, float deltaTime);
+	void checkForwardRaycast(const SceneGraph<GameObject>& scene);
 
 	CameraFPS& getCamera() { return camera; };
 	LibMath::Vector3& getPosition() { return position; };

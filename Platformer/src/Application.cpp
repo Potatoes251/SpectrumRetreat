@@ -16,7 +16,6 @@ bool Application::init()
     if (!initShaderAndResources())
         return false;
 
-
     return true;
 }
 
@@ -28,10 +27,12 @@ bool Application::initGLFW()
 
         return false;
     }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
+
     return true;
 }
 
@@ -43,7 +44,6 @@ void Application::initImGuiContext()
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
 }
 
 bool Application::createWindow() 
@@ -88,9 +88,7 @@ void Application::initGLContext()
 
     glfwSwapInterval(0);
 
-
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 
     if (glfwRawMouseMotionSupported())
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -101,13 +99,13 @@ void Application::initGLContext()
 
 bool Application::initShaderAndResources()
 {
-    //gameManager.shader = new Shader();
-
     if (!setupResources()) // Load shaders, model, textures, set lighting and OpenGL states
     {
         std::cerr << "Failed to set up resources!\n";
+
         return false;
     }
+
     return true;
 }
 
@@ -116,19 +114,20 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) 
     {
         updateDeltaTime();
-        gameManager.player.processInput(window, deltaTime);
+        gameManager.player.processInput(window, deltaTime, gameManager.scene);
 
         // Update game logic
-        updateSceneGraph();
+        //updateSceneGraph();
         gameManager.update(deltaTime);
 
         // Render
         clearScreen();
-        gameManager.draw();
+        renderFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     glfwTerminate();
 }
 
@@ -141,16 +140,25 @@ void Application::updateDeltaTime()
 
 void Application::updateSceneGraph()
 {
-    float angle = glfwGetTime();
+    updateDeltaTime();
+    float angle = deltaTime * LibMath::Radian(LibMath::Degree(45.0f).radian()).raw();
 
-    auto node = gameManager.scene.findNodeByName("Lapinou");
-    
-    if (node) 
+    auto bunnyNode = gameManager.scene.findNodeByName("Blue Lapinou");
+
+    if (bunnyNode)
     {
-        node->localTransform =
-            LibMath::Matrix4::createTranslation({ 0,10,0 }) *
+        bunnyNode->localTransform =
+            LibMath::Matrix4::createTranslation({ 0, 5, 0 }) *
             LibMath::Matrix4::createRotationY(angle) *
-            LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+            LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
+        bunnyNode->object->color = LibMath::Vector4(0, 0, 1, 1);
+    }
+
+    auto floorNode = gameManager.scene.findNodeByName("Floor");
+
+    if (floorNode)
+    {
+        floorNode->object->color = LibMath::Vector4(1, 0, 0, 1);
     }
 
     gameManager.scene.root->updateTransform();
@@ -181,6 +189,22 @@ void Application::drawUI()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void Application::renderFrame()
+{
+    gameManager.shader->Use(); // Bind shader program
+
+    setMatrices();          // Send model/view/projection matrices to shader
+    setCameraUniforms();    // Send camera position to shader for lighting calculations
+    setLightUniforms();     // Send lighting parameters to shader
+    bindTexture(); // Bind texture and tell shader to use it
+    configureCulling();     // Enable face culling (to improve performance)
+
+    updateSceneGraph();
+    gameManager.scene.draw(gameManager.shader);
+    drawUI();
+}
+
+
 void Application::setMatrices()
 {
     // Calculate the view, projection, and model matrices
@@ -196,7 +220,7 @@ void Application::setMatrices()
 
 void Application::bindTexture()
 {
-    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), true); // Tell shader to use texture
+    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), false); // Tell shader to use texture
     glActiveTexture(GL_TEXTURE0);      // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, texture1); // Bind texture to unit 0
 }
@@ -295,19 +319,6 @@ unsigned int Application::loadTexture(const char* path)
 bool Application::setupResources()
 {
     setupLighting();  // Initialize lighting parameters
-
-    //if (!loadShaders()) // Load vertex and fragment shaders
-    //{
-    //    return false;
-    //}
-
-    //if (!loadModel())   // Load 3D model from file
-    //{
-    //    return false;
-    //}
-
-    //buildSceneGraph();
-    //model3D.uploadToGPU(); // Upload mesh data (vertices, indices) to GPU buffers
     setupOpenGLStates();
     bindTexture();         // Load and bind texture for rendering
 

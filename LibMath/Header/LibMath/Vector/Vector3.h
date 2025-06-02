@@ -66,7 +66,7 @@ namespace LibMath
 
 		void			scale(Vector3 const& other);					// scale this vector by a given factor
 
-		//std::string		string() const;									// return a string representation of this vector
+		std::string		string() const;									// return a string representation of this vector
 		//std::string		stringLong() const;								// return a verbose string representation of this vector
 
 		void			translate(Vector3 const& other);				// offset this vector by a given distance
@@ -93,7 +93,7 @@ namespace LibMath
 	
 	Vector3			operator*(Vector3 const& v, float scalar);
 
-	//std::ostream&	operator<<(std::ostream&, Vector3 const&);			// cout << Vector3{ .5, 1.5, -2.5 }				// add a vector string representation to an output stream
+	std::ostream&	operator<<(std::ostream&, Vector3 const&);			// cout << Vector3{ .5, 1.5, -2.5 }				// add a vector string representation to an output stream
 	//std::istream&	operator>>(std::istream&, Vector3&);				// ifstream file{ save.txt }; file >> vector;	// parse a string representation from an input stream into a vector
 }
 

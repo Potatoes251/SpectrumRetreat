@@ -1,8 +1,11 @@
+#pragma once
+
 #include "SceneGraph.h"
 #include "GameObject.h"
 #include "Camera.h"
 #include "ResourceManager.h"
 #include "Player.h"
+#include "Physics.h"
 
 class GameManager 
 {
@@ -24,7 +27,7 @@ public:
 
     SceneGraph<GameObject> scene;
     Player player;
-    /*std::unique_ptr<Shader>*/Shader* shader;
+    Shader* shader;
 
 private:
     ResourceManager resourceManager;

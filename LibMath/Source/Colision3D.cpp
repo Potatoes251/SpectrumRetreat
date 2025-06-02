@@ -307,12 +307,12 @@ bool	LibMath::collisionCapsulePrism(Capsule capsule, Prism prism)	// AABB collis
 bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& outPrismNormal)	// AABB collision only
 {
 	Point3D halfSize(prism.extentX(), prism.extentY(), prism.extentZ());
-
+	
 	LibMath::Vector3 minPoint = prism.getCenter() - halfSize;
 	LibMath::Vector3 maxPoint = prism.getCenter() + halfSize;
-
+	
 	LibMath::Vector3 capLine = capsule.getEnd() - capsule.getStart();
-
+	
 	// Project the box center onto the capsule segment
 	float abLengthSq = capLine.magnitudeSquared();
 	float t = 0.0f;
@@ -340,7 +340,7 @@ bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& ou
 	if (distSq <= capsule.getRadius() * capsule.getRadius())
 	{
 		float dist = std::sqrt(distSq);
-
+		//std::cout << dist <<std::endl;
 		if (dist > 1e-6f)
 		{
 			outPrismNormal = delta;

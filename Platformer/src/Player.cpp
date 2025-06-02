@@ -3,7 +3,7 @@
 Player::Player()
     : collider(
         LibMath::Point3D(0.0f, 1.0f, 0.0f), 
-        LibMath::Point3D(0.0f, 2.0f, 0.0f), 
+        LibMath::Point3D(0.0f, 0.1f, 0.0f), 
         0.5f                               
     ),
     camera(
@@ -28,7 +28,13 @@ void Player::Update(float deltaTime)
     // Apply vertical velocity (y-axis)
     velocity.m_y = yVelocity;
 
-    // Update position
+    // Damp horizontal movement
+    velocity.m_x *= 0.8f;
+    velocity.m_z *= 0.8f;
+}
+
+void Player::move(float deltaTime)
+{
     camera.position += velocity * deltaTime;
 
     if (camera.position.m_y <= 0.0f)
@@ -38,20 +44,10 @@ void Player::Update(float deltaTime)
         isJumping = false;
     }
 
-    // Damp horizontal movement
-    velocity.m_x = 0.0f;
-    velocity.m_z = 0.0f;
-
     position = camera.position;
 }
 
-void Player::move(LibMath::Vector3 movement)
-{
-    camera.position += movement;
-    position = camera.position;
-}
-
-void Player::processInput(GLFWwindow* window, float deltaTime)
+void Player::processInput(GLFWwindow* window, float deltaTime, const SceneGraph<GameObject>& scene)
 {
     LibMath::Vector3 inputVelocity(0.0f, 0.0f, 0.0f);
 
@@ -93,6 +89,11 @@ void Player::processInput(GLFWwindow* window, float deltaTime)
         isJumping = true;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        checkForwardRaycast(scene);
+    }
+
     Update(deltaTime);
 }
 
@@ -122,6 +123,30 @@ void Player::ProcessKeyboard(char direction, float deltaTime)
             yVelocity = jumpStrength;
             isJumping = true;
         }
+    }
+}
+
+void Player::checkForwardRaycast(const SceneGraph<GameObject>& scene)
+{
+    LibMath::Point3D rayOrigin = camera.position;
+    LibMath::Vector3 rayDirection = camera.front;
+    rayDirection.normalize();
+
+    LibMath::Line3D ray(rayOrigin, rayDirection);
+    RaycastHit hit;
+
+    const float maxRange = 10.0f;  // Max raycast distance
+
+    if (raycast(ray, scene, hit, maxRange))
+    {
+        std::cout << "Raycast hit object at: ("
+            << hit.m_intersectionPoint.m_x << ", "
+            << hit.m_intersectionPoint.m_y << ", "
+            << hit.m_intersectionPoint.m_z << ")" << std::endl;
+    }
+    else
+    {
+        std::cout << "Raycast missed." << std::endl;
     }
 }
 

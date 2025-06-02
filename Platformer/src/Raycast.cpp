@@ -1,28 +1,27 @@
 #include "Raycast.h"
 
-bool raycast(LibMath::Line3D ray, const std::vector<GameObject>& gameObjectList, RaycastHit& hit)
+
+bool raycast(const LibMath::Line3D& ray, const SceneGraph<GameObject>& scene, RaycastHit& hit, float maxRange = 0.0f)
 {
     bool foundHit = false;
-    
-    float   distanceMin = std::numeric_limits<float>::infinity(); // set min distance to infinity
+    float minDistance = maxRange * maxRange;  // squared max range for comparison
+    LibMath::Vector3 rayOrigin(ray.getCenter().getX(), ray.getCenter().getY(), ray.getCenter().getZ());
 
-    LibMath::Vector3    intersectionPoint;
-
-    LibMath::Vector3    rayCenter(ray.getCenter().getX(), ray.getCenter().getY(), ray.getCenter().getZ());
-
-    for (int i = 0; i < gameObjectList.size(); ++i)
-    {
-        if (LibMath::intersectionRayPrism(ray, gameObjectList[i].box, intersectionPoint))
+    // Use traverseSceneGraph to iterate all objects
+    traverseSceneGraph<GameObject>(scene.root, [&](const std::shared_ptr<GameObject>& obj)
         {
-            float newDistance = intersectionPoint.distanceSquaredFrom(rayCenter);
-            if (newDistance < distanceMin)
+            LibMath::Vector3 intersectionPoint;
+            if (LibMath::intersectionRayPrism(ray, obj->collider, intersectionPoint))
             {
-                distanceMin = newDistance;
-                foundHit = true;
-                hit = RaycastHit(gameObjectList[i], intersectionPoint);
+                float distSq = intersectionPoint.distanceSquaredFrom(rayOrigin);
+                if (distSq < minDistance)
+                {
+                    minDistance = distSq;
+                    hit = RaycastHit(*obj, intersectionPoint);
+                    foundHit = true;
+                }
             }
-        }
-    }
+        });
 
     return foundHit;
 }
@@ -30,6 +29,7 @@ bool raycast(LibMath::Line3D ray, const std::vector<GameObject>& gameObjectList,
 RaycastHit::RaycastHit() :
     m_gameObject(),
     m_intersectionPoint() {}
+
 
 RaycastHit::RaycastHit(GameObject gameObject, LibMath::Vector3 point) :
     m_gameObject(gameObject), 

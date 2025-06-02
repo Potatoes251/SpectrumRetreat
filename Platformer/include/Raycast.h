@@ -1,12 +1,9 @@
 #pragma once
 
 #include "LibMath/Colision3D.h"
+#include "GameObject.h"
+#include "SceneGraph.h"
 #include <vector>
-
-struct GameObject
-{
-	LibMath::Prism box;
-};
 
 struct RaycastHit 
 {
@@ -17,4 +14,4 @@ struct RaycastHit
 	LibMath::Vector3 m_intersectionPoint;
 };
 
-bool raycast(LibMath::Line3D line, const std::vector<GameObject>& gameObjectList, RaycastHit& hit);
+bool raycast(const LibMath::Line3D& ray, const SceneGraph<GameObject>& scene, RaycastHit& hit, float maxRange);
