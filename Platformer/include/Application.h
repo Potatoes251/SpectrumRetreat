@@ -62,7 +62,7 @@ private:
     GLFWwindow* window = nullptr;
     GameManager gameManager;
     ImGuiIO* io;
-    UIManager uiManager;
+    
 
     // Timing
     float lastFrame = 0.0f;

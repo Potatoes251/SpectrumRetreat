@@ -2,11 +2,13 @@
 #include "GLTexture.h"
 #include <GLFW/glfw3.h>
 
+
 GameManager::GameManager() {}
 GameManager::~GameManager() {}
 
-void GameManager::init() 
+void GameManager::init(float windowWidth, float windowHeight)
 {
+    
     // Load shader
     shader = new Shader();
     shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
@@ -24,8 +26,9 @@ void GameManager::init()
     auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
     bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
                                 LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
-    scene.addNode(bunnyNode);
+    bunnyNode->object->color = LibMath::Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
+    scene.addNode(bunnyNode);
 
     auto floorModel = resourceManager.Create<Model>("../../Assets/Meshes/floor.obj");
     floorModel->uploadToGPU();
@@ -37,8 +40,22 @@ void GameManager::init()
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
     floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-        LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
+        LibMath::Matrix4::createScale({ 0.5f ,0.5f,0.5f });
     scene.addNode(floorNode);
+
+    float phoneRadius = windowHeight / 10.0f;
+
+    // Position from bottom-right (in pixels)
+    float posX = windowWidth - phoneRadius - 20.0f;  // 20px margin
+    float posY = windowHeight - phoneRadius - 20.0f;
+
+    auto phone = std::make_unique<CircleUI>(
+        LibMath::Vector2(posX, posY), phoneRadius, ImColor(255, 255, 255, 255)
+    );
+
+    phonePtr = phone.get();
+
+    uiManager.addElement(std::move(phone));
 }
 
 void GameManager::update(float deltaTime) 
@@ -52,6 +69,7 @@ void GameManager::update(float deltaTime)
 
 void GameManager::draw()
 {
+
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
@@ -61,6 +79,9 @@ void GameManager::draw()
 
     // Render scene graph
     scene.draw(shader);
+
+
+
 }
 
 void GameManager::processMouseMovement(double xpos, double ypos) 
