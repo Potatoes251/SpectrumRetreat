@@ -45,7 +45,7 @@ void GameManager::update(float deltaTime)
 {
     player.Update(deltaTime);
     checkWalls(player, scene);
-    player.move(deltaTime);
+    //player.move(deltaTime);
     // Update scene (logic + transform)
     scene.update();
 }

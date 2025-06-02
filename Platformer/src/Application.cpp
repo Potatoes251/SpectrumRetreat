@@ -114,7 +114,7 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) 
     {
         updateDeltaTime();
-        gameManager.player.processInput(window, deltaTime);
+        gameManager.player.Update(deltaTime, window, objectList);
 
         // Update game logic
         //updateSceneGraph();

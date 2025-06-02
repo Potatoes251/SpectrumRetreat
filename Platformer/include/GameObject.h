@@ -10,6 +10,7 @@
 class GameObject
 {
 public:
+	GameObject() {} ;
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
 
 	void update(float deltaTime);
@@ -18,6 +19,8 @@ public:
 	void draw(Shader* shader, LibMath::Matrix4& worldTransform);
 
 	const std::string& getName() const;
+
+	LibMath::Prism collider;
 
 	// transform
 	LibMath::Vector3 position;

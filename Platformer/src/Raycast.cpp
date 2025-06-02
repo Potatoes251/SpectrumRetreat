@@ -15,6 +15,7 @@ bool raycast(LibMath::Line3D ray, const std::vector<GameObject>& gameObjectList,
         if (LibMath::intersectionRayPrism(ray, gameObjectList[i].collider, intersectionPoint))
         {
             float newDistance = intersectionPoint.distanceSquaredFrom(rayCenter);
+
             if (newDistance < distanceMin)
             {
                 distanceMin = newDistance;
