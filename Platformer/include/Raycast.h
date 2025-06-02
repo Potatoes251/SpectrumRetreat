@@ -14,4 +14,4 @@ struct RaycastHit
 	LibMath::Vector3 m_intersectionPoint;
 };
 
-bool raycast(const LibMath::Line3D& ray, const SceneGraph<GameObject>& scene, RaycastHit& hit, float maxRange);
+bool raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, RaycastHit& hit, float maxRange);

@@ -74,7 +74,7 @@ private:
 };
 
 template<typename T, typename Func>
-void traverseSceneGraph(const std::shared_ptr<SceneNode<T>>& node, Func&& func)
+void traverseSceneGraph(std::shared_ptr<SceneNode<T>>& node, Func&& func)
 {
     if (!node) return;
 
