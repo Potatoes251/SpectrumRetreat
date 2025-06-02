@@ -20,7 +20,6 @@
 #include "UIManager.h"
 #include "CircleUI.h"
 #include "GameManager.h"
-#include "GameObject.h"
 
 //class Application
 //{
@@ -64,7 +63,7 @@ private:
     GameManager gameManager;
     ImGuiIO* io;
     UIManager uiManager;
-    std::vector<GameObject> objectList;
+
     // Timing
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;

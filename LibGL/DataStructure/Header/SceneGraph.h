@@ -72,3 +72,15 @@ private:
         return nullptr;
     }
 };
+
+template<typename T, typename Func>
+void traverseSceneGraph(const std::shared_ptr<SceneNode<T>>& node, Func&& func)
+{
+    if (!node) return;
+
+    if (node->object)
+        func(node->object);
+
+    for (auto& child : node->children)
+        traverseSceneGraph(child, func);
+}

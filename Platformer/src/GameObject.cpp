@@ -2,6 +2,19 @@
 
 
 
+GameObject::GameObject()
+    : name(""),
+    model(nullptr),
+    position(0.0f, 0.0f, 0.0f),
+    rotation(0.0f, 0.0f, 0.0f),
+    scale(1.0f, 1.0f, 1.0f),
+    collider(),
+    color(0, 0, 0, 1),
+    localTransform(LibMath::Matrix4::getIdentity()),
+    worldTransform(LibMath::Matrix4::getIdentity())
+{
+}
+
 GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
 	: name(name), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
 {
