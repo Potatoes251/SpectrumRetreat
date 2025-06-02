@@ -113,7 +113,6 @@ void Application::run()
 {
     while (!glfwWindowShouldClose(window)) 
     {
-        processInput();
         updateDeltaTime();
         gameManager.player.Update(deltaTime);
         checkWalls(gameManager.player, gameManager.scene);
@@ -148,7 +147,7 @@ void Application::updateSceneGraph()
     float angle = deltaTime * LibMath::Radian(LibMath::Degree(45.0f).radian()).raw();
 
     auto bunnyNode = gameManager.scene.findNodeByName("Blue Lapinou");
-
+    
     if (bunnyNode)
     {
         bunnyNode->localTransform =
