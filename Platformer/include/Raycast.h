@@ -2,7 +2,11 @@
 
 #include "LibMath/Colision3D.h"
 #include <vector>
-#include "GameObject.h"
+
+struct GameObject
+{
+	LibMath::Prism box;
+};
 
 struct RaycastHit 
 {

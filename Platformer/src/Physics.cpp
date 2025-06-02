@@ -13,7 +13,7 @@ void checkWalls(Player& player, const std::vector<GameObject>& gameObjectList)
 
     for (int i = 0; i < gameObjectList.size(); ++i)
     {
-        if (LibMath::intersectionCapsulePrism(player.getCapsule(), gameObjectList[i].collider, correction))
+        if (LibMath::intersectionCapsulePrism(player.getCapsule(), gameObjectList[i].box, correction))
         {
             player.move(correction);
         }

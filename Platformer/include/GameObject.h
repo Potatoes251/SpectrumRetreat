@@ -1,16 +1,12 @@
-#pragma once
-
 #include "Model.h"
 //#include "GLTexture.h"
 #include "../../LibMath/Header/LibMath/Matrix.h"
-#include "LibMath/Geometry3D.h"
 
 #include <string>
 
 class GameObject
 {
 public:
-	GameObject() {} ;
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
 
 	void update(float deltaTime);
@@ -18,8 +14,6 @@ public:
 	void draw(Shader* shader, LibMath::Matrix4& worldTransform);
 
 	const std::string& getName() const;
-
-	LibMath::Prism collider;
 
 	// transform
 	LibMath::Vector3 position;
@@ -32,5 +26,5 @@ public:
 private:
 	std::string name;
 	std::shared_ptr<Model> model;
-	
+	//LibMath::Prism collider;
 };
