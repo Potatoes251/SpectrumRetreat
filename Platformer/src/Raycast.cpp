@@ -17,7 +17,7 @@ bool raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, RaycastH
                 if (distSq < minDistance)
                 {
                     minDistance = distSq;
-                    hit = RaycastHit(*obj, intersectionPoint);
+                    hit = RaycastHit(obj, intersectionPoint);
                     foundHit = true;
                 }
             }

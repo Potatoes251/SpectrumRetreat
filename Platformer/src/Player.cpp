@@ -11,12 +11,7 @@ Player::Player()
         LibMath::Vector3(0.0f, 1.0f, 0.0f),  
         -90.0f,                              
         0.0f                                 
-    ),
-    phone(
-        LibMath::Vector2(0.5f, 0.5f), 0.01f,
-        ImColor(255, 255, 255)
     )
-
 {
     
     velocity = LibMath::Vector3(0.0f);
@@ -52,7 +47,7 @@ void Player::move(float deltaTime)
     position = camera.position;
 }
 
-void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene)
+void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone)
 {
     LibMath::Vector3 inputVelocity(0.0f, 0.0f, 0.0f);
 
@@ -98,7 +93,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
 
     if (isEKeyPressed && !EKeyAlreadyPressed)
     {
-        checkForwardRaycast(scene); // Only triggers once per key press
+        checkForwardRaycast(scene, phone); // Only triggers once per key press
     }
 
     EKeyAlreadyPressed = isEKeyPressed;
@@ -135,7 +130,7 @@ void Player::ProcessKeyboard(char direction, float deltaTime)
     }
 }
 
-void Player::checkForwardRaycast(SceneGraph<GameObject>& scene)
+void Player::checkForwardRaycast(SceneGraph<GameObject>& scene, CircleUI& phone)
 {
     LibMath::Point3D rayOrigin = camera.position;
     LibMath::Vector3 rayDirection = camera.front;
@@ -146,22 +141,28 @@ void Player::checkForwardRaycast(SceneGraph<GameObject>& scene)
 
     const float maxRange = 10.0f;  // Max raycast distance
 
-    std::cout << phone.getColor().Value.x << std::endl;
-
-    if (raycast(ray, scene, hit, maxRange))
+    //std::cout << phone.getColor().Value.x << std::endl;
+    //&& hit.m_gameObject->getName() == "blue lapinou"
+    if (raycast(ray, scene, hit, maxRange) )
     {
-        LibMath::Vector4 temp(hit.m_gameObject.color);
+        LibMath::Vector4 temp(hit.m_gameObject->color);
+
+        std::cout << temp.m_x << " " << temp.m_y << " " << temp.m_z << std::endl;
 
         ImColor phoneColor = phone.getColor();
 
-        hit.m_gameObject.color = LibMath::Vector4(
+        hit.m_gameObject->color = LibMath::Vector4(
             phoneColor.Value.x,
             phoneColor.Value.y,
             phoneColor.Value.z,
             phoneColor.Value.w
         );
 
+
+
         phone.setColor(ImColor(temp.m_x, temp.m_y, temp.m_z, temp.m_w));
+
+        std::cout << hit.m_gameObject->color.m_x << " " << hit.m_gameObject->color.m_y << " " << hit.m_gameObject->color.m_z << std::endl;
 
         std::cout << phoneColor.Value.x << " " << phoneColor.Value.y<< " " << phoneColor.Value.z << std::endl;
     }

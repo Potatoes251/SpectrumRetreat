@@ -8,6 +8,7 @@ CircleUI::CircleUI(const LibMath::Vector2& center, float radius, const ImColor& 
 void CircleUI::draw() const
 {
     ImDrawList* draw_list = ImGui::GetBackgroundDrawList();
+
     if (draw_list)
     {
         draw_list->AddCircleFilled(

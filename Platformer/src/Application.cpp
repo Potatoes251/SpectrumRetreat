@@ -11,7 +11,7 @@ bool Application::init()
     initImGuiContext();
 
     // Initialize scene and game objects
-    gameManager.init();
+    gameManager.init(windowWidth, windowHeight);
 
     if (!initShaderAndResources())
         return false;
@@ -118,7 +118,7 @@ void Application::run()
         gameManager.player.Update(deltaTime);
         checkWalls(gameManager.player, gameManager.scene);
         gameManager.player.move(deltaTime);
-        gameManager.player.processInput(window, deltaTime, gameManager.scene);
+        gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr);
 
         // Update game logic
         //updateSceneGraph();
@@ -168,12 +168,6 @@ void Application::updateSceneGraph()
     gameManager.scene.root->updateTransform();
 }
 
-void Application::processInput() 
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    // ... camera or player input could go here or inside GameManager
-}
 
 void Application::clearScreen() 
 {
@@ -186,9 +180,7 @@ void Application::drawUI()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-    uiManager.drawAll(); // Draws all elements
-
+    gameManager.uiManager.drawAll();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
@@ -203,8 +195,9 @@ void Application::renderFrame()
     bindTexture(); // Bind texture and tell shader to use it
     configureCulling();     // Enable face culling (to improve performance)
 
-    //updateSceneGraph();
     gameManager.scene.draw(gameManager.shader);
+
+
     drawUI();
 }
 
