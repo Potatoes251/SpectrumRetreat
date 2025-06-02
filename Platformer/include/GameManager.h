@@ -31,6 +31,7 @@ public:
     Shader* shader;
     UIManager uiManager;
     CircleUI* phonePtr = nullptr; 
+    CircleUI* crosshair = nullptr;
 private:
     ResourceManager resourceManager;
 };
