@@ -10,6 +10,7 @@
 #include "LibMath/Geometry3D.h"
 #include "Raycast.h" 
 #include "SceneGraph.h"
+#include "CircleUI.h"
 
 class Player
 {
@@ -19,13 +20,14 @@ private:
 
 	LibMath::Vector3 position;
 
-	
+	CircleUI phone; 
 	float yVelocity = 0.0f;
 	bool isJumping = false;
 
 	const float gravity = -9.8f;
 	const float jumpStrength = 5.0f;
 	float movementSpeed = 2.5f;
+	bool EKeyAlreadyPressed = false;
 
 public:
 	LibMath::Vector3 velocity;
@@ -33,9 +35,9 @@ public:
 	Player();
 	void Update(float deltaTime);
 	void move(float deltaTime);
-	void processInput(GLFWwindow* window, float deltaTime, const SceneGraph<GameObject>& scene);
+	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene);
 	void ProcessKeyboard(char direction, float deltaTime);
-	void checkForwardRaycast(const SceneGraph<GameObject>& scene);
+	void checkForwardRaycast(SceneGraph<GameObject>& scene);
 
 	CameraFPS& getCamera() { return camera; };
 	LibMath::Vector3& getPosition() { return position; };
