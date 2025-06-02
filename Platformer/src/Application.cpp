@@ -51,8 +51,8 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 600;
-    windowHeight = 500;
+    windowWidth = 1920;
+    windowHeight = 1200;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
 
@@ -203,7 +203,7 @@ void Application::renderFrame()
     bindTexture(); // Bind texture and tell shader to use it
     configureCulling();     // Enable face culling (to improve performance)
 
-    updateSceneGraph();
+    //updateSceneGraph();
     gameManager.scene.draw(gameManager.shader);
     drawUI();
 }

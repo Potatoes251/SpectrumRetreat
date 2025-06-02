@@ -29,6 +29,10 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
         {
             player.velocity = player.velocity - normal * dot;
         }
+        if (normal.dot(LibMath::Vector3::up()) >= .9f)
+        {
+            player.isJumping = false;
+        }
     }
 
     for (auto& child : gameObject->children)

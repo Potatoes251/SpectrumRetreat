@@ -13,32 +13,39 @@ void GameManager::init()
     shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
     shader->Link();
 
-    auto bunnyModel = resourceManager.Create<Model>("../../Assets/Meshes/bunny.obj");
-    bunnyModel->uploadToGPU();
+    auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
+    cubeModel->uploadToGPU();
 
-    auto bunnyModelShared = std::shared_ptr<Model>(bunnyModel, [](Model*) {});
+    auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
     // Create GameObject and SceneNode
-    auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", bunnyModelShared);
+    auto cubeGO = std::make_shared<GameObject>("Blue Lapinou", cubeModelShared);
 
-    auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
-    bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
-                                LibMath::Matrix4::createScale({ .1f, .1f, .1f});
-    scene.addNode(bunnyNode);
+    auto cubeNode = std::make_shared<SceneNode<GameObject>>(cubeGO, shader);
+    cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
+                                LibMath::Matrix4::createScale({ .5f, .5f, .5f});
+    scene.addNode(cubeNode);
 
-
-    auto floorModel = resourceManager.Create<Model>("../../Assets/Meshes/floor.obj");
-    floorModel->uploadToGPU();
-
-    auto floorModelShared = std::shared_ptr<Model>(floorModel, [](Model*) {});
+    auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
     // Create GameObject and SceneNode
     auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
-    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-                                LibMath::Matrix4::createScale({ 5, 1, 5});
+    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,-2,0 }) *
+                                LibMath::Matrix4::createScale({ 50, 1, 50});
     scene.addNode(floorNode);
+
+
+    auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+
+    // Create GameObject and SceneNode
+    auto ceilingGO = std::make_shared<GameObject>("Floor2", ceilingModelShared);
+
+    auto ceilingNode = std::make_shared<SceneNode<GameObject>>(ceilingGO, shader);
+    ceilingNode->localTransform = LibMath::Matrix4::createTranslation({ 0,5,0 }) *
+                                 LibMath::Matrix4::createScale({ 50, 1, 50 });
+    scene.addNode(ceilingNode);
 }
 
 void GameManager::update(float deltaTime) 

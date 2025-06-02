@@ -22,15 +22,15 @@ private:
 
 	CircleUI phone; 
 	float yVelocity = 0.0f;
-	bool isJumping = false;
 
 	const float gravity = -9.8f;
-	const float jumpStrength = 5.0f;
+	const float jumpStrength = 10.0f;
 	float movementSpeed = 2.5f;
 	bool EKeyAlreadyPressed = false;
 
 public:
 	LibMath::Vector3 velocity;
+	bool isJumping = false;
 
 	Player();
 	void Update(float deltaTime);

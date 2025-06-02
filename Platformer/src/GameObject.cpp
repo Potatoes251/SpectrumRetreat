@@ -59,15 +59,15 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
         worldTransform[3][1] + colliderAtOrigin.getCenter().getY(),
         worldTransform[3][2] + colliderAtOrigin.getCenter().getZ());
 
-    LibMath::Vector3 scale(
-        LibMath::Vector3(worldTransform[0][0], worldTransform[0][1], worldTransform[0][2]).magnitude(),
-        LibMath::Vector3(worldTransform[1][0], worldTransform[1][1], worldTransform[1][2]).magnitude(),
-        LibMath::Vector3(worldTransform[2][0], worldTransform[2][1], worldTransform[2][2]).magnitude());
+    //LibMath::Vector3 scale(
+    //    LibMath::Vector3(worldTransform[0][0], worldTransform[0][1], worldTransform[0][2]).magnitude(),
+    //    LibMath::Vector3(worldTransform[1][0], worldTransform[1][1], worldTransform[1][2]).magnitude(),
+    //    LibMath::Vector3(worldTransform[2][0], worldTransform[2][1], worldTransform[2][2]).magnitude());
 
     LibMath::Vector3 colliderSize(
-        scale.m_x * colliderAtOrigin.getWidth(),
-        scale.m_y * colliderAtOrigin.getHeight(),
-        scale.m_z * colliderAtOrigin.getDepth());
+        worldTransform[0][0] * colliderAtOrigin.getWidth(),
+        worldTransform[1][1] * colliderAtOrigin.getHeight(),
+        worldTransform[2][2] * colliderAtOrigin.getDepth());
 
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 }
