@@ -22,8 +22,8 @@ void GameManager::init()
     auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", bunnyModelShared);
 
     auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
-    bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-                                LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
+    bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
+                                LibMath::Matrix4::createScale({ .1f, .1f, .1f});
     scene.addNode(bunnyNode);
 
 
@@ -37,7 +37,7 @@ void GameManager::init()
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
     floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-        LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
+                                LibMath::Matrix4::createScale({ 5, 1, 5});
     scene.addNode(floorNode);
 }
 

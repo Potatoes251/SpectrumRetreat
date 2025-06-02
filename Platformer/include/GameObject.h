@@ -13,7 +13,7 @@ public:
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
 
 	void update(float deltaTime);
-	void updateCollider();
+	void updateCollider(LibMath::Matrix4& worldTransform);
 	void draw(Shader* shader);
 	void draw(Shader* shader, LibMath::Matrix4& worldTransform);
 
@@ -32,6 +32,7 @@ public:
 	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
 
 private:
+	LibMath::Prism colliderAtOrigin;
 	LibMath::Vector3 centerColliderOffset;
 	std::string name;
 	std::shared_ptr<Model> model;

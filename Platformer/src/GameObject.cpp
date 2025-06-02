@@ -30,12 +30,8 @@ GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
         minPointCollider.m_y + colliderSize.m_y / 2.f,
         minPointCollider.m_z + colliderSize.m_z / 2.f);
 
-    centerColliderOffset = LibMath::Vector3(center.getX(), center.getY(), center.getZ());
     collider = LibMath::Prism(center, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
-
-    std::cout << collider.getDepth() << '\t' <<
-        collider.getWidth() << '\t' <<
-        collider.getHeight() << '\n';
+    colliderAtOrigin = collider;
 }
 
 void GameObject::update(float deltaTime)
@@ -43,17 +39,22 @@ void GameObject::update(float deltaTime)
 	rotation.m_y += 1.0f * deltaTime;
 }
 
-void GameObject::updateCollider()
+void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 {
     LibMath::Point3D position(
-        worldTransform[3][0] + centerColliderOffset.m_x,
-        worldTransform[3][1] + centerColliderOffset.m_y,
-        worldTransform[3][2] + centerColliderOffset.m_z);
+        worldTransform[3][0] + colliderAtOrigin.getCenter().getX(),
+        worldTransform[3][1] + colliderAtOrigin.getCenter().getY(),
+        worldTransform[3][2] + colliderAtOrigin.getCenter().getZ());
+
+    LibMath::Vector3 scale(
+        LibMath::Vector3(worldTransform[0][0], worldTransform[0][1], worldTransform[0][2]).magnitude(),
+        LibMath::Vector3(worldTransform[1][0], worldTransform[1][1], worldTransform[1][2]).magnitude(),
+        LibMath::Vector3(worldTransform[2][0], worldTransform[2][1], worldTransform[2][2]).magnitude());
 
     LibMath::Vector3 colliderSize(
-        worldTransform[0][0] * collider.getWidth(),
-        worldTransform[1][1] * collider.getHeight(),
-        worldTransform[1][2] * collider.getDepth());
+        scale.m_x * colliderAtOrigin.getWidth(),
+        scale.m_y * colliderAtOrigin.getHeight(),
+        scale.m_z * colliderAtOrigin.getDepth());
 
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 }
@@ -75,7 +76,7 @@ void GameObject::draw(Shader* shader)
 
 void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
 {
-    updateCollider();
+    updateCollider(worldTransform);
     if (!model) return;
 
     shader->setMat4("model", worldTransform);
