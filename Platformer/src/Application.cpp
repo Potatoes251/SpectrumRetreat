@@ -113,9 +113,11 @@ void Application::run()
 {
     while (!glfwWindowShouldClose(window)) 
     {
+        processInput();
         updateDeltaTime();
         gameManager.player.Update(deltaTime, window, objectList);
-
+        checkWalls(gameManager.player, gameManager.scene);
+        gameManager.player.move(deltaTime);
         // Update game logic
         //updateSceneGraph();
         gameManager.update(deltaTime);

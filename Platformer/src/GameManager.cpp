@@ -43,8 +43,8 @@ void GameManager::init()
 
 void GameManager::update(float deltaTime) 
 {
-    player.Update(deltaTime);
-    checkWalls(player, scene);
+    //player.Update(deltaTime);
+    //checkWalls(player, scene);
     //player.move(deltaTime);
     // Update scene (logic + transform)
     scene.update();

@@ -3,8 +3,8 @@
 Player::Player()
     : collider(
         LibMath::Point3D(0.0f, 1.0f, 0.0f), 
-        LibMath::Point3D(0.0f, 1.0f, 0.0f), 
-        0.1f                               
+        LibMath::Point3D(0.0f, .1f, 0.0f), 
+        0.5f
     ),
     camera(
         LibMath::Vector3(0.0f, 2.0f, 5.0f),
@@ -21,12 +21,6 @@ void Player::Update(float deltaTime, GLFWwindow* window, const std::vector<GameO
     handleMovementInput(window);
     handleJumpInput(window);
     handleMouseRaycast(window, gameObjectList);
-
-    applyGravity(deltaTime);
-    updatePosition(deltaTime);
-    dampHorizontalVelocity();
-
-    position = camera.position;
 }
 
 void Player::applyGravity(float deltaTime)
@@ -54,9 +48,11 @@ void Player::dampHorizontalVelocity()
     velocity.m_z *= 0.8f;
 }
 
-void Player::move(LibMath::Vector3 movement)
+void Player::move(float deltaTime)
 {
-    camera.position += movement;
+    applyGravity(deltaTime);
+    updatePosition(deltaTime);
+    dampHorizontalVelocity();
     position = camera.position;
 }
 

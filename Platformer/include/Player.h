@@ -41,7 +41,7 @@ public:
 	void handleMovementInput(GLFWwindow* window);
 	void handleMouseRaycast(GLFWwindow* window, const std::vector<GameObject>& gameObjectList);
 	void handleJumpInput(GLFWwindow* window);
-	void move(LibMath::Vector3 movement);
+	void move(float deltaTime);
 	void ProcessKeyboard(char direction, float deltaTime);
 
 	CameraFPS& getCamera() { return camera; };

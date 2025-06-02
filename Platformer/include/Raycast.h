@@ -6,7 +6,7 @@
 
 struct RaycastHit 
 {
-	RaycastHit();
+	RaycastHit() = default;
 	RaycastHit(GameObject, LibMath::Vector3);
 
 	GameObject m_gameObject;

@@ -30,8 +30,6 @@ public:
 	LibMath::Matrix4 localTransform = LibMath::Matrix4::getIdentity();
 	LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
 
-	LibMath::Prism collider;
-
 	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
 
 private:
