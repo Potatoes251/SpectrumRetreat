@@ -22,10 +22,10 @@ void GameManager::init(float windowWidth, float windowHeight)
 
     // Create Cube
     auto cubeGO = std::make_shared<GameObject>("Cube", "interactable", cubeModelShared);
-    cubeGO->color = LibMath::Vector4(0.5f, 0.0f, 0.5f, 1.0f);
+    cubeGO->color = LibMath::Vector4(1, 1, 1, 1);
 
     auto cubeNode = std::make_shared<SceneNode<GameObject>>(cubeGO, shader);
-    cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
+    cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 5, 4, 5}) *
                                 LibMath::Matrix4::createScale({ .5f, .5f, .5f});
     scene.addNode(cubeNode);
 
@@ -111,7 +111,6 @@ void GameManager::update(float deltaTime)
 
 void GameManager::draw()
 {
-
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
@@ -121,9 +120,6 @@ void GameManager::draw()
 
     // Render scene graph
     scene.draw(shader);
-
-
-
 }
 
 void GameManager::processMouseMovement(double xpos, double ypos) 
