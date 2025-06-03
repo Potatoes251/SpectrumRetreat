@@ -21,7 +21,7 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto bunnyModelShared = std::shared_ptr<Model>(bunnyModel, [](Model*) {});
 
     // Create GameObject and SceneNode
-    auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", bunnyModelShared);
+    auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", "interactable", bunnyModelShared);
 
     auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
     bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
@@ -69,7 +69,7 @@ void GameManager::init(float windowWidth, float windowHeight)
         LibMath::Vector2(posX, posY), crosshairRadius, ImColor(255, 255, 255, 255)
     );
 
-    phonePtr = crosshair.get();
+    crosshairPtr = crosshair.get();
 
     uiManager.addElement(std::move(crosshair));
 }

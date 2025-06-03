@@ -12,6 +12,8 @@ class GameObject
 public:
 	GameObject();  
 	GameObject(const std::string& name, std::shared_ptr<Model> model);
+	GameObject(const std::string& name, const std::string& tag, std::shared_ptr<Model> model);
+	void computeColliderFromModel();
 
 	void update(float deltaTime);
 	void updateCollider();
@@ -31,7 +33,7 @@ public:
 	LibMath::Prism collider;
 
 	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
-	
+	std::string tag;
 private:
 	LibMath::Vector3 centerColliderOffset;
 	std::string name;

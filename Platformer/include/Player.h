@@ -35,9 +35,9 @@ public:
 	Player();
 	void Update(float deltaTime);
 	void move(float deltaTime);
-	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone);
+	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 	void ProcessKeyboard(char direction, float deltaTime);
-	void checkForwardRaycast(SceneGraph<GameObject>& scene, CircleUI& phone);
+	void checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 
 	CameraFPS& getCamera() { return camera; };
 	LibMath::Vector3& getPosition() { return position; };

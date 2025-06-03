@@ -114,10 +114,9 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) 
     {
         updateDeltaTime();
-        gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr);
+        gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
 
         // Update game logic
-        //updateSceneGraph();
         gameManager.update(deltaTime);
 
         // Render
