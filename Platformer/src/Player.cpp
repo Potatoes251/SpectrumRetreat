@@ -19,14 +19,8 @@ Player::Player()
 
 void Player::Update(float deltaTime)
 {
-    // Apply gravity
-    //if (isJumping)
-    {
-        velocity.m_y += gravity * deltaTime;
-    }
 
-    // Apply vertical velocity (y-axis)
-    //velocity.m_y = yVelocity;
+    velocity.m_y += gravity * deltaTime;
 
     // Damp horizontal movement
     velocity.m_x *= 0.8f;
@@ -36,13 +30,6 @@ void Player::Update(float deltaTime)
 void Player::move(float deltaTime)
 {
     camera.position += velocity * deltaTime;
-
-    //if (camera.position.m_y <= 0.0f)
-    {
-        //camera.position.m_y = 0.0f;
-        //yVelocity = 0.0f;
-        //isJumping = false;
-    }
 
     position = camera.position;
 }
@@ -136,26 +123,48 @@ void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& sce
 
     const float maxRange = 10.0f;
 
-    // Check for hit
-    if (raycast(ray, scene, hit, maxRange) && hit.m_gameObject -> tag == "interactable")
+    if (raycast(ray, scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
     {
         crosshair.setRadius(4);
 
+        LibMath::Vector4 objColor = hit.m_gameObject->color;
+        LibMath::Vector4 phoneColor(
+            phone.getColor().Value.x,
+            phone.getColor().Value.y,
+            phone.getColor().Value.z,
+            phone.getColor().Value.w
+        );
+
+        // Only swap colors on E press
         if (isEKeyPressed && !EKeyAlreadyPressed)
         {
-            // Swap color with phone
-            LibMath::Vector4 objColor = hit.m_gameObject->color;
+            if (objColor != phoneColor)
+            {
+                // Swap colors
+                hit.m_gameObject->color = phoneColor;
+                phone.setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+            }
+        }
 
-            ImColor phoneColor = phone.getColor();
+        // This part runs *every frame* if the colors match
+        if (objColor == phoneColor && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+            // Pull player toward object
+            LibMath::Vector3 toObject = hit.m_gameObject->position - camera.position;
 
-            hit.m_gameObject->color = LibMath::Vector4(
-                phoneColor.Value.x,
-                phoneColor.Value.y,
-                phoneColor.Value.z,
-                phoneColor.Value.w
-            );
+            //toObject.m_y = 0; // Ignore vertical
 
-            phone.setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+            float distance = toObject.magnitude();
+
+            if (distance > 1.0f) // stop pulling when close
+            {
+                toObject.normalize();
+                const float attractionSpeed = 15.0f;
+
+                velocity.m_x = toObject.m_x * attractionSpeed;
+                velocity.m_z = toObject.m_z * attractionSpeed;
+                velocity.m_y = toObject.m_y * attractionSpeed;
+            }
         }
     }
     else
@@ -163,7 +172,6 @@ void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& sce
         crosshair.setRadius(2);
     }
 
-    // Update key press state (used to detect press vs. hold)
     EKeyAlreadyPressed = isEKeyPressed;
 }
 
