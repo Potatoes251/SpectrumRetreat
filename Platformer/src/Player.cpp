@@ -147,8 +147,6 @@ void Player::checkForwardRaycast(SceneGraph<GameObject>& scene, CircleUI& phone)
     {
         LibMath::Vector4 temp(hit.m_gameObject->color);
 
-        //std::cout << temp.m_x << " " << temp.m_y << " " << temp.m_z << std::endl;
-
         ImColor phoneColor = phone.getColor();
 
         hit.m_gameObject->color = LibMath::Vector4(
@@ -158,13 +156,7 @@ void Player::checkForwardRaycast(SceneGraph<GameObject>& scene, CircleUI& phone)
             phoneColor.Value.w
         );
 
-
-
         phone.setColor(ImColor(temp.m_x, temp.m_y, temp.m_z, temp.m_w));
-
-        //std::cout << hit.m_gameObject->color.m_x << " " << hit.m_gameObject->color.m_y << " " << hit.m_gameObject->color.m_z << std::endl;
-
-        //std::cout << phoneColor.Value.x << " " << phoneColor.Value.y<< " " << phoneColor.Value.z << std::endl;
     }
     else
     {

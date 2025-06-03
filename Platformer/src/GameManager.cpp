@@ -65,6 +65,8 @@ void GameManager::init(float windowWidth, float windowHeight)
 
 
     // PHONE
+
+    // Phone
     float phoneRadius = windowHeight / 10.0f;
 
     // Position from bottom-right (in pixels)
@@ -78,6 +80,20 @@ void GameManager::init(float windowWidth, float windowHeight)
     phonePtr = phone.get();
 
     uiManager.addElement(std::move(phone));
+
+    // Crosshair
+    float crosshairRadius = 2;
+    
+    posX = windowWidth / 2; 
+    posY = windowHeight / 2;
+
+    auto crosshair = std::make_unique<CircleUI>(
+        LibMath::Vector2(posX, posY), crosshairRadius, ImColor(255, 255, 255, 255)
+    );
+
+    phonePtr = crosshair.get();
+
+    uiManager.addElement(std::move(crosshair));
 }
 
 void GameManager::update(float deltaTime) 
