@@ -29,6 +29,10 @@ file(GLOB_RECURSE PROJECT_FILES
 target_sources(${EXE_NAME} PRIVATE ${PROJECT_FILES})
 target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+include_directories(${CMAKE_SOURCE_DIR}/External/irrKlang/include)
+link_directories(${CMAKE_SOURCE_DIR}/External/irrKlang/lib)
+target_link_libraries(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/External/irrKlang/lib/irrKlang.lib)
+
 
 ###############################
 #                             #
@@ -76,7 +80,7 @@ target_link_libraries(${EXE_NAME} PRIVATE shell32)
 #                             #
 ###############################
 
-# FetchContent_Declare(
+# FetchContent_Declare(	
 	# LibMath
 	# GIT_REPOSITORY	ssh://git@git.isartintra.com:2424/2022/Lib_De_Math/${nom_du_groupe}.git  #change the nom_du_groupe 
 	# GIT_SHALLOW		ON
@@ -105,3 +109,8 @@ add_custom_command(TARGET ${EXE_NAME} POST_BUILD
         "${CMAKE_SOURCE_DIR}/Assets/Sounds"
         "$<TARGET_FILE_DIR:${EXE_NAME}>/Sounds"
 )
+
+add_custom_command(TARGET ${EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_SOURCE_DIR}/External/irrKlang/bin/irrKlang.dll"
+    $<TARGET_FILE_DIR:${EXE_NAME}>)
