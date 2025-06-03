@@ -16,7 +16,18 @@ GameObject::GameObject()
 }
 
 GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
-	: name(name), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+    : name(name), tag("null"), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+{
+    computeColliderFromModel();
+}
+
+GameObject::GameObject(const std::string& name, const std::string& tag, std::shared_ptr<Model> model)
+    : name(name), tag(tag), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+{
+    computeColliderFromModel();
+}
+
+void GameObject::computeColliderFromModel()
 {
     //this->model;
     LibMath::Vector3 minPointCollider = this->model->vertices[0].Position;
@@ -58,11 +69,6 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
         worldTransform[3][0] + colliderAtOrigin.getCenter().getX(),
         worldTransform[3][1] + colliderAtOrigin.getCenter().getY(),
         worldTransform[3][2] + colliderAtOrigin.getCenter().getZ());
-
-    //LibMath::Vector3 scale(
-    //    LibMath::Vector3(worldTransform[0][0], worldTransform[0][1], worldTransform[0][2]).magnitude(),
-    //    LibMath::Vector3(worldTransform[1][0], worldTransform[1][1], worldTransform[1][2]).magnitude(),
-    //    LibMath::Vector3(worldTransform[2][0], worldTransform[2][1], worldTransform[2][2]).magnitude());
 
     LibMath::Vector3 colliderSize(
         worldTransform[0][0] * colliderAtOrigin.getWidth(),

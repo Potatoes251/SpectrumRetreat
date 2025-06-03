@@ -21,7 +21,8 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
     // Create Cube
-    auto cubeGO = std::make_shared<GameObject>("Cube", cubeModelShared);
+    auto cubeGO = std::make_shared<GameObject>("Cube", "interactable", cubeModelShared);
+    cubeGO->color = LibMath::Vector4(0.5f, 0.0f, 0.5f, 1.0f);
 
     auto cubeNode = std::make_shared<SceneNode<GameObject>>(cubeGO, shader);
     cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
@@ -45,11 +46,12 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
     
     auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
+    floorGO->color = LibMath::Vector4(1.0f, 0.4f, 0.7f, 1.0f);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
     floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,-2,0 }) *
                                 LibMath::Matrix4::createScale({ 50, 1, 50});
-    floorNode->object->color = LibMath::Vector4(1.0f, 0.4f, 0.7f, 1.0f);
+
     scene.addNode(floorNode);
 
 
@@ -57,11 +59,12 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
     
     auto ceilingGO = std::make_shared<GameObject>("Ceiling", ceilingModelShared);
+    ceilingGO->color = LibMath::Vector4(0.68f, 0.85f, 0.90f, 1.0f);
 
     auto ceilingNode = std::make_shared<SceneNode<GameObject>>(ceilingGO, shader);
     ceilingNode->localTransform = LibMath::Matrix4::createTranslation({ 0,5,0 }) *
                                  LibMath::Matrix4::createScale({ 50, 1, 50 });
-    ceilingNode->object->color = LibMath::Vector4(0.68f, 0.85f, 0.90f, 1.0f);
+
     scene.addNode(ceilingNode);
 
 
@@ -91,6 +94,8 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto crosshair = std::make_unique<CircleUI>(
         LibMath::Vector2(posX, posY), crosshairRadius, ImColor(255, 255, 255, 255)
     );
+
+    crosshairPtr = crosshair.get();
 
     uiManager.addElement(std::move(crosshair));
 }
