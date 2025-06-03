@@ -12,6 +12,18 @@ void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, Im
 
 void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color)
 {
+    LibMath::Vector3 objectColor(gameObject->object->color.m_x, gameObject->object->color.m_y, gameObject->object->color.m_z);
+    bool doorOpened = false;
+    if (objectColor == color && gameObject->object->isDoor)
+    {
+        gameObject->object->color.m_w = 0.2f;
+        doorOpened = true;
+    }
+    else if (gameObject->object->isDoor)
+    {
+        gameObject->object->color.m_w = 0.5f;
+    }
+
     //move collider to player position
     LibMath::Point3D capsuleStart(player.getCapsule().getStart() + player.getPosition());
     LibMath::Point3D capsuleEnd(player.getCapsule().getEnd() + player.getPosition());
@@ -25,8 +37,7 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal))    // look for collision
     {
-        LibMath::Vector3 goColor(gameObject->object->color.m_x, gameObject->object->color.m_y, gameObject->object->color.m_z);
-        if (!(gameObject->object->isDoor && goColor == color))  // dont apply collision for door of same color
+        if (!doorOpened)  // dont apply collision for door of same color
         {
             float dot = player.velocity.dot(normal);
             if (dot < 0.0f) // only cancel motion *into* the wall

@@ -29,19 +29,6 @@ void GameManager::init(float windowWidth, float windowHeight)
                                 LibMath::Matrix4::createScale({ .5f, .5f, .5f});
     scene.addNode(cubeNode);
 
-    
-    // Create Door
-    auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
-    doorGO->isDoor = true;
-    doorGO->color = LibMath::Vector4(1.0f, 1.f, 1.f, 1.0f);
-
-    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
-    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -2.5 }) *
-        LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
-    scene.addNode(doorNode);
-
-
-
     // Create Floor
     auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
     
@@ -68,9 +55,19 @@ void GameManager::init(float windowWidth, float windowHeight)
     scene.addNode(ceilingNode);
 
 
-    // PHONE
+    // Create Door
+    auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
+    doorGO->isDoor = true;
+    doorGO->color = LibMath::Vector4(1.0f, 1.f, 1.f, .5f);
 
-    // Phone
+    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
+    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -2.5 }) *
+        LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
+
+    scene.addNode(doorNode);
+
+
+    // PHONE
     float phoneRadius = windowHeight / 10.0f;
 
     // Position from bottom-right (in pixels)
@@ -85,7 +82,7 @@ void GameManager::init(float windowWidth, float windowHeight)
 
     uiManager.addElement(std::move(phone));
 
-    // Crosshair
+    // CROSSHAIR
     float crosshairRadius = 2;
     
     posX = windowWidth / 2; 
@@ -121,9 +118,6 @@ void GameManager::draw()
 
     // Render scene graph
     scene.draw(shader);
-
-
-
 }
 
 void GameManager::processMouseMovement(double xpos, double ypos) 
