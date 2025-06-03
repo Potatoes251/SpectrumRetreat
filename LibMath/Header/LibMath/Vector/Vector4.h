@@ -25,6 +25,8 @@ namespace LibMath
 
 		void			homogenize();
 
+		std::string		string() const;									// return a string representation of this vector
+
 		float m_x;
 		float m_y;
 		float m_z;
@@ -45,6 +47,8 @@ namespace LibMath
 	Vector4&	operator/=(Vector4& v1, Vector4 const& v2);				// division component wise
 
 	Vector4		operator*(Vector4 const& v, float nb);
+
+	std::ostream& operator<<(std::ostream&, Vector4 const&);
 }
 
 #ifdef LIBMATH_MATRIX_MATRIX4_H_

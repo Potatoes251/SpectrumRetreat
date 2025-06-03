@@ -32,9 +32,10 @@ void GameManager::init(float windowWidth, float windowHeight)
     // Create Door
     auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
     doorGO->isDoor = true;
+    doorGO->color = LibMath::Vector4(1.0f, 1.f, 1.f, 1.0f);
 
     auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
-    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 5, 0, -5 }) *
+    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -2.5 }) *
         LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
     scene.addNode(doorNode);
 
@@ -90,8 +91,6 @@ void GameManager::init(float windowWidth, float windowHeight)
     auto crosshair = std::make_unique<CircleUI>(
         LibMath::Vector2(posX, posY), crosshairRadius, ImColor(255, 255, 255, 255)
     );
-
-    phonePtr = crosshair.get();
 
     uiManager.addElement(std::move(crosshair));
 }
