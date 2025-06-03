@@ -20,7 +20,7 @@ private:
 
 	LibMath::Vector3 position;
 
-	CircleUI phone; 
+	
 	float yVelocity = 0.0f;
 
 	const float gravity = -9.8f;
@@ -35,9 +35,9 @@ public:
 	Player();
 	void Update(float deltaTime);
 	void move(float deltaTime);
-	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene);
+	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 	void ProcessKeyboard(char direction, float deltaTime);
-	void checkForwardRaycast(SceneGraph<GameObject>& scene);
+	void checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 
 	CameraFPS& getCamera() { return camera; };
 	LibMath::Vector3& getPosition() { return position; };

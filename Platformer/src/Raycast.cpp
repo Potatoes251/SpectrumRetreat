@@ -17,7 +17,7 @@ bool raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, RaycastH
                 if (distSq < minDistance)
                 {
                     minDistance = distSq;
-                    hit = RaycastHit(*obj, intersectionPoint);
+                    hit = RaycastHit(obj, intersectionPoint);
                     foundHit = true;
                 }
             }
@@ -26,6 +26,6 @@ bool raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, RaycastH
     return foundHit;
 }
 
-RaycastHit::RaycastHit(GameObject gameObject, LibMath::Vector3 point) :
+RaycastHit::RaycastHit(std::shared_ptr<GameObject> gameObject, LibMath::Vector3 point) :
     m_gameObject(gameObject), 
     m_intersectionPoint(point){}

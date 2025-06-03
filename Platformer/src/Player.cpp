@@ -11,12 +11,7 @@ Player::Player()
         LibMath::Vector3(0.0f, 1.0f, 0.0f),  
         -90.0f,                              
         0.0f                                 
-    ),
-    phone(
-        LibMath::Vector2(0.5f, 0.5f), 0.01f,
-        ImColor(255, 255, 255)
     )
-
 {
     
     velocity = LibMath::Vector3(0.0f);
@@ -52,7 +47,7 @@ void Player::move(float deltaTime)
     position = camera.position;
 }
 
-void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene)
+void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
 {
     LibMath::Vector3 inputVelocity(0.0f, 0.0f, 0.0f);
 
@@ -93,15 +88,8 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
         velocity.m_y = jumpStrength;
         isJumping = true;
     }
-
-    bool isEKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
-
-    if (isEKeyPressed && !EKeyAlreadyPressed)
-    {
-        checkForwardRaycast(scene); // Only triggers once per key press
-    }
-
-    EKeyAlreadyPressed = isEKeyPressed;
+    
+    checkForwardRaycast(window, scene, phone, crosshair);
 
     Update(deltaTime);
 }
@@ -135,8 +123,10 @@ void Player::ProcessKeyboard(char direction, float deltaTime)
     }
 }
 
-void Player::checkForwardRaycast(SceneGraph<GameObject>& scene)
+void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
 {
+    bool isEKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
+
     LibMath::Point3D rayOrigin = camera.position;
     LibMath::Vector3 rayDirection = camera.front;
     rayDirection.normalize();
@@ -144,31 +134,37 @@ void Player::checkForwardRaycast(SceneGraph<GameObject>& scene)
     LibMath::Line3D ray(rayOrigin, rayDirection);
     RaycastHit hit;
 
-    const float maxRange = 10.0f;  // Max raycast distance
+    const float maxRange = 10.0f;
 
-    std::cout << phone.getColor().Value.x << std::endl;
-
-    if (raycast(ray, scene, hit, maxRange))
+    // Check for hit
+    if (raycast(ray, scene, hit, maxRange) && hit.m_gameObject -> tag == "interactable")
     {
-        LibMath::Vector4 temp(hit.m_gameObject.color);
+        crosshair.setRadius(4);
 
-        ImColor phoneColor = phone.getColor();
+        if (isEKeyPressed && !EKeyAlreadyPressed)
+        {
+            // Swap color with phone
+            LibMath::Vector4 objColor = hit.m_gameObject->color;
 
-        hit.m_gameObject.color = LibMath::Vector4(
-            phoneColor.Value.x,
-            phoneColor.Value.y,
-            phoneColor.Value.z,
-            phoneColor.Value.w
-        );
+            ImColor phoneColor = phone.getColor();
 
-        phone.setColor(ImColor(temp.m_x, temp.m_y, temp.m_z, temp.m_w));
+            hit.m_gameObject->color = LibMath::Vector4(
+                phoneColor.Value.x,
+                phoneColor.Value.y,
+                phoneColor.Value.z,
+                phoneColor.Value.w
+            );
 
-        std::cout << phoneColor.Value.x << " " << phoneColor.Value.y<< " " << phoneColor.Value.z << std::endl;
+            phone.setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+        }
     }
     else
     {
-        std::cout << "Raycast missed." << std::endl;
+        crosshair.setRadius(2);
     }
+
+    // Update key press state (used to detect press vs. hold)
+    EKeyAlreadyPressed = isEKeyPressed;
 }
 
 

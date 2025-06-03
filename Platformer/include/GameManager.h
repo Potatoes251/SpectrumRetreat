@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "Player.h"
 #include "Physics.h"
+#include "UIManager.h"
 
 class GameManager 
 {
@@ -14,7 +15,7 @@ public:
     ~GameManager();
 
     // Initialize resources and scene
-    void init();
+    void init(float windowWidth, float windowHeight);
 
     // Update logic (scene, camera) each frame
     void update(float deltaTime);
@@ -28,7 +29,9 @@ public:
     SceneGraph<GameObject> scene;
     Player player;
     Shader* shader;
-
+    UIManager uiManager;
+    CircleUI* phonePtr = nullptr; 
+    CircleUI* crosshairPtr = nullptr;
 private:
     ResourceManager resourceManager;
 };
