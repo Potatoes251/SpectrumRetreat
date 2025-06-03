@@ -31,6 +31,7 @@ public:
 	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
 
 	LibMath::Prism collider;
+	bool isDoor = false;
 
 private:
 	LibMath::Prism colliderAtOrigin;

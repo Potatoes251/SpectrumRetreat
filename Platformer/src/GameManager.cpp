@@ -28,9 +28,21 @@ void GameManager::init(float windowWidth, float windowHeight)
                                 LibMath::Matrix4::createScale({ .5f, .5f, .5f});
     scene.addNode(cubeNode);
 
-    auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+    
+    // Create Door
+    auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
+    doorGO->isDoor = true;
+
+    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
+    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 5, 0, -5 }) *
+        LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
+    scene.addNode(doorNode);
+
+
 
     // Create Floor
+    auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+    
     auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
@@ -40,9 +52,9 @@ void GameManager::init(float windowWidth, float windowHeight)
     scene.addNode(floorNode);
 
 
-    auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
-
     // Create Ceiling
+    auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+    
     auto ceilingGO = std::make_shared<GameObject>("Ceiling", ceilingModelShared);
 
     auto ceilingNode = std::make_shared<SceneNode<GameObject>>(ceilingGO, shader);
@@ -51,6 +63,8 @@ void GameManager::init(float windowWidth, float windowHeight)
     ceilingNode->object->color = LibMath::Vector4(0.68f, 0.85f, 0.90f, 1.0f);
     scene.addNode(ceilingNode);
 
+
+    // PHONE
     float phoneRadius = windowHeight / 10.0f;
 
     // Position from bottom-right (in pixels)
