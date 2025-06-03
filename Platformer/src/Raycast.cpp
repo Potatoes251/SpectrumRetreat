@@ -26,11 +26,6 @@ bool raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, RaycastH
     return foundHit;
 }
 
-RaycastHit::RaycastHit() :
-    m_gameObject(),
-    m_intersectionPoint() {}
-
-
 RaycastHit::RaycastHit(std::shared_ptr<GameObject> gameObject, LibMath::Vector3 point) :
     m_gameObject(gameObject), 
     m_intersectionPoint(point){}

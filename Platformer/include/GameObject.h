@@ -16,7 +16,7 @@ public:
 	void computeColliderFromModel();
 
 	void update(float deltaTime);
-	void updateCollider();
+	void updateCollider(LibMath::Matrix4& worldTransform);
 	void draw(Shader* shader);
 	void draw(Shader* shader, LibMath::Matrix4& worldTransform);
 
@@ -31,11 +31,13 @@ public:
 	LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
 
 	LibMath::Prism collider;
+	bool isDoor = false;
+
 
 	LibMath::Vector4 color = LibMath::Vector4(0, 0, 0, 1);
 	std::string tag;
 private:
-	LibMath::Vector3 centerColliderOffset;
+	LibMath::Prism colliderAtOrigin;
 	std::string name;
 	std::shared_ptr<Model> model;
 };

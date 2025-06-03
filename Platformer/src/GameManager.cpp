@@ -15,34 +15,60 @@ void GameManager::init(float windowWidth, float windowHeight)
     shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
     shader->Link();
 
-    auto bunnyModel = resourceManager.Create<Model>("../../Assets/Meshes/bunny.obj");
-    bunnyModel->uploadToGPU();
+    auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
+    cubeModel->uploadToGPU();
 
-    auto bunnyModelShared = std::shared_ptr<Model>(bunnyModel, [](Model*) {});
+    auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
-    // Create GameObject and SceneNode
-    auto bunnyGO = std::make_shared<GameObject>("Blue Lapinou", "interactable", bunnyModelShared);
+    // Create Cube
+    auto cubeGO = std::make_shared<GameObject>("Cube", "interactable", cubeModelShared);
+    cubeGO->color = LibMath::Vector4(0.5f, 0.0f, 0.5f, 1.0f);
 
-    auto bunnyNode = std::make_shared<SceneNode<GameObject>>(bunnyGO, shader);
-    bunnyNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-                                LibMath::Matrix4::createScale({ 0.1f,0.1f,0.1f });
-    bunnyNode->object->color = LibMath::Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+    auto cubeNode = std::make_shared<SceneNode<GameObject>>(cubeGO, shader);
+    cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, 0}) *
+                                LibMath::Matrix4::createScale({ .5f, .5f, .5f});
+    scene.addNode(cubeNode);
 
-    scene.addNode(bunnyNode);
+    
+    // Create Door
+    auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
+    doorGO->isDoor = true;
+    doorGO->color = LibMath::Vector4(1.0f, 1.f, 1.f, 1.0f);
 
-    auto floorModel = resourceManager.Create<Model>("../../Assets/Meshes/floor.obj");
-    floorModel->uploadToGPU();
+    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
+    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -2.5 }) *
+        LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
+    scene.addNode(doorNode);
 
-    auto floorModelShared = std::shared_ptr<Model>(floorModel, [](Model*) {});
 
-    // Create GameObject and SceneNode
+
+    // Create Floor
+    auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+    
     auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
+    floorGO->color = LibMath::Vector4(1.0f, 0.4f, 0.7f, 1.0f);
 
     auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
-    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,0,0 }) *
-        LibMath::Matrix4::createScale({ 0.5f ,0.5f,0.5f });
+    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,-2,0 }) *
+                                LibMath::Matrix4::createScale({ 50, 1, 50});
+
     scene.addNode(floorNode);
 
+
+    // Create Ceiling
+    auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+    
+    auto ceilingGO = std::make_shared<GameObject>("Ceiling", ceilingModelShared);
+    ceilingGO->color = LibMath::Vector4(0.68f, 0.85f, 0.90f, 1.0f);
+
+    auto ceilingNode = std::make_shared<SceneNode<GameObject>>(ceilingGO, shader);
+    ceilingNode->localTransform = LibMath::Matrix4::createTranslation({ 0,5,0 }) *
+                                 LibMath::Matrix4::createScale({ 50, 1, 50 });
+
+    scene.addNode(ceilingNode);
+
+
+    // PHONE
 
     // Phone
     float phoneRadius = windowHeight / 10.0f;
@@ -76,9 +102,9 @@ void GameManager::init(float windowWidth, float windowHeight)
 
 void GameManager::update(float deltaTime) 
 {
-    player.Update(deltaTime);
-    checkWalls(player, scene);
-    player.move(deltaTime);
+    //player.Update(deltaTime);
+    //checkWalls(player, scene);
+    //player.move(deltaTime);
     // Update scene (logic + transform)
     scene.update();
 }

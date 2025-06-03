@@ -7,7 +7,7 @@
 
 struct RaycastHit 
 {
-	RaycastHit();
+	RaycastHit() = default;
 	RaycastHit(std::shared_ptr<GameObject>, LibMath::Vector3);
 
 	std::shared_ptr<GameObject> m_gameObject;

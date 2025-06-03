@@ -686,6 +686,11 @@ void LibMath::Vector4::homogenize()
 	}
 }
 
+std::string LibMath::Vector4::string() const
+{
+	return "{" + std::to_string(m_x) + "," + std::to_string(m_y) + "," + std::to_string(m_z) + "," + std::to_string(m_w) + "}";
+}
+
 // Operator == (comparison for equality)
 bool LibMath::operator==(Vector4 const& v1, Vector4 const& v2) 
 {
@@ -790,6 +795,12 @@ LibMath::Vector4& LibMath::operator/=(Vector4& v1, Vector4 const& v2)
 LibMath::Vector4 LibMath::operator*(Vector4 const& v, float nb)
 {
 	return Vector4(v.m_x * nb, v.m_y * nb, v.m_z * nb, v.m_w * nb);
+}
+
+std::ostream& LibMath::operator<<(std::ostream& os, Vector4 const& vec)
+{
+	os << vec.string();
+	return os;
 }
 
 

@@ -4,12 +4,10 @@
 
 GameObject::GameObject()
     : name(""),
-    tag(""),
     model(nullptr),
     position(0.0f, 0.0f, 0.0f),
     rotation(0.0f, 0.0f, 0.0f),
     scale(1.0f, 1.0f, 1.0f),
-    centerColliderOffset(0.0f, 0.0f, 0.0f),
     collider(),
     color(0, 0, 0, 1),
     localTransform(LibMath::Matrix4::getIdentity()),
@@ -24,42 +22,40 @@ GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
 }
 
 GameObject::GameObject(const std::string& name, const std::string& tag, std::shared_ptr<Model> model)
-	: name(name), tag(tag), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+    : name(name), tag(tag), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
 {
     computeColliderFromModel();
 }
 
 void GameObject::computeColliderFromModel()
 {
-    if (!model || model->vertices.empty())
-        return;
-
-    LibMath::Vector3 minPointCollider = model->vertices[0].Position;
+    //this->model;
+    LibMath::Vector3 minPointCollider = this->model->vertices[0].Position;
     LibMath::Vector3 maxPointCollider = minPointCollider;
 
-    for (const auto& vertex : model->vertices)
+    for (int i = 0; i < this->model->vertices.size(); ++i)
     {
-        LibMath::Vector3 position = vertex.Position;
+        LibMath::Vector3 position = this->model->vertices[i].Position;
         for (int j = 0; j < 3; ++j)
         {
             if (minPointCollider[j] > position[j])
+            {
                 minPointCollider[j] = position[j];
+            }
             if (maxPointCollider[j] < position[j])
+            {
                 maxPointCollider[j] = position[j];
+            }
         }
     }
 
     LibMath::Vector3 colliderSize = maxPointCollider - minPointCollider;
-    LibMath::Point3D center(
-        minPointCollider.m_x + colliderSize.m_x / 2.f,
+    LibMath::Point3D center(minPointCollider.m_x + colliderSize.m_x / 2.f,
         minPointCollider.m_y + colliderSize.m_y / 2.f,
-        minPointCollider.m_z + colliderSize.m_z / 2.f
-    );
+        minPointCollider.m_z + colliderSize.m_z / 2.f);
 
-    centerColliderOffset = LibMath::Vector3(center.getX(), center.getY(), center.getZ());
     collider = LibMath::Prism(center, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
-
-    std::cout << collider.getDepth() << '\t' << collider.getWidth() << '\t' << collider.getHeight() << '\n';
+    colliderAtOrigin = collider;
 }
 
 void GameObject::update(float deltaTime)
@@ -67,17 +63,17 @@ void GameObject::update(float deltaTime)
 	rotation.m_y += 1.0f * deltaTime;
 }
 
-void GameObject::updateCollider()
+void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 {
     LibMath::Point3D position(
-        worldTransform[3][0] + centerColliderOffset.m_x,
-        worldTransform[3][1] + centerColliderOffset.m_y,
-        worldTransform[3][2] + centerColliderOffset.m_z);
+        worldTransform[3][0] + colliderAtOrigin.getCenter().getX(),
+        worldTransform[3][1] + colliderAtOrigin.getCenter().getY(),
+        worldTransform[3][2] + colliderAtOrigin.getCenter().getZ());
 
     LibMath::Vector3 colliderSize(
-        worldTransform[0][0] * collider.getWidth(),
-        worldTransform[1][1] * collider.getHeight(),
-        worldTransform[1][2] * collider.getDepth());
+        worldTransform[0][0] * colliderAtOrigin.getWidth(),
+        worldTransform[1][1] * colliderAtOrigin.getHeight(),
+        worldTransform[2][2] * colliderAtOrigin.getDepth());
 
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 }
@@ -99,7 +95,7 @@ void GameObject::draw(Shader* shader)
 
 void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
 {
-    updateCollider();
+    updateCollider(worldTransform);
     if (!model) return;
 
     shader->setMat4("model", worldTransform);

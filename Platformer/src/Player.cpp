@@ -2,9 +2,9 @@
 
 Player::Player()
     : collider(
-        LibMath::Point3D(0.0f, 1.0f, 0.0f), 
-        LibMath::Point3D(0.0f, 0.1f, 0.0f), 
-        0.5f                               
+        LibMath::Point3D(0.0f, 0.0f, 0.0f), 
+        LibMath::Point3D(0.0f, -1.5f, 0.0f), 
+        0.2f                               
     ),
     camera(
         LibMath::Vector3(0.0f, 2.0f, 5.0f),  
@@ -20,13 +20,13 @@ Player::Player()
 void Player::Update(float deltaTime)
 {
     // Apply gravity
-    if (isJumping)
+    //if (isJumping)
     {
-        yVelocity += gravity * deltaTime;
+        velocity.m_y += gravity * deltaTime;
     }
 
     // Apply vertical velocity (y-axis)
-    velocity.m_y = yVelocity;
+    //velocity.m_y = yVelocity;
 
     // Damp horizontal movement
     velocity.m_x *= 0.8f;
@@ -37,11 +37,11 @@ void Player::move(float deltaTime)
 {
     camera.position += velocity * deltaTime;
 
-    if (camera.position.m_y <= 0.0f)
+    //if (camera.position.m_y <= 0.0f)
     {
-        camera.position.m_y = 0.0f;
-        yVelocity = 0.0f;
-        isJumping = false;
+        //camera.position.m_y = 0.0f;
+        //yVelocity = 0.0f;
+        //isJumping = false;
     }
 
     position = camera.position;
@@ -85,7 +85,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !isJumping)
     {
-        yVelocity = jumpStrength;
+        velocity.m_y = jumpStrength;
         isJumping = true;
     }
     

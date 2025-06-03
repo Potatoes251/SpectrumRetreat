@@ -51,8 +51,8 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 600;
-    windowHeight = 500;
+    windowWidth = 1920;
+    windowHeight = 1200;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
 
@@ -105,7 +105,7 @@ bool Application::initShaderAndResources()
 
         return false;
     }
-
+    
     return true;
 }
 
@@ -114,6 +114,9 @@ void Application::run()
     while (!glfwWindowShouldClose(window)) 
     {
         updateDeltaTime();
+        gameManager.player.Update(deltaTime);
+        checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
+        gameManager.player.move(deltaTime);
         gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
 
         // Update game logic
@@ -143,7 +146,7 @@ void Application::updateSceneGraph()
     float angle = deltaTime * LibMath::Radian(LibMath::Degree(45.0f).radian()).raw();
 
     auto bunnyNode = gameManager.scene.findNodeByName("Blue Lapinou");
-
+    
     if (bunnyNode)
     {
         bunnyNode->localTransform =
