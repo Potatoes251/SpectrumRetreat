@@ -158,7 +158,6 @@ void GameManager::update(float deltaTime)
 
 void GameManager::draw()
 {
-
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
