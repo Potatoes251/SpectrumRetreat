@@ -20,84 +20,131 @@ void GameManager::init(float windowWidth, float windowHeight)
 
     auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
-    // Create Cube
-    auto cubeGO = std::make_shared<GameObject>("Cube", "interactable", cubeModelShared);
-    cubeGO->color = LibMath::Vector4(1, 1, 1, 1);
+    // Add game objects
 
-    auto cubeNode = std::make_shared<SceneNode<GameObject>>(cubeGO, shader);
-    cubeNode->localTransform = LibMath::Matrix4::createTranslation({ 5, 4, 5}) *
-                                LibMath::Matrix4::createScale({ .5f, .5f, .5f});
-    scene.addNode(cubeNode);
+    // cube that can be used to change phone color
+    addGameObject("Cube", "interactable", cubeModelShared,
+        { 0.86f, 0.08f, 0.24f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 2, 0, 0 }) *
+        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
 
-    
+    addGameObject("Cube2", "interactable", cubeModelShared,
+        { 0.71f, 0.49f, 0.86f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0, 0, -20 }) *
+        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
+
+    addGameObject("Cube3", "interactable", cubeModelShared,
+        { 0.71f, 0.49f, 0.86f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0, 6, -40 }) *
+        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
+
+    addGameObject("Cube4", "interactable", cubeModelShared,
+        { 1.0f, 0.85f, 0.73f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0, 6, -85 }) *
+        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
+
+    // add the floor & walls
+    addGameObject("Floor", "", cubeModelShared,
+        { 1.0f, 0.4f, 0.7f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0, -1.5f, 0 }) *
+        LibMath::Matrix4::createScale({ 5.0f, 1.0f, 50.0f }));
+
+    addGameObject("Wall", "", cubeModelShared,
+        { 1.0f, 1.f, 1.f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0 , 0, 5 }) *
+        LibMath::Matrix4::createScale({ 50.0f, 10.0f, 10.0f }));
+
+    addGameObject("Wall2", "", cubeModelShared,
+        { 1.0f, 1.f, 1.f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0 , 0, -5 }) *
+        LibMath::Matrix4::createScale({ 50.0f, 2.5f, 10.0f }));
+
+    addGameObject("Wall3", "", cubeModelShared,
+        { 1.0f, 1.f, 1.f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 5 , 0, 0 }) *
+        LibMath::Matrix4::createScale({ 1.0f, 10.0f, 50.0f }));
+
+    addGameObject("Wall4", "", cubeModelShared,
+        { 1.0f, 1.f, 1.f, 1.0f },
+        LibMath::Matrix4::createTranslation({ -5 , 0, 0 }) *
+        LibMath::Matrix4::createScale({ 1.0f, 10.0f, 50.0f }));
+
+    addGameObject("Wall5", "", cubeModelShared,
+        { 0.71f, 0.49f, 0.86f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0 , 0, -2.5f }) *
+        LibMath::Matrix4::createScale({ 5.0f, 2.5f, 10.f }));
+
+    //addGameObject("Wall6", "", cubeModelShared,
+    //    { 0.71f, 0.49f, 0.86f, 1.0f },
+    //    LibMath::Matrix4::createTranslation({ 0 , 0, -2.5f }) *
+    //    LibMath::Matrix4::createScale({ 5.0f, 2.5f, 10.f }));
+
+
+    addGameObject("Ceiling", "", cubeModelShared,
+        { 0.68f, 0.85f, 0.90f, 1.0f },
+        LibMath::Matrix4::createTranslation({ 0, 10, 0 }) *
+        LibMath::Matrix4::createScale({ 5.0f, 1.0f, 50.0f }));
+
+
     // Create Door
     auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
     doorGO->isDoor = true;
-    doorGO->color = LibMath::Vector4(1.0f, 1.f, 1.f, 1.0f);
+    doorGO->color = LibMath::Vector4(0.86f, 0.08f, 0.24f, 1.0f);
 
     auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
-    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -2.5 }) *
-        LibMath::Matrix4::createScale({ 2.5f, 2.5f, 2.5f });
+    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -10 }) *
+                                LibMath::Matrix4::createScale({ 5.f, 2.5f, .5f });
+
     scene.addNode(doorNode);
 
 
+    initUI(windowWidth, windowHeight);
+}
 
-    // Create Floor
-    auto floorModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
-    
-    auto floorGO = std::make_shared<GameObject>("Floor", floorModelShared);
-    floorGO->color = LibMath::Vector4(1.0f, 0.4f, 0.7f, 1.0f);
-
-    auto floorNode = std::make_shared<SceneNode<GameObject>>(floorGO, shader);
-    floorNode->localTransform = LibMath::Matrix4::createTranslation({ 0,-2,0 }) *
-                                LibMath::Matrix4::createScale({ 50, 1, 50});
-
-    scene.addNode(floorNode);
-
-
-    // Create Ceiling
-    auto ceilingModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
-    
-    auto ceilingGO = std::make_shared<GameObject>("Ceiling", ceilingModelShared);
-    ceilingGO->color = LibMath::Vector4(0.68f, 0.85f, 0.90f, 1.0f);
-
-    auto ceilingNode = std::make_shared<SceneNode<GameObject>>(ceilingGO, shader);
-    ceilingNode->localTransform = LibMath::Matrix4::createTranslation({ 0,5,0 }) *
-                                 LibMath::Matrix4::createScale({ 50, 1, 50 });
-
-    scene.addNode(ceilingNode);
-
-
+void	GameManager::initUI(float windowWidth, float windowHeight)
+{
     // PHONE
-
-    // Phone
     float phoneRadius = windowHeight / 10.0f;
-
-    // Position from bottom-right (in pixels)
-    float posX = windowWidth - phoneRadius - 20.0f;  // 20px margin
-    float posY = windowHeight - phoneRadius - 20.0f;
+    float phonePosX = windowWidth - phoneRadius - 20.0f;
+    float phonePosY = windowHeight - phoneRadius - 20.0f;
 
     auto phone = std::make_unique<CircleUI>(
-        LibMath::Vector2(posX, posY), phoneRadius, ImColor(255, 255, 255, 255)
+        LibMath::Vector2(phonePosX, phonePosY),
+        phoneRadius,
+        ImColor(255, 255, 255, 255)
     );
 
     phonePtr = phone.get();
-
     uiManager.addElement(std::move(phone));
 
-    // Crosshair
-    float crosshairRadius = 2;
-    
-    posX = windowWidth / 2; 
-    posY = windowHeight / 2;
+    // CROSSHAIR
+    float crosshairRadius = 2.0f;
+    float crosshairPosX = windowWidth / 2.0f;
+    float crosshairPosY = windowHeight / 2.0f;
 
     auto crosshair = std::make_unique<CircleUI>(
-        LibMath::Vector2(posX, posY), crosshairRadius, ImColor(255, 255, 255, 255)
+        LibMath::Vector2(crosshairPosX, crosshairPosY),
+        crosshairRadius,
+        ImColor(255, 255, 255, 255)
     );
 
     crosshairPtr = crosshair.get();
-
     uiManager.addElement(std::move(crosshair));
+}
+
+void	GameManager::addGameObject(const std::string& name,
+    const std::string& tag,
+    const std::shared_ptr<Model>& model,
+    const LibMath::Vector4& color,
+    const LibMath::Matrix4& transformMatrix)
+{
+    auto gameObject = std::make_shared<GameObject>(name, tag, model);
+    gameObject->color = color;
+
+    auto node = std::make_shared<SceneNode<GameObject>>(gameObject, shader);
+    node->localTransform = transformMatrix;
+
+    scene.addNode(node);
 }
 
 void GameManager::update(float deltaTime) 

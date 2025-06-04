@@ -10,6 +10,10 @@ bool Application::init()
     initGLContext();
     initImGuiContext();
 
+    // enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Initialize scene and game objects
     gameManager.init(windowWidth, windowHeight);
 
@@ -324,13 +328,13 @@ bool Application::setupResources()
 void Application::setupLighting()
 {
     // Initialize point light position and color properties (ambient, diffuse, specular)
-    pointLight.position = LibMath::Vector3(2.0f, 2.0f, 2.0f);
+    pointLight.position = LibMath::Vector3(.0f, .0f, .0f);
     pointLight.ambient = LibMath::Vector4(0.3f, 0.3f, 0.3f, 1.0f);
     pointLight.diffuse = LibMath::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
     pointLight.specular = LibMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     pointLight.constant = 1.0f;
     pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
+    pointLight.quadratic = 0.f;
 }
 
 void Application::setupOpenGLStates()

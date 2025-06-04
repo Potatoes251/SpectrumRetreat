@@ -53,13 +53,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 void main()
 {
-    FragColor = vertexColor;
-
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    vec3 result = CalcPointLight(pointLight, norm, FragPos, viewDir);
+    vec3 lighting = CalcPointLight(pointLight, norm, FragPos, viewDir);
 
-    vec4 texColor = useTexture ? texture(texture1, TexCoords) : vec4(1.0);
-    FragColor = vec4(result, 1.0) * objectColor;
+    vec4 baseColor = useTexture ? texture(texture1, TexCoords) : objectColor;
+
+    FragColor = vec4(lighting, 1.0) * baseColor;
 }
