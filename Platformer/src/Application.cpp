@@ -246,6 +246,16 @@ void Application::updatePause()
     }
 
     escapePressedLastFrame = escapePressed;
+
+    if (isPaused) 
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+    else 
+    {
+        glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
 }
 
 
@@ -279,24 +289,18 @@ void Application::configureCulling()
 void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-    if (!app) return;
+    if (!app || app->isPaused) return;
 
-    if (app->firstMouse) 
-    {
-        app->lastX = (float)xpos;
-        app->lastY = (float)ypos;
-        app->firstMouse = false;
+    float centerX = app->windowWidth / 2.0f;
+    float centerY = app->windowHeight / 2.0f;
 
-        return;
-    }
-
-    float xoffset = (float)xpos - app->lastX;
-    float yoffset = app->lastY - (float)ypos;
-
-    app->lastX = (float)xpos;
-    app->lastY = (float)ypos;
+    float xoffset = xpos - centerX;
+    float yoffset = centerY - ypos; // inversé pour l’axe Y
 
     app->gameManager.processMouseMovement(xoffset, yoffset);
+
+    // Recentrer la souris
+    glfwSetCursorPos(window, centerX, centerY);
 }
 
 void Application::setLightUniforms()
