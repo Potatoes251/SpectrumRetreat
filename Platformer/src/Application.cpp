@@ -205,8 +205,19 @@ void Application::drawUI()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     gameManager.uiManager.drawAll();
+
+    if (isPaused)
+    {
+        ImGui::GetBackgroundDrawList()->AddRectFilled(
+            ImVec2(0, 0),
+            ImVec2((float)windowWidth, (float)windowHeight),
+            IM_COL32(0, 0, 0, 150)
+        );
+    }
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 void Application::renderFrame()
