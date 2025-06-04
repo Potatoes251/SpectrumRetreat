@@ -48,6 +48,12 @@ void Application::initImGuiContext()
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImGuiIO& io = ImGui::GetIO();
+
+    gameManager.uiManager.fontSmall = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
+    gameManager.uiManager.fontMedium = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
+    gameManager.uiManager.fontLarge = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
 }
 
 bool Application::createWindow() 
@@ -206,13 +212,65 @@ void Application::drawUI()
     ImGui::NewFrame();
     gameManager.uiManager.drawAll();
 
-    if (isPaused)
+    if (isPaused) // screen darkening in pause
     {
+        int menuSizeX = windowWidth * 0.25;
+        int menuSizeY = windowHeight * 0.4;
+        int halfWindowWidth = windowWidth / 2.0f;
+        int halfWindowHeight = windowHeight / 2.0f;
+
+        int buttonWidth = 350;
+        int buttonHeight = 100;
+        int buttonPosX = (menuSizeX - buttonWidth) / 2;
+
         ImGui::GetBackgroundDrawList()->AddRectFilled(
             ImVec2(0, 0),
             ImVec2((float)windowWidth, (float)windowHeight),
             IM_COL32(0, 0, 0, 150)
         );
+
+        ImGui::SetNextWindowSize(ImVec2(menuSizeX, menuSizeY));
+        ImGui::SetNextWindowPos(ImVec2(halfWindowWidth - menuSizeX / 2, halfWindowHeight - menuSizeY / 2));
+
+        ImGui::Begin("Pause Menu", nullptr,
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoTitleBar);
+
+        ImGui::PushFont(gameManager.uiManager.fontLarge);
+
+        ImGui::Spacing();
+        ImGui::Spacing();
+
+        const char* text = "Pause Menu";
+        ImVec2 textSize = ImGui::CalcTextSize(text);
+        float offsetX = (menuSizeX - textSize.x) * 0.5f;
+        ImGui::SetCursorPosX(offsetX);
+        ImGui::Text("%s", text);
+        ImGui::Dummy(ImVec2(0.0f, buttonPosX * 0.6));
+
+        ImGui::Indent(buttonPosX);
+
+        if (ImGui::Button("Resume", ImVec2(buttonWidth, buttonHeight))) // -1 = whole width
+        {
+            exitPause();
+        }
+
+        if (ImGui::Button("Restart", ImVec2(buttonWidth, buttonHeight)))
+        {
+            restartGame();
+        }
+
+        if (ImGui::Button("Quit", ImVec2(buttonWidth, buttonHeight)))
+        {
+            glfwSetWindowShouldClose(window, true);
+        }
+
+        ImGui::PopFont();
+        ImGui::Unindent(buttonPosX);
+
+        ImGui::End();
     }
 
     ImGui::Render();
@@ -224,11 +282,11 @@ void Application::renderFrame()
 {
     gameManager.shader->Use(); // Bind shader program
 
-    setMatrices();          // Send model/view/projection matrices to shader
-    setCameraUniforms();    // Send camera position to shader for lighting calculations
-    setLightUniforms();     // Send lighting parameters to shader
-    bindTexture(); // Bind texture and tell shader to use it
-    configureCulling();     // Enable face culling (to improve performance)
+    setMatrices();              // Send model/view/projection matrices to shader
+    setCameraUniforms();        // Send camera position to shader for lighting calculations
+    setLightUniforms();         // Send lighting parameters to shader
+    bindTexture();              // Bind texture and tell shader to use it
+    configureCulling();         // Enable face culling (to improve performance)
 
     gameManager.scene.draw(gameManager.shader);
 
@@ -256,6 +314,17 @@ void Application::updatePause()
         glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
+}
+
+void Application::exitPause()
+{
+    isPaused = false;
+    glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Application::restartGame()
+{
 }
 
 

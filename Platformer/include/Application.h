@@ -57,6 +57,8 @@ public:
     void setupOpenGLStates();
     void renderFrame();
     void updatePause();
+    void exitPause();
+    void restartGame();
     unsigned int loadTexture(const char* path);
 
 private:

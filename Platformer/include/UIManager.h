@@ -10,6 +10,10 @@ public:
     void addElement(std::unique_ptr<UIElement> element);
     void drawAll() const;
 
+    ImFont* fontSmall;
+    ImFont* fontMedium;
+    ImFont* fontLarge;
+
 private:
     std::vector<std::unique_ptr<UIElement>> m_elements;
 };
