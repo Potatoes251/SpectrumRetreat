@@ -147,7 +147,7 @@ void	GameManager::addGameObject(const std::string& name,
     scene.addNode(node);
 }
 
-void GameManager::update(float deltaTime) 
+void    GameManager::update(float deltaTime) 
 {
     //player.Update(deltaTime);
     //checkWalls(player, scene);
@@ -156,7 +156,7 @@ void GameManager::update(float deltaTime)
     scene.update();
 }
 
-void GameManager::draw()
+void    GameManager::draw()
 {
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
@@ -169,7 +169,7 @@ void GameManager::draw()
     scene.draw(shader);
 }
 
-void GameManager::processMouseMovement(double xpos, double ypos) 
+void    GameManager::processMouseMovement(double xpos, double ypos) 
 {
     player.getCamera().ProcessMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }

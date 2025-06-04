@@ -20,7 +20,7 @@ int main()
         return 1;
     }
 
-    engine->play2D("../../Assets/Sounds/ophelia.ogg", true); // true = boucle
+    engine->play2D("../../Assets/Sounds/fragments of hope.ogg", true); // true = boucle
 
     if (!app.init())
     {

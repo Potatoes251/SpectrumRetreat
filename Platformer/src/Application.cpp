@@ -55,10 +55,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 1920;
-    windowHeight = 1200;
+    windowWidth = 2560;
+    windowHeight = 1440;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
     if (!window) 
     {
@@ -117,14 +117,26 @@ void Application::run()
 {
     while (!glfwWindowShouldClose(window)) 
     {
+        updatePause();
         updateDeltaTime();
-        gameManager.player.Update(deltaTime);
-        checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
-        gameManager.player.move(deltaTime);
-        gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
 
-        // Update game logic
-        gameManager.update(deltaTime);
+        if (!isPaused)
+        {
+            gameManager.player.Update(deltaTime);
+            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
+            gameManager.player.move(deltaTime);
+            gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
+
+            // Update game logic
+            gameManager.update(deltaTime);
+
+            std::cout << "unpaused" << std::endl;
+        }
+
+        else
+        {
+            std::cout << "paused" << std::endl;
+        }
 
         // Render
         clearScreen();
@@ -140,8 +152,18 @@ void Application::run()
 void Application::updateDeltaTime() 
 {
     float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+
+    if (!isPaused)
+    {
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+    }
+
+    else
+    {
+        deltaTime = 0.0f;
+        lastFrame = currentFrame;
+    }
 }
 
 void Application::updateSceneGraph()
@@ -201,6 +223,18 @@ void Application::renderFrame()
 
 
     drawUI();
+}
+
+void Application::updatePause()
+{
+    bool escapePressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+
+    if (escapePressed && !escapePressedLastFrame)
+    {
+        isPaused = !isPaused;
+    }
+
+    escapePressedLastFrame = escapePressed;
 }
 
 
