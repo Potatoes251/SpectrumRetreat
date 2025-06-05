@@ -2,8 +2,20 @@
 #include "GLTexture.h"
 #include "Player.h"
 
+
 bool Application::init() 
 {
+
+    gameManager.engine = irrklang::createIrrKlangDevice();
+
+    if (!gameManager.engine)
+    {
+        std::cerr << "Error : cannot initialize IrrKlang." << std::endl;
+        return 1;
+    }
+
+    gameManager.engine->play2D("../../Assets/Sounds/fragments of hope.ogg", true); // true = boucle
+
     if (!initGLFW()) return false;
     if (!createWindow()) return false;
     if (!initGLAD()) return false;
@@ -62,7 +74,7 @@ bool Application::createWindow()
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
     windowWidth = 2560;
-    windowHeight = 1440;
+    windowHeight = 1600;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
@@ -135,13 +147,6 @@ void Application::run()
 
             // Update game logic
             gameManager.update(deltaTime);
-
-            std::cout << "unpaused" << std::endl;
-        }
-
-        else
-        {
-            std::cout << "paused" << std::endl;
         }
 
         // Render
@@ -153,6 +158,7 @@ void Application::run()
     }
 
     glfwTerminate();
+    
 }
 
 void Application::updateDeltaTime() 
@@ -175,25 +181,9 @@ void Application::updateDeltaTime()
 void Application::updateSceneGraph()
 {
     updateDeltaTime();
-    float angle = deltaTime * LibMath::Radian(LibMath::Degree(45.0f).radian()).raw();
 
-    auto bunnyNode = gameManager.scene.findNodeByName("Blue Lapinou");
-    
-    if (bunnyNode)
-    {
-        bunnyNode->localTransform =
-            LibMath::Matrix4::createTranslation({ 0, 5, 0 }) *
-            LibMath::Matrix4::createRotationY(angle) *
-            LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
-        bunnyNode->object->color = LibMath::Vector4(0, 0, 1, 1);
-    }
-
-    auto floorNode = gameManager.scene.findNodeByName("Floor");
-
-    if (floorNode)
-    {
-        floorNode->object->color = LibMath::Vector4(1, 0, 0, 1);
-    }
+    gameManager.scene.findNodeByName("Cube1")->localTransform =
+        LibMath::Matrix4::createTranslation({ 0, 10, 0 });
 
     gameManager.scene.root->updateTransform();
 }

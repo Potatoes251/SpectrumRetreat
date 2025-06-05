@@ -8,6 +8,8 @@
 #include "Physics.h"
 #include "UIManager.h"
 
+#include <../../External/irrKlang/include/irrKlang.h>
+
 class GameManager 
 {
 public:
@@ -42,6 +44,8 @@ public:
     UIManager   uiManager;
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
+    irrklang::ISoundEngine* engine;
+
 private:
     ResourceManager     resourceManager;
 };

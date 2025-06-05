@@ -74,12 +74,6 @@ void GameManager::init(float windowWidth, float windowHeight)
         LibMath::Matrix4::createTranslation({ 0 , 0, -2.5f }) *
         LibMath::Matrix4::createScale({ 5.0f, 2.5f, 10.f }));
 
-    //addGameObject("Wall6", "", cubeModelShared,
-    //    { 0.71f, 0.49f, 0.86f, 1.0f },
-    //    LibMath::Matrix4::createTranslation({ 0 , 0, -2.5f }) *
-    //    LibMath::Matrix4::createScale({ 5.0f, 2.5f, 10.f }));
-
-
     addGameObject("Ceiling", "", cubeModelShared,
         { 0.68f, 0.85f, 0.90f, 1.0f },
         LibMath::Matrix4::createTranslation({ 0, 10, 0 }) *
@@ -149,10 +143,6 @@ void	GameManager::addGameObject(const std::string& name,
 
 void    GameManager::update(float deltaTime) 
 {
-    //player.Update(deltaTime);
-    //checkWalls(player, scene);
-    //player.move(deltaTime);
-    // Update scene (logic + transform)
     scene.update();
 }
 
