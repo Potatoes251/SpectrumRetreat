@@ -77,7 +77,7 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 
-    this->position = LibMath::Vector3(worldTransform[3][0], worldTransform[3][0], worldTransform[3][1]);
+    this->position = LibMath::Vector3(worldTransform[3][0], worldTransform[3][1], worldTransform[3][2]);
 }
 
 
