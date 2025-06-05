@@ -98,8 +98,10 @@ void GameManager::init(float windowWidth, float windowHeight)
 
     scene.addNode(doorNode);
 
-
     initUI(windowWidth, windowHeight);
+    soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
+
+    player.setGameManager(this);
 }
 
 void	GameManager::initUI(float windowWidth, float windowHeight)

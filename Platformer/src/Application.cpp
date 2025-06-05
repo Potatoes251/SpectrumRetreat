@@ -132,7 +132,7 @@ void Application::run()
             gameManager.player.Update(deltaTime);
             checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
             gameManager.player.move(deltaTime);
-            gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
+            gameManager.player.processInput(window, deltaTime);
 
             // Update game logic
             gameManager.update(deltaTime);

@@ -8,6 +8,7 @@
 #include "Physics.h"
 #include "UIManager.h"
 #include "ButtonUI.h"
+#include "SoundManager.h"
 
 class Application;
 
@@ -50,6 +51,7 @@ public:
     ButtonUI* resumeButton = nullptr;
     ButtonUI* restartButton = nullptr;
     ButtonUI* quitButton = nullptr;
+    SoundManager soundManager;
 private:
     ResourceManager     resourceManager;
     Application* application = nullptr;
