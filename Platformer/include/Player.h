@@ -25,7 +25,7 @@ private:
 
 	const float gravity = -9.8f;
 	const float jumpStrength = 10.0f;
-	float movementSpeed = 2.5f;
+	float movementSpeed = 10.f;
 	bool EKeyAlreadyPressed = false;
 
 public:

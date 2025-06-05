@@ -10,6 +10,10 @@ bool Application::init()
     initGLContext();
     initImGuiContext();
 
+    // enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Initialize scene and game objects
     gameManager.init(windowWidth, windowHeight);
 
@@ -44,6 +48,12 @@ void Application::initImGuiContext()
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImGuiIO& io = ImGui::GetIO();
+
+    gameManager.uiManager.fontSmall = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
+    gameManager.uiManager.fontMedium = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
+    gameManager.uiManager.fontLarge = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
 }
 
 bool Application::createWindow() 
@@ -51,10 +61,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 1920;
-    windowHeight = 1200;
+    windowWidth = 2560;
+    windowHeight = 1440;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
     if (!window) 
     {
@@ -113,14 +123,26 @@ void Application::run()
 {
     while (!glfwWindowShouldClose(window)) 
     {
+        updatePause();
         updateDeltaTime();
-        gameManager.player.Update(deltaTime);
-        checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
-        gameManager.player.move(deltaTime);
-        gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
 
-        // Update game logic
-        gameManager.update(deltaTime);
+        if (!isPaused)
+        {
+            gameManager.player.Update(deltaTime);
+            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
+            gameManager.player.move(deltaTime);
+            gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
+
+            // Update game logic
+            gameManager.update(deltaTime);
+
+            std::cout << "unpaused" << std::endl;
+        }
+
+        else
+        {
+            std::cout << "paused" << std::endl;
+        }
 
         // Render
         clearScreen();
@@ -136,8 +158,18 @@ void Application::run()
 void Application::updateDeltaTime() 
 {
     float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+
+    if (!isPaused)
+    {
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+    }
+
+    else
+    {
+        deltaTime = 0.0f;
+        lastFrame = currentFrame;
+    }
 }
 
 void Application::updateSceneGraph()
@@ -179,24 +211,120 @@ void Application::drawUI()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     gameManager.uiManager.drawAll();
+
+    if (isPaused) // screen darkening in pause
+    {
+        int menuSizeX = windowWidth * 0.25;
+        int menuSizeY = windowHeight * 0.4;
+        int halfWindowWidth = windowWidth / 2.0f;
+        int halfWindowHeight = windowHeight / 2.0f;
+
+        int buttonWidth = 350;
+        int buttonHeight = 100;
+        int buttonPosX = (menuSizeX - buttonWidth) / 2;
+
+        ImGui::GetBackgroundDrawList()->AddRectFilled(
+            ImVec2(0, 0),
+            ImVec2((float)windowWidth, (float)windowHeight),
+            IM_COL32(0, 0, 0, 150)
+        );
+
+        ImGui::SetNextWindowSize(ImVec2(menuSizeX, menuSizeY));
+        ImGui::SetNextWindowPos(ImVec2(halfWindowWidth - menuSizeX / 2, halfWindowHeight - menuSizeY / 2));
+
+        ImGui::Begin("Pause Menu", nullptr,
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoTitleBar);
+
+        ImGui::PushFont(gameManager.uiManager.fontLarge);
+
+        ImGui::Spacing();
+        ImGui::Spacing();
+
+        const char* text = "Pause Menu";
+        ImVec2 textSize = ImGui::CalcTextSize(text);
+        float offsetX = (menuSizeX - textSize.x) * 0.5f;
+        ImGui::SetCursorPosX(offsetX);
+        ImGui::Text("%s", text);
+        ImGui::Dummy(ImVec2(0.0f, buttonPosX * 0.6));
+
+        ImGui::Indent(buttonPosX);
+
+        if (ImGui::Button("Resume", ImVec2(buttonWidth, buttonHeight))) // -1 = whole width
+        {
+            exitPause();
+        }
+
+        if (ImGui::Button("Restart", ImVec2(buttonWidth, buttonHeight)))
+        {
+            restartGame();
+        }
+
+        if (ImGui::Button("Quit", ImVec2(buttonWidth, buttonHeight)))
+        {
+            glfwSetWindowShouldClose(window, true);
+        }
+
+        ImGui::PopFont();
+        ImGui::Unindent(buttonPosX);
+
+        ImGui::End();
+    }
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 void Application::renderFrame()
 {
     gameManager.shader->Use(); // Bind shader program
 
-    setMatrices();          // Send model/view/projection matrices to shader
-    setCameraUniforms();    // Send camera position to shader for lighting calculations
-    setLightUniforms();     // Send lighting parameters to shader
-    bindTexture(); // Bind texture and tell shader to use it
-    configureCulling();     // Enable face culling (to improve performance)
+    setMatrices();              // Send model/view/projection matrices to shader
+    setCameraUniforms();        // Send camera position to shader for lighting calculations
+    setLightUniforms();         // Send lighting parameters to shader
+    bindTexture();              // Bind texture and tell shader to use it
+    configureCulling();         // Enable face culling (to improve performance)
 
     gameManager.scene.draw(gameManager.shader);
 
 
     drawUI();
+}
+
+void Application::updatePause()
+{
+    bool escapePressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+
+    if (escapePressed && !escapePressedLastFrame)
+    {
+        isPaused = !isPaused;
+    }
+
+    escapePressedLastFrame = escapePressed;
+
+    if (isPaused) 
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+    else 
+    {
+        glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+}
+
+void Application::exitPause()
+{
+    isPaused = false;
+    glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Application::restartGame()
+{
 }
 
 
@@ -230,24 +358,18 @@ void Application::configureCulling()
 void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-    if (!app) return;
+    if (!app || app->isPaused) return;
 
-    if (app->firstMouse) 
-    {
-        app->lastX = (float)xpos;
-        app->lastY = (float)ypos;
-        app->firstMouse = false;
+    float centerX = app->windowWidth / 2.0f;
+    float centerY = app->windowHeight / 2.0f;
 
-        return;
-    }
-
-    float xoffset = (float)xpos - app->lastX;
-    float yoffset = app->lastY - (float)ypos;
-
-    app->lastX = (float)xpos;
-    app->lastY = (float)ypos;
+    float xoffset = xpos - centerX;
+    float yoffset = centerY - ypos; // inversé pour l’axe Y
 
     app->gameManager.processMouseMovement(xoffset, yoffset);
+
+    // Recentrer la souris
+    glfwSetCursorPos(window, centerX, centerY);
 }
 
 void Application::setLightUniforms()
@@ -324,13 +446,13 @@ bool Application::setupResources()
 void Application::setupLighting()
 {
     // Initialize point light position and color properties (ambient, diffuse, specular)
-    pointLight.position = LibMath::Vector3(2.0f, 2.0f, 2.0f);
+    pointLight.position = LibMath::Vector3(.0f, .0f, .0f);
     pointLight.ambient = LibMath::Vector4(0.3f, 0.3f, 0.3f, 1.0f);
     pointLight.diffuse = LibMath::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
     pointLight.specular = LibMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     pointLight.constant = 1.0f;
     pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.032f;
+    pointLight.quadratic = 0.f;
 }
 
 void Application::setupOpenGLStates()

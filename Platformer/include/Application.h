@@ -56,6 +56,9 @@ public:
     void setupLighting();
     void setupOpenGLStates();
     void renderFrame();
+    void updatePause();
+    void exitPause();
+    void restartGame();
     unsigned int loadTexture(const char* path);
 
 private:
@@ -63,6 +66,8 @@ private:
     GameManager gameManager;
     ImGuiIO* io;
     
+    bool escapePressedLastFrame = false;
+    bool isPaused = false;
 
     // Timing
     float lastFrame = 0.0f;

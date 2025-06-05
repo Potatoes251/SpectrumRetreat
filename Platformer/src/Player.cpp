@@ -52,10 +52,10 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
     flatRight.normalize();
 
     // Check for escape key to close the window
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
+    //if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    //{
+    //    glfwSetWindowShouldClose(window, true);
+    //}
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         inputVelocity += flatFront;
