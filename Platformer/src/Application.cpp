@@ -16,6 +16,7 @@ bool Application::init()
 
     // Initialize scene and game objects
     gameManager.init(windowWidth, windowHeight);
+    gameManager.setApplication(this);
 
     if (!initShaderAndResources())
         return false;
@@ -61,10 +62,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 2560;
-    windowHeight = 1440;
+    windowWidth = 1000;
+    windowHeight = 600;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
 
     if (!window) 
     {
@@ -135,13 +136,11 @@ void Application::run()
 
             // Update game logic
             gameManager.update(deltaTime);
-
-            std::cout << "unpaused" << std::endl;
         }
 
         else
         {
-            std::cout << "paused" << std::endl;
+
         }
 
         // Render
@@ -162,14 +161,13 @@ void Application::updateDeltaTime()
     if (!isPaused)
     {
         deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
     }
-
     else
     {
         deltaTime = 0.0f;
-        lastFrame = currentFrame;
     }
+
+    lastFrame = currentFrame;
 }
 
 void Application::updateSceneGraph()
@@ -185,6 +183,7 @@ void Application::updateSceneGraph()
             LibMath::Matrix4::createTranslation({ 0, 5, 0 }) *
             LibMath::Matrix4::createRotationY(angle) *
             LibMath::Matrix4::createScale({ 0.5f,0.5f,0.5f });
+
         bunnyNode->object->color = LibMath::Vector4(0, 0, 1, 1);
     }
 
@@ -214,65 +213,20 @@ void Application::drawUI()
 
     if (isPaused) // screen darkening in pause
     {
-        int menuSizeX = windowWidth * 0.25;
-        int menuSizeY = windowHeight * 0.4;
-        int halfWindowWidth = windowWidth / 2.0f;
-        int halfWindowHeight = windowHeight / 2.0f;
-
-        int buttonWidth = 350;
-        int buttonHeight = 100;
-        int buttonPosX = (menuSizeX - buttonWidth) / 2;
-
-        ImGui::GetBackgroundDrawList()->AddRectFilled(
-            ImVec2(0, 0),
-            ImVec2((float)windowWidth, (float)windowHeight),
-            IM_COL32(0, 0, 0, 150)
-        );
-
-        ImGui::SetNextWindowSize(ImVec2(menuSizeX, menuSizeY));
-        ImGui::SetNextWindowPos(ImVec2(halfWindowWidth - menuSizeX / 2, halfWindowHeight - menuSizeY / 2));
-
-        ImGui::Begin("Pause Menu", nullptr,
-            ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoTitleBar);
-
-        ImGui::PushFont(gameManager.uiManager.fontLarge);
-
-        ImGui::Spacing();
-        ImGui::Spacing();
-
-        const char* text = "Pause Menu";
-        ImVec2 textSize = ImGui::CalcTextSize(text);
-        float offsetX = (menuSizeX - textSize.x) * 0.5f;
-        ImGui::SetCursorPosX(offsetX);
-        ImGui::Text("%s", text);
-        ImGui::Dummy(ImVec2(0.0f, buttonPosX * 0.6));
-
-        ImGui::Indent(buttonPosX);
-
-        if (ImGui::Button("Resume", ImVec2(buttonWidth, buttonHeight))) // -1 = whole width
-        {
-            exitPause();
-        }
-
-        if (ImGui::Button("Restart", ImVec2(buttonWidth, buttonHeight)))
-        {
-            restartGame();
-        }
-
-        if (ImGui::Button("Quit", ImVec2(buttonWidth, buttonHeight)))
-        {
-            glfwSetWindowShouldClose(window, true);
-        }
-
-        ImGui::PopFont();
-        ImGui::Unindent(buttonPosX);
-
-        ImGui::End();
+        gameManager.quitButton -> isActive = true;
+        gameManager.restartButton -> isActive = true;
+        gameManager.resumeButton -> isActive = true;
+        gameManager.crosshairPtr -> isActive = false;
+        gameManager.phonePtr -> isActive = false;
     }
-
+    else
+    {
+        gameManager.quitButton -> isActive = false;
+        gameManager.restartButton -> isActive = false;
+        gameManager.resumeButton -> isActive = false;
+        gameManager.crosshairPtr -> isActive = true;
+        gameManager.phonePtr -> isActive = true;
+    }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -280,7 +234,7 @@ void Application::drawUI()
 
 void Application::renderFrame()
 {
-    gameManager.shader->Use(); // Bind shader program
+    gameManager.shader -> Use(); // Bind shader program
 
     setMatrices();              // Send model/view/projection matrices to shader
     setCameraUniforms();        // Send camera position to shader for lighting calculations

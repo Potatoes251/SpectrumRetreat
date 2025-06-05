@@ -7,6 +7,9 @@
 #include "Player.h"
 #include "Physics.h"
 #include "UIManager.h"
+#include "ButtonUI.h"
+
+class Application;
 
 class GameManager 
 {
@@ -27,6 +30,8 @@ public:
         const LibMath::Vector4& color,
         const LibMath::Matrix4& transformMatrix);
 
+    void setApplication(Application* app);
+
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
 
@@ -42,6 +47,10 @@ public:
     UIManager   uiManager;
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
+    ButtonUI* resumeButton = nullptr;
+    ButtonUI* restartButton = nullptr;
+    ButtonUI* quitButton = nullptr;
 private:
     ResourceManager     resourceManager;
+    Application* application = nullptr;
 };

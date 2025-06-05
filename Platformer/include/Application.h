@@ -21,24 +21,6 @@
 #include "CircleUI.h"
 #include "GameManager.h"
 
-//class Application
-//{
-//public:
-//    Application(int width, int height, const char* title)
-//        : windowWidth(width), windowHeight(height), windowTitle(title), window(nullptr), shaderProgram(nullptr) {
-//    }
-//
-//    ~Application()
-//    {
-//        if (shaderProgram) delete shaderProgram;
-//        if (window) glfwDestroyWindow(window);
-//        glfwTerminate();
-//
-//        ImGui_ImplOpenGL3_Shutdown();
-//        ImGui_ImplGlfw_Shutdown();
-//        ImGui::DestroyContext();
-//    }
-
 class Application
 {
 public:
@@ -60,6 +42,8 @@ public:
     void exitPause();
     void restartGame();
     unsigned int loadTexture(const char* path);
+
+    GLFWwindow* getWindow() const { return window; }
 
 private:
     GLFWwindow* window = nullptr;
