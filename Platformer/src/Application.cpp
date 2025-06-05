@@ -61,10 +61,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 2560;
-    windowHeight = 1440;
+    windowWidth = 1920;
+    windowHeight = 1200;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
 
     if (!window) 
     {
@@ -135,13 +135,6 @@ void Application::run()
 
             // Update game logic
             gameManager.update(deltaTime);
-
-            std::cout << "unpaused" << std::endl;
-        }
-
-        else
-        {
-            std::cout << "paused" << std::endl;
         }
 
         // Render
@@ -201,7 +194,7 @@ void Application::updateSceneGraph()
 
 void Application::clearScreen() 
 {
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.f, 1.f, 1.f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
