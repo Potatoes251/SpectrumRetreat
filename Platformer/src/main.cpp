@@ -5,21 +5,28 @@
 #include <stb_image.h>
 
 #include "Application.h"
+#include "memoryLeak.h"
 
 int main()
 {
-    Application app;
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 
-
-    if (!app.init())
     {
-        std::cerr << "Failed to initialize application\n";
-        return -1;
+        Application app;
+
+        if (!app.init())
+        {
+            std::cerr << "Failed to initialize application\n";
+            return -1;
+        }
+
+        app.run();
+
+        glfwTerminate();
     }
 
-    app.run();
-
-    glfwTerminate();
+    _CrtDumpMemoryLeaks();
 
     return 0;
 }

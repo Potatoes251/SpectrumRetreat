@@ -7,6 +7,8 @@
 class UIManager
 {
 public:
+    ~UIManager();
+
     void addElement(std::unique_ptr<UIElement> element);
     void drawAll() const;
 
