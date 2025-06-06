@@ -28,7 +28,9 @@ void GameManager::init(float windowWidth, float windowHeight)
     loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 
     initUI(windowWidth, windowHeight);
-    soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
+    soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
+
+    soundManager.setMusicVolume(0.6f);
 
     player.setGameManager(this);
 }
