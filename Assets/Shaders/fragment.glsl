@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_POINT_LIGHTS 10
+#define MAX_POINT_LIGHTS 8
 
 struct Light {
     vec3 ambient;
@@ -38,7 +38,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
 
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0); 
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1.0); 
 
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
@@ -64,6 +64,11 @@ void main()
     for (int i = 0; i < numPointLights; i++)
     {
         lighting += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+    }
+
+    if (numPointLights > 0)
+    {
+        lighting /= float(numPointLights);
     }
 
     vec4 baseColor = useTexture ? texture(texture1, TexCoords) : objectColor;
