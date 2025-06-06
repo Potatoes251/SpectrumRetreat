@@ -63,10 +63,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 1920;
-    windowHeight = 1080;
+    windowWidth = 2560;
+    windowHeight = 1600;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
     if (!window) 
     {
@@ -379,34 +379,34 @@ void Application::setupLighting()
     p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
     gameManager.scene.pointLights.push_back(p);
     PointLight p2;
-    p2.position = LibMath::Vector3(1.0f, 1.0f, -20.0f);
+    p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
     gameManager.scene.pointLights.push_back(p2);
     PointLight p3;
-    p3.position = LibMath::Vector3(1.0f, 1.0f, -40.0f);
+    p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
     gameManager.scene.pointLights.push_back(p3);
     PointLight p4;
-    p4.position = LibMath::Vector3(1.0f, 1.0f, -60.0f);
+    p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
     gameManager.scene.pointLights.push_back(p4);    
     PointLight p5;
-    p5.position = LibMath::Vector3(1.0f, 1.0f, 1.0f);
+    p5.position = LibMath::Vector3(1.0f, 5.0f, 1.0f);
     gameManager.scene.pointLights.push_back(p5);
     PointLight p6;
-    p6.position = LibMath::Vector3(1.0f, 1.0f, -80.0f);
+    p6.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
     gameManager.scene.pointLights.push_back(p6);
     PointLight p7;
-    p7.position = LibMath::Vector3(1.0f, 1.0f, -100.0f);
+    p7.position = LibMath::Vector3(1.0f, 5.0f, -100.0f);
     gameManager.scene.pointLights.push_back(p7);
     PointLight p8;
-    p8.position = LibMath::Vector3(1.0f, 1.0f, -120.0f);
+    p8.position = LibMath::Vector3(1.0f, 5.0f, -120.0f);
     gameManager.scene.pointLights.push_back(p8);
 
     // Initialize point light position and color properties (ambient, diffuse, specular)
     for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
     {
         //gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, -200.0f);
-        gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-        gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.9f, 0.7f, 0.7f, 1.0f);
-        gameManager.scene.pointLights[i].specular = LibMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+        gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+        gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
+        gameManager.scene.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
         gameManager.scene.pointLights[i].constant = 1.0f;
         gameManager.scene.pointLights[i].linear = 0.09f;
         gameManager.scene.pointLights[i].quadratic = 0.f;

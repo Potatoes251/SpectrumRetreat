@@ -129,7 +129,7 @@ void Player::checkForwardRaycast(GLFWwindow* window)
     LibMath::Line3D ray(rayOrigin, rayDirection);
     RaycastHit hit;
 
-    const float maxRange = 10.0f;
+    const float maxRange = 100.0f;
 
     if (raycast(ray, gameManager->scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
     {
