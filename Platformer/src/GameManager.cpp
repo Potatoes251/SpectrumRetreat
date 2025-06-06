@@ -28,7 +28,9 @@ void GameManager::init(float windowWidth, float windowHeight)
     loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 
     initUI(windowWidth, windowHeight);
-    soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
+    soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
+
+    soundManager.setMusicVolume(0.6f);
 
     player.setGameManager(this);
 }
@@ -64,9 +66,9 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
     uiManager.addElement(std::move(crosshair));
 
     // Get button dimensions
-    float buttonWidth = 200.0f;
-    float buttonHeight = 50.0f;
-    float spacing = 10.0f;
+    float buttonWidth = windowWidth * 0.25f;   // 25% of screen width
+    float buttonHeight = windowHeight * 0.07f; // 7% of screen height
+    float spacing = windowHeight * 0.015f;     // 1.5% of screen height
 
     // Compute base X and Y to center the buttons
     float baseX = (float)windowWidth / 2.0f - buttonWidth / 2.0f;
@@ -136,8 +138,8 @@ void	GameManager::addDoorObject(const std::string& name,
     scene.addNode(doorNode);
 }
 
-void GameManager::loadSceneFromFile(const std::string& path, 
-    const std::shared_ptr<Model>& defaultModel, 
+void GameManager::loadSceneFromFile(const std::string& path,
+    const std::shared_ptr<Model>& defaultModel,
     const std::shared_ptr<Model>& roundedModel)
 {
     std::ifstream file(path);
@@ -156,7 +158,7 @@ void GameManager::loadSceneFromFile(const std::string& path,
         float sx, sy, sz;
         bool isDoor;
 
-        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz >> isDoor;
+        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz;
 
         LibMath::Vector4 color(r, g, b, a);
         LibMath::Matrix4 transform = LibMath::Matrix4::createTranslation({ tx, ty, tz }) *
@@ -172,14 +174,7 @@ void GameManager::loadSceneFromFile(const std::string& path,
             model = defaultModel;
         }
 
-        if (isDoor)
-        {
-            addDoorObject(name, model, color, transform);
-        }
-        else
-        {
-            addGameObject(name, tag, model, color, transform);
-        }
+        addGameObject(name, tag, model, color, transform);
     }
 }
 

@@ -64,7 +64,7 @@ bool Application::createWindow()
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
     windowWidth = 1920;
-    windowHeight = 1200;
+    windowHeight = 1080;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
 
@@ -134,6 +134,7 @@ void Application::run()
             gameManager.player.Update(deltaTime);
             checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
             gameManager.player.move(deltaTime);
+
             // Update game logic
             gameManager.update(deltaTime);
         }
