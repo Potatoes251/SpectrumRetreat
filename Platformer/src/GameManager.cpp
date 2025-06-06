@@ -35,7 +35,8 @@ void GameManager::init(float windowWidth, float windowHeight)
         soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
 
         initUI(windowWidth, windowHeight);
-
+        soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
+        soundManager.setMusicVolume(0.6f);
         firstLoad = false;
     }
     else
@@ -86,9 +87,9 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
     uiManager.addElement(std::move(crosshair));
 
     // Get button dimensions
-    float buttonWidth = 200.0f;
-    float buttonHeight = 50.0f;
-    float spacing = 10.0f;
+    float buttonWidth = windowWidth * 0.25f;   // 25% of screen width
+    float buttonHeight = windowHeight * 0.07f; // 7% of screen height
+    float spacing = windowHeight * 0.015f;     // 1.5% of screen height
 
     // Compute base X and Y to center the buttons
     float baseX = (float)windowWidth / 2.0f - buttonWidth / 2.0f;
