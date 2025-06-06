@@ -75,6 +75,21 @@ void	GameManager::addGameObject(const std::string& name,
     scene.addNode(node);
 }
 
+void	GameManager::addDoorObject(const std::string& name,
+    const std::shared_ptr<Model>& model,
+    const LibMath::Vector4& color,
+    const LibMath::Matrix4& transform)
+{
+    auto doorGO = std::make_shared<GameObject>(name, model);
+    doorGO->isDoor = true;
+    doorGO->color = color;
+
+    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
+    doorNode->localTransform = transform;
+
+    scene.addNode(doorNode);
+}
+
 void GameManager::loadSceneFromFile(const std::string& path, 
     const std::shared_ptr<Model>& defaultModel, 
     const std::shared_ptr<Model>& roundedModel)
@@ -93,8 +108,9 @@ void GameManager::loadSceneFromFile(const std::string& path,
         float r, g, b, a;
         float tx, ty, tz;
         float sx, sy, sz;
+        bool isDoor;
 
-        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz;
+        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz >> isDoor;
 
         LibMath::Vector4 color(r, g, b, a);
         LibMath::Matrix4 transform = LibMath::Matrix4::createTranslation({ tx, ty, tz }) *
@@ -110,7 +126,14 @@ void GameManager::loadSceneFromFile(const std::string& path,
             model = defaultModel;
         }
 
-        addGameObject(name, tag, model, color, transform);
+        if (isDoor)
+        {
+            addDoorObject(name, model, color, transform);
+        }
+        else
+        {
+            addGameObject(name, tag, model, color, transform);
+        }
     }
 }
 

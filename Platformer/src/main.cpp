@@ -4,23 +4,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include <../../External/irrKlang/include/irrKlang.h>
-
 #include "Application.h"
 
 int main()
 {
     Application app;
-
-    irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
-
-    if (!engine) 
-    {
-        std::cerr << "Erreur : impossible d'initialiser IrrKlang." << std::endl;
-        return 1;
-    }
-
-    engine->play2D("../../Assets/Sounds/fragments of hope.ogg", true); // true = boucle
 
     if (!app.init())
     {
@@ -29,8 +17,7 @@ int main()
     }
 
     app.run();
-    engine->drop();
-
+    app.gameManager.engine->drop();
     glfwTerminate();
 
     return 0;
