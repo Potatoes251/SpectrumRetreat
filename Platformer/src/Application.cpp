@@ -246,6 +246,8 @@ void Application::exitPause()
 
 void Application::restartGame()
 {
+    gameManager.restart(windowWidth, windowHeight);
+    exitPause();
 }
 
 

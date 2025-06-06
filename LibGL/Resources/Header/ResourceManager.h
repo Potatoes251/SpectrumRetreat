@@ -75,4 +75,9 @@ public:
     {
         resources.erase(name);
     }
+
+    void clear()
+    {
+        resources.clear();
+    }
 };
