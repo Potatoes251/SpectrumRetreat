@@ -4,7 +4,7 @@ Player::Player()
     : collider(
         LibMath::Point3D(0.0f, 0.0f, 0.0f),
         LibMath::Point3D(0.0f, -1.5f, 0.0f),
-        0.2f
+        0.5f
     ),
     camera(
         LibMath::Vector3(0.0f, 2.0f, 5.0f),
@@ -30,6 +30,13 @@ void Player::Update(float deltaTime)
 void Player::move(float deltaTime)
 {
     camera.position += velocity * deltaTime;
+
+    position = camera.position;
+}
+
+void Player::move(LibMath::Vector3 correction)
+{
+    camera.position += correction;
 
     position = camera.position;
 }
