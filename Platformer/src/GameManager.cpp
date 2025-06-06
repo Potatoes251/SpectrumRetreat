@@ -5,7 +5,23 @@
 
 
 GameManager::GameManager() {}
-GameManager::~GameManager() {}
+GameManager::~GameManager()
+{
+    if (shader)
+    {
+        delete shader;
+        shader = nullptr;
+    }
+
+    resumeButton = nullptr;
+    restartButton = nullptr;
+    quitButton = nullptr;
+
+    phonePtr = nullptr;
+    crosshairPtr = nullptr;
+
+    scene.clear();
+}
 
 void GameManager::init(float windowWidth, float windowHeight)
 {
