@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "GameManager.h"
 
 Player::Player()
     : collider(
@@ -83,7 +84,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
         isJumping = true;
     }
     
-    checkForwardRaycast(window, scene, phone, crosshair);
+    checkForwardRaycast(window);
 
     Update(deltaTime);
 }
@@ -117,7 +118,7 @@ void Player::ProcessKeyboard(char direction, float deltaTime)
     }
 }
 
-void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
+void Player::checkForwardRaycast(GLFWwindow* window)
 {
     bool isEKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
 
@@ -130,16 +131,16 @@ void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& sce
 
     const float maxRange = 10.0f;
 
-    if (raycast(ray, scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
+    if (raycast(ray, gameManager->scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
     {
-        crosshair.setRadius(4);
+        gameManager->crosshairPtr->setRadius(4);
 
         LibMath::Vector4 objColor = hit.m_gameObject->color;
         LibMath::Vector4 phoneColor(
-            phone.getColor().Value.x,
-            phone.getColor().Value.y,
-            phone.getColor().Value.z,
-            phone.getColor().Value.w
+            gameManager->phonePtr->getColor().Value.x,
+            gameManager->phonePtr->getColor().Value.y,
+            gameManager->phonePtr->getColor().Value.z,
+            gameManager->phonePtr->getColor().Value.w
         );
 
         // Only swap colors on E press
@@ -149,7 +150,9 @@ void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& sce
             {
                 // Swap colors
                 hit.m_gameObject->color = phoneColor;
-                phone.setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+                gameManager->phonePtr->setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+
+                gameManager->soundManager.playSound("../../Assets/Sounds/changeColor.wav");
             }
         }
 
@@ -176,7 +179,7 @@ void Player::checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& sce
     }
     else
     {
-        crosshair.setRadius(2);
+        gameManager->crosshairPtr->setRadius(2);
     }
 
     EKeyAlreadyPressed = isEKeyPressed;

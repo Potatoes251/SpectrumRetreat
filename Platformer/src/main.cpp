@@ -10,6 +10,7 @@ int main()
 {
     Application app;
 
+
     if (!app.init())
     {
         std::cerr << "Failed to initialize application\n";
@@ -17,7 +18,7 @@ int main()
     }
 
     app.run();
-    app.gameManager.engine->drop();
+
     glfwTerminate();
 
     return 0;

@@ -7,6 +7,10 @@
 #include "Player.h"
 #include "Physics.h"
 #include "UIManager.h"
+#include "ButtonUI.h"
+#include "SoundManager.h"
+
+class Application;
 
 #include <../../External/irrKlang/include/irrKlang.h>
 
@@ -35,6 +39,8 @@ public:
         const LibMath::Vector4& color,
         const LibMath::Matrix4& transform);
 
+    void setApplication(Application* app);
+
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
 
@@ -50,8 +56,11 @@ public:
     UIManager   uiManager;
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
-    irrklang::ISoundEngine* engine;
-
+    ButtonUI* resumeButton = nullptr;
+    ButtonUI* restartButton = nullptr;
+    ButtonUI* quitButton = nullptr;
+    SoundManager soundManager;
 private:
     ResourceManager     resourceManager;
+    Application* application = nullptr;
 };

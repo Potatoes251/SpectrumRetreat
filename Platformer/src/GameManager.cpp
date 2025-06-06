@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "Application.h"
 #include "GLTexture.h"
 #include <GLFW/glfw3.h>
 
@@ -27,6 +28,9 @@ void GameManager::init(float windowWidth, float windowHeight)
     loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 
     initUI(windowWidth, windowHeight);
+    soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
+
+    player.setGameManager(this);
 }
 
 void	GameManager::initUI(float windowWidth, float windowHeight)
@@ -58,6 +62,48 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
 
     crosshairPtr = crosshair.get();
     uiManager.addElement(std::move(crosshair));
+
+    // Get button dimensions
+    float buttonWidth = 200.0f;
+    float buttonHeight = 50.0f;
+    float spacing = 10.0f;
+
+    // Compute base X and Y to center the buttons
+    float baseX = (float)windowWidth / 2.0f - buttonWidth / 2.0f;
+    float totalHeight = 3 * buttonHeight + 2 * spacing;
+    float baseY = (float)windowHeight / 2.0f - totalHeight / 2.0f;
+
+    resumeButton = new ButtonUI(
+        "Resume",
+        ImVec2(baseX, baseY),
+        ImVec2(buttonWidth, buttonHeight),
+        [this]() { application->exitPause(); }
+    );
+    resumeButton->isActive = false; // Start inactive
+    uiManager.addElement(std::unique_ptr<ButtonUI>(resumeButton));
+
+    restartButton = new ButtonUI(
+        "Restart",
+        ImVec2(baseX, baseY + buttonHeight + spacing),
+        ImVec2(buttonWidth, buttonHeight),
+        [this]() { application->exitPause(); }
+    );
+    restartButton->isActive = false;
+    uiManager.addElement(std::unique_ptr<ButtonUI>(restartButton));
+
+    quitButton = new ButtonUI(
+        "Quit",
+        ImVec2(baseX, baseY + 2 * (buttonHeight + spacing)),
+        ImVec2(buttonWidth, buttonHeight),
+        [this]() {
+            if (application)
+            {
+                glfwSetWindowShouldClose(application->getWindow(), true);
+            }
+        }
+    );
+    quitButton->isActive = false;
+    uiManager.addElement(std::unique_ptr<ButtonUI>(quitButton));
 }
 
 void	GameManager::addGameObject(const std::string& name,
@@ -135,6 +181,11 @@ void GameManager::loadSceneFromFile(const std::string& path,
             addGameObject(name, tag, model, color, transform);
         }
     }
+}
+
+void GameManager::setApplication(Application* app)
+{
+    application = app;
 }
 
 void    GameManager::update(float deltaTime) 

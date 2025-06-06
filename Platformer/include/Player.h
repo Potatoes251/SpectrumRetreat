@@ -12,6 +12,8 @@
 #include "SceneGraph.h"
 #include "CircleUI.h"
 
+class GameManager;
+
 class Player
 {
 private:
@@ -27,6 +29,7 @@ private:
 	const float jumpStrength = 7.5f;
 	float movementSpeed = 10.f;
 	bool EKeyAlreadyPressed = false;
+	GameManager* gameManager = nullptr;
 
 public:
 	LibMath::Vector3 velocity;
@@ -38,8 +41,8 @@ public:
 	void move(LibMath::Vector3 correction);
 	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 	void ProcessKeyboard(char direction, float deltaTime);
-	void checkForwardRaycast(GLFWwindow* window, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
-
+	void checkForwardRaycast(GLFWwindow* window);
+	void setGameManager(GameManager* gm) { gameManager = gm; }
 	CameraFPS& getCamera() { return camera; };
 	LibMath::Vector3& getPosition() { return position; };
 	LibMath::Capsule& getCapsule() { return collider; };
