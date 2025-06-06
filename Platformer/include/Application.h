@@ -43,11 +43,11 @@ public:
     void restartGame();
     unsigned int loadTexture(const char* path);
 
+    GameManager gameManager;
     GLFWwindow* getWindow() const { return window; }
 
 private:
     GLFWwindow* window = nullptr;
-    GameManager gameManager;
     ImGuiIO* io;
     
     bool escapePressedLastFrame = false;
@@ -61,9 +61,6 @@ private:
     float lastX = 0.0f, lastY = 0.0f;
 
     float sensitivity = 0.1f;
-
-    PointLight pointLight;
-    SpotLight spotLight;
 
     float m_rotationAngle = 0.0f;
 
@@ -83,6 +80,5 @@ private:
     void initGLContext();
     void processInput();
     void updateDeltaTime();
-    void updateSceneGraph();
     void clearScreen();
 };

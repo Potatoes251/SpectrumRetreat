@@ -3,15 +3,15 @@
 
 Player::Player()
     : collider(
-        LibMath::Point3D(0.0f, 0.0f, 0.0f), 
-        LibMath::Point3D(0.0f, -1.5f, 0.0f), 
-        0.2f                               
+        LibMath::Point3D(0.0f, 0.0f, 0.0f),
+        LibMath::Point3D(0.0f, -1.5f, 0.0f),
+        0.2f
     ),
     camera(
-        LibMath::Vector3(0.0f, 2.0f, 5.0f),  
-        LibMath::Vector3(0.0f, 1.0f, 0.0f),  
-        -90.0f,                              
-        0.0f                                 
+        LibMath::Vector3(0.0f, 2.0f, 5.0f),
+        LibMath::Vector3(0.0f, 1.0f, 0.0f),
+        -90.0f,
+        0.0f
     )
 {
     

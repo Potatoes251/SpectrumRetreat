@@ -1,5 +1,7 @@
 #version 330 core
 
+#define MAX_POINT_LIGHTS 10
+
 struct Light {
     vec3 ambient;
     vec3 diffuse;
@@ -27,7 +29,8 @@ uniform sampler2D texture1;
 uniform bool useTexture;
 
 uniform vec3 viewPos;
-uniform PointLight pointLight;
+uniform int numPointLights;
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -56,7 +59,12 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    vec3 lighting = CalcPointLight(pointLight, norm, FragPos, viewDir);
+    vec3 lighting = vec3(0.0);
+
+    for (int i = 0; i < numPointLights; i++)
+    {
+        lighting += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+    }
 
     vec4 baseColor = useTexture ? texture(texture1, TexCoords) : objectColor;
 

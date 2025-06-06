@@ -4,8 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include <../../External/irrKlang/include/irrKlang.h>
-
 #include "Application.h"
 
 int main()
