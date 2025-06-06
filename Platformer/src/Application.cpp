@@ -147,6 +147,8 @@ void Application::run()
 
             // Update game logic
             gameManager.update(deltaTime);
+
+            std::cout << gameManager.player.getPosition() << std::endl;
         }
 
         // Render
@@ -355,13 +357,21 @@ void Application::setLightUniforms()
     GLuint shaderID = gameManager.shader->GetID();
 
     // Pass all point light parameters to shader uniforms
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.position"), 1, &pointLight.position.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.ambient"), 1, &pointLight.ambient.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.diffuse"), 1, &pointLight.diffuse.m_x);
-    glUniform3fv(glGetUniformLocation(shaderID, "pointLight.base.specular"), 1, &pointLight.specular.m_x);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.constant"), pointLight.constant);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.linear"), pointLight.linear);
-    glUniform1f(glGetUniformLocation(shaderID, "pointLight.quadratic"), pointLight.quadratic);
+    for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
+    {
+        const PointLight& light = gameManager.scene.pointLights[i];
+        std::string baseName = "pointLights[" + std::to_string(i) + "]";
+
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()), 1, &light.ambient.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()), 1, &light.diffuse.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1, &light.specular.m_x);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".constant").c_str()), light.constant);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".linear").c_str()), light.linear);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".quadratic").c_str()), light.quadratic);
+    }
+
+    glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), gameManager.scene.pointLights.size());
 }
 
 void Application::setCameraUniforms()
@@ -423,14 +433,24 @@ bool Application::setupResources()
 
 void Application::setupLighting()
 {
+    PointLight p;
+    p.position = { 1.0f, 1.0f, 1.0f };
+    gameManager.scene.pointLights.push_back(p);
+    //PointLight p2;
+    //p2.position = { 1.0f, 5.0f, 20.0f };
+    //gameManager.scene.pointLights.push_back(p);
+
     // Initialize point light position and color properties (ambient, diffuse, specular)
-    pointLight.position = LibMath::Vector3(.0f, .0f, .0f);
-    pointLight.ambient = LibMath::Vector4(0.3f, 0.3f, 0.3f, 1.0f);
-    pointLight.diffuse = LibMath::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
-    pointLight.specular = LibMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    pointLight.constant = 1.0f;
-    pointLight.linear = 0.09f;
-    pointLight.quadratic = 0.f;
+    for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
+    {
+        gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, .0f);
+        gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.3f, 0.3f, 0.3f, 1.0f);
+        gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
+        gameManager.scene.pointLights[i].specular = LibMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+        gameManager.scene.pointLights[i].constant = 1.0f;
+        gameManager.scene.pointLights[i].linear = 0.09f;
+        gameManager.scene.pointLights[i].quadratic = 0.f;
+    }
 }
 
 void Application::setupOpenGLStates()

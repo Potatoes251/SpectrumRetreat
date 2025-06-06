@@ -16,7 +16,7 @@ public:
     SceneGraph()
     {
         root = std::make_shared<Node>();
-        pointLights = nullptr;
+        //pointLights = new std::vector();
     }
 
     void    update()

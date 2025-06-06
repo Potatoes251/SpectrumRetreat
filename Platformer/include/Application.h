@@ -60,9 +60,6 @@ private:
 
     float sensitivity = 0.1f;
 
-    PointLight pointLight;
-    SpotLight spotLight;
-
     float m_rotationAngle = 0.0f;
 
     unsigned int texture1;
