@@ -34,12 +34,10 @@ public:
         const std::shared_ptr<Model>& model,
         const LibMath::Vector4& color,
         const LibMath::Matrix4& transformMatrix);
-    void	addDoorObject(const std::string& name,
-        const std::shared_ptr<Model>& model,
-        const LibMath::Vector4& color,
-        const LibMath::Matrix4& transform);
 
-    void setApplication(Application* app);
+    void    setApplication(Application* app);
+
+    void    restart(float windowWidth, float windowHeight);
 
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
@@ -52,15 +50,16 @@ public:
 
     SceneGraph<GameObject>  scene;
     Player      player;
-    Shader*     shader;
+    Shader*     shader = nullptr;
     UIManager   uiManager;
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
-    ButtonUI* resumeButton = nullptr;
-    ButtonUI* restartButton = nullptr;
-    ButtonUI* quitButton = nullptr;
-    SoundManager soundManager;
+    ButtonUI*   resumeButton = nullptr;
+    ButtonUI*   restartButton = nullptr;
+    ButtonUI*   quitButton = nullptr;
+    SoundManager    soundManager;
 private:
     ResourceManager     resourceManager;
-    Application* application = nullptr;
+    Application*    application = nullptr;
+    bool firstLoad = true;
 };
