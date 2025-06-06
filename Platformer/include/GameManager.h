@@ -18,7 +18,9 @@ public:
 
     // Initialize resources and scene
     void    init(float windowWidth, float windowHeight);
-
+    void    loadSceneFromFile(const std::string& path, 
+        const std::shared_ptr<Model>& defaultModel, 
+        const std::shared_ptr<Model>& roundedModel);
     // initUI
     void initUI(float windowWidth, float windowHeight);
 
@@ -28,6 +30,10 @@ public:
         const std::shared_ptr<Model>& model,
         const LibMath::Vector4& color,
         const LibMath::Matrix4& transformMatrix);
+    void	addDoorObject(const std::string& name,
+        const std::shared_ptr<Model>& model,
+        const LibMath::Vector4& color,
+        const LibMath::Matrix4& transform);
 
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);

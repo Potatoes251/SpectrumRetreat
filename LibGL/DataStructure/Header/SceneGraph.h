@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneNode.h"
+#include "Light.h"
 
 template<typename T>
 class SceneGraph
@@ -10,31 +11,33 @@ public:
     using Ptr = typename Node::Ptr;
 
     Ptr root;
+    std::vector<PointLight> pointLights;
 
     SceneGraph()
     {
         root = std::make_shared<Node>();
+        pointLights = nullptr;
     }
 
-    void update()
+    void    update()
     {
         if (root)
             root->updateTransform();
     }
 
-    void draw(Shader* shader)
+    void    draw(Shader* shader)
     {
         if (root)
             root->draw(shader);
     }
 
-    void addNode(const Ptr& node, const Ptr& parent = nullptr)
+    void    addNode(const Ptr& node, const Ptr& parent = nullptr)
     {
         Ptr target = parent ? parent : root;
         target->addChild(node);
     }
 
-    T* findObjectByName(const std::string& name) 
+    T*      findObjectByName(const std::string& name) 
     {
         if (!root) return nullptr;
 
@@ -42,13 +45,13 @@ public:
     }
 
 
-    Ptr findNodeByName(const std::string& name) {
+    Ptr     findNodeByName(const std::string& name) {
         if (!root) return nullptr;
         return findNodeRec(root, name);
     }
 
 private:
-    T* findRec(const typename SceneNode<T>::Ptr& node, const std::string& name) 
+    T*      findRec(const typename SceneNode<T>::Ptr& node, const std::string& name) 
     {
         if (node->object && node->object->getName() == name)
             return node->object.get();
@@ -62,7 +65,7 @@ private:
         return nullptr;
     }
 
-    Ptr findNodeRec(const Ptr& node, const std::string& name) {
+    Ptr     findNodeRec(const Ptr& node, const std::string& name) {
         if (node->object && node->object->getName() == name)
             return node;
         for (auto& child : node->children) {
@@ -74,7 +77,7 @@ private:
 };
 
 template<typename T, typename Func>
-void traverseSceneGraph(std::shared_ptr<SceneNode<T>>& node, Func&& func)
+void    traverseSceneGraph(std::shared_ptr<SceneNode<T>>& node, Func&& func)
 {
     if (!node) return;
 

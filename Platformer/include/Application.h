@@ -81,6 +81,5 @@ private:
     void initGLContext();
     void processInput();
     void updateDeltaTime();
-    void updateSceneGraph();
     void clearScreen();
 };

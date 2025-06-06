@@ -158,7 +158,6 @@ void Application::run()
     }
 
     glfwTerminate();
-    
 }
 
 void Application::updateDeltaTime() 
@@ -178,20 +177,9 @@ void Application::updateDeltaTime()
     }
 }
 
-void Application::updateSceneGraph()
-{
-    updateDeltaTime();
-
-    gameManager.scene.findNodeByName("Cube1")->localTransform =
-        LibMath::Matrix4::createTranslation({ 0, 10, 0 });
-
-    gameManager.scene.root->updateTransform();
-}
-
-
 void Application::clearScreen() 
 {
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.f, 1.f, 1.f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

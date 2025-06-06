@@ -8,7 +8,6 @@ GameManager::~GameManager() {}
 
 void GameManager::init(float windowWidth, float windowHeight)
 {
-    
     // Load shader
     shader = new Shader();
     shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
@@ -20,77 +19,12 @@ void GameManager::init(float windowWidth, float windowHeight)
 
     auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
 
-    // Add game objects
+    auto roundCubeModel = resourceManager.Create<Model>("../../Assets/Meshes/rounded_cube.obj");
+    roundCubeModel->uploadToGPU();
 
-    // cube that can be used to change phone color
-    addGameObject("Cube", "interactable", cubeModelShared,
-        { 0.86f, 0.08f, 0.24f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 2, 0, 0 }) *
-        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
+    auto roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
 
-    addGameObject("Cube2", "interactable", cubeModelShared,
-        { 0.71f, 0.49f, 0.86f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0, 0, -20 }) *
-        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
-
-    addGameObject("Cube3", "interactable", cubeModelShared,
-        { 0.71f, 0.49f, 0.86f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0, 6, -40 }) *
-        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
-
-    addGameObject("Cube4", "interactable", cubeModelShared,
-        { 1.0f, 0.85f, 0.73f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0, 6, -85 }) *
-        LibMath::Matrix4::createScale({ 0.5f, 0.5f, 0.5f }));
-
-    // add the floor & walls
-    addGameObject("Floor", "", cubeModelShared,
-        { 1.0f, 0.4f, 0.7f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0, -1.5f, 0 }) *
-        LibMath::Matrix4::createScale({ 5.0f, 1.0f, 50.0f }));
-
-    addGameObject("Wall", "", cubeModelShared,
-        { 1.0f, 1.f, 1.f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0 , 0, 5 }) *
-        LibMath::Matrix4::createScale({ 50.0f, 10.0f, 10.0f }));
-
-    addGameObject("Wall2", "", cubeModelShared,
-        { 1.0f, 1.f, 1.f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0 , 0, -5 }) *
-        LibMath::Matrix4::createScale({ 50.0f, 2.5f, 10.0f }));
-
-    addGameObject("Wall3", "", cubeModelShared,
-        { 1.0f, 1.f, 1.f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 5 , 0, 0 }) *
-        LibMath::Matrix4::createScale({ 1.0f, 10.0f, 50.0f }));
-
-    addGameObject("Wall4", "", cubeModelShared,
-        { 1.0f, 1.f, 1.f, 1.0f },
-        LibMath::Matrix4::createTranslation({ -5 , 0, 0 }) *
-        LibMath::Matrix4::createScale({ 1.0f, 10.0f, 50.0f }));
-
-    addGameObject("Wall5", "", cubeModelShared,
-        { 0.71f, 0.49f, 0.86f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0 , 0, -2.5f }) *
-        LibMath::Matrix4::createScale({ 5.0f, 2.5f, 10.f }));
-
-    addGameObject("Ceiling", "", cubeModelShared,
-        { 0.68f, 0.85f, 0.90f, 1.0f },
-        LibMath::Matrix4::createTranslation({ 0, 10, 0 }) *
-        LibMath::Matrix4::createScale({ 5.0f, 1.0f, 50.0f }));
-
-
-    // Create Door
-    auto doorGO = std::make_shared<GameObject>("Door", cubeModelShared);
-    doorGO->isDoor = true;
-    doorGO->color = LibMath::Vector4(0.86f, 0.08f, 0.24f, 1.0f);
-
-    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
-    doorNode->localTransform = LibMath::Matrix4::createTranslation({ 0, 0, -10 }) *
-                                LibMath::Matrix4::createScale({ 5.f, 2.5f, .5f });
-
-    scene.addNode(doorNode);
-
+    loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 
     initUI(windowWidth, windowHeight);
 }
@@ -139,6 +73,68 @@ void	GameManager::addGameObject(const std::string& name,
     node->localTransform = transformMatrix;
 
     scene.addNode(node);
+}
+
+void	GameManager::addDoorObject(const std::string& name,
+    const std::shared_ptr<Model>& model,
+    const LibMath::Vector4& color,
+    const LibMath::Matrix4& transform)
+{
+    auto doorGO = std::make_shared<GameObject>(name, model);
+    doorGO->isDoor = true;
+    doorGO->color = color;
+
+    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
+    doorNode->localTransform = transform;
+
+    scene.addNode(doorNode);
+}
+
+void GameManager::loadSceneFromFile(const std::string& path, 
+    const std::shared_ptr<Model>& defaultModel, 
+    const std::shared_ptr<Model>& roundedModel)
+{
+    std::ifstream file(path);
+    if (!file.is_open()) return;
+
+    std::string line;
+    while (std::getline(file, line))
+    {
+        if (line.empty() || line[0] == '#') continue;
+
+        std::istringstream iss(line);
+
+        std::string name, tag;
+        float r, g, b, a;
+        float tx, ty, tz;
+        float sx, sy, sz;
+        bool isDoor;
+
+        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz >> isDoor;
+
+        LibMath::Vector4 color(r, g, b, a);
+        LibMath::Matrix4 transform = LibMath::Matrix4::createTranslation({ tx, ty, tz }) *
+            LibMath::Matrix4::createScale({ sx, sy, sz });
+
+        std::shared_ptr<Model> model;
+        if (tag == "interactable")
+        {
+            model = roundedModel;
+        }
+        else
+        {
+            model = defaultModel;
+        }
+
+        if (isDoor)
+        {
+            addDoorObject(name, model, color, transform);
+        }
+        else
+        {
+            addGameObject(name, tag, model, color, transform);
+        }
+    }
 }
 
 void    GameManager::update(float deltaTime) 
