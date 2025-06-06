@@ -44,6 +44,8 @@ public:
     unsigned int loadTexture(const char* path);
 
     GameManager gameManager;
+    GLFWwindow* getWindow() const { return window; }
+
 private:
     GLFWwindow* window = nullptr;
     ImGuiIO* io;

@@ -304,7 +304,8 @@ bool	LibMath::collisionCapsulePrism(Capsule capsule, Prism prism)	// AABB collis
 	return distSq <= capsule.getRadius() * capsule.getRadius();
 }
 
-bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& outPrismNormal)	// AABB collision only
+bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& outPrismNormal, float& outPenetrationDepth)	
+// AABB collision only
 {
 	Point3D halfSize(prism.extentX(), prism.extentY(), prism.extentZ());
 	
@@ -340,7 +341,7 @@ bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& ou
 	if (distSq <= capsule.getRadius() * capsule.getRadius())
 	{
 		float dist = std::sqrt(distSq);
-		//std::cout << dist <<std::endl;
+
 		if (dist > 1e-6f)
 		{
 			outPrismNormal = delta;
@@ -351,10 +352,13 @@ bool	LibMath::intersectionCapsulePrism(Capsule capsule, Prism prism, Vector3& ou
 			outPrismNormal = LibMath::Vector3(0, 1, 0);
 		}
 
+		outPenetrationDepth = capsule.getRadius() - dist;
+
 		return true;
 	}
 
 	// No collision
 	outPrismNormal = LibMath::Vector3(0, 0, 0);
+	outPenetrationDepth = 0.0f;
 	return false;
 }

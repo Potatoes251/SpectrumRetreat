@@ -9,6 +9,7 @@ void UIManager::drawAll() const
 {
     for (const auto& element : m_elements)
     {
-        element->draw();
+        if (element->isActive)
+            element->draw();
     }
 }
