@@ -1,16 +1,21 @@
 #include "Physics.h"
 
 
-void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, ImColor color)
+void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, ImColor color, bool& restart)
 {
     LibMath::Vector3 vecColor(color.Value.x, color.Value.y, color.Value.z);
+    restart = false;
     for (auto& child : gameObjectList.root->children)
     {
-        checkWall(player, child, vecColor);
+        checkWall(player, child, vecColor, restart);
+        if (restart)
+        {
+            return;
+        }
     }
 }
 
-void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color)
+void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color, bool& restart)
 {
     LibMath::Vector3 objectColor(gameObject->object->color.m_x, gameObject->object->color.m_y, gameObject->object->color.m_z);
     bool doorOpened = false;
@@ -40,6 +45,11 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal, penetrationDepth))    // look for collision
     {
+        if (gameObject->object->tag == "endzone")
+        {
+            restart = true;
+            return;
+        }
         if (!doorOpened)  // dont apply collision for door of same color
         {
             player.move(correction);
@@ -60,7 +70,7 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
 
     for (auto& child : gameObject->children)    // go through its children
     {
-        checkWall(player, child, color);
+        checkWall(player, child, color, restart);
     }
 
 }

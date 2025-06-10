@@ -8,6 +8,7 @@ UIManager::~UIManager()
     fontMedium = nullptr;
     fontLarge = nullptr;
 
+
 }
 
 void UIManager::addElement(std::unique_ptr<UIElement> element)
