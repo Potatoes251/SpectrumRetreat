@@ -15,7 +15,7 @@ Shader::~Shader()
     if (m_programID) glDeleteProgram(m_programID);
 }
 
-std::string Shader::LoadFile(const std::filesystem::path& filename) 
+std::string     Shader::LoadFile(const std::filesystem::path& filename) 
 {
     std::ifstream file(filename);
 
@@ -32,7 +32,7 @@ std::string Shader::LoadFile(const std::filesystem::path& filename)
     return buffer.str();
 }
 
-bool Shader::CompileShader(GLuint shaderID, const std::string& source) 
+bool    Shader::CompileShader(GLuint shaderID, const std::string& source) 
 {
     const char* src = source.c_str();
 
@@ -55,7 +55,7 @@ bool Shader::CompileShader(GLuint shaderID, const std::string& source)
     return true;
 }
 
-bool Shader::SetVertexShader(const std::filesystem::path& filename) 
+bool    Shader::SetVertexShader(const std::filesystem::path& filename) 
 {
     std::string source = LoadFile(filename);
 
@@ -70,7 +70,7 @@ bool Shader::SetVertexShader(const std::filesystem::path& filename)
     return true;
 }
 
-bool Shader::SetFragmentShader(const std::filesystem::path& filename) 
+bool    Shader::SetFragmentShader(const std::filesystem::path& filename) 
 {
     std::string source = LoadFile(filename);
 
@@ -85,7 +85,7 @@ bool Shader::SetFragmentShader(const std::filesystem::path& filename)
     return true;
 }
 
-bool Shader::Link() 
+bool    Shader::Link() 
 {
     glLinkProgram(m_programID);
 
@@ -117,17 +117,17 @@ bool Shader::Link()
     return true;
 }
 
-void Shader::setMat4(const std::string& name, LibMath::Matrix4& mat)
+void    Shader::setMat4(const std::string& name, LibMath::Matrix4& mat)
 {
     glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1, GL_FALSE, &mat.m_values[0][0]);
 }
 
-void Shader::Use() const 
+void    Shader::Use() const 
 {
     glUseProgram(m_programID);
 }
 
-void Shader::setVec4(const std::string& name, const LibMath::Vector4& value) const
+void    Shader::setVec4(const std::string& name, const LibMath::Vector4& value) const
 {
     glUniform4fv(glGetUniformLocation(m_programID, name.c_str()), 1, (float*)&value);
 }

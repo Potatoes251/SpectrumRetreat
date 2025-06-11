@@ -1,7 +1,7 @@
 #include "ButtonUI.h"
 #include <imgui.h>
 
-void ButtonUI::draw() const
+void    ButtonUI::draw() const
 {
     ImGui::SetNextWindowPos(m_position);
     ImGui::SetNextWindowSize(m_size);

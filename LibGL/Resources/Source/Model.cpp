@@ -20,7 +20,7 @@ bool Model::load(const std::string& filename)
     return true;
 }
 
-void Model::reset()
+void    Model::reset()
 {
     positions.clear();
     normals.clear();
@@ -28,7 +28,7 @@ void Model::reset()
     tempVertices.clear();
 }
 
-void Model::processLine(const std::string& line)
+void    Model::processLine(const std::string& line)
 {
     std::istringstream iss(line);
     std::string prefix;
@@ -39,31 +39,31 @@ void Model::processLine(const std::string& line)
     else if (prefix == "f")  parseFace(iss);
 }
 
-void Model::parseVertex(std::istringstream& iss)
+void    Model::parseVertex(std::istringstream& iss)
 {
     LibMath::Vector3 pos; iss >> pos.m_x >> pos.m_y >> pos.m_z;
     positions.push_back(pos);
 }
 
-void Model::parseUV(std::istringstream& iss)
+void    Model::parseUV(std::istringstream& iss)
 {
     LibMath::Vector2 uv; iss >> uv.m_x >> uv.m_y;
     uvs.push_back(uv);
 }
 
-void Model::parseNormal(std::istringstream& iss)
+void    Model::parseNormal(std::istringstream& iss)
 {
     LibMath::Vector3 norm; iss >> norm.m_x >> norm.m_y >> norm.m_z;
     normals.push_back(norm);
 }
 
-void Model::parseFace(std::istringstream& iss)
+void    Model::parseFace(std::istringstream& iss)
 {
     std::string token;
     while (iss >> token) parseFaceVertex(token);
 }
 
-void Model::parseFaceVertex(const std::string& token)
+void    Model::parseFaceVertex(const std::string& token)
 {
     int posIdx = 0, uvIdx = 0, normIdx = 0;
 
@@ -117,7 +117,7 @@ void Model::parseFaceVertex(const std::string& token)
     tempVertices.push_back(v);
 }
 
-void Model::uploadToGPU()
+void    Model::uploadToGPU()
 {
     // 1) Create and fill VBO
     m_vertexBuffer.init(GL_ARRAY_BUFFER);
@@ -143,20 +143,20 @@ void Model::uploadToGPU()
     m_vertexArray.unbind();
 }
 
-void Model::unloadFromGPU()
+void    Model::unloadFromGPU()
 {
     m_vertexBuffer.destroy();   // Calls glDeleteBuffers internally
     m_vertexArray.destroy();    // Calls glDeleteVertexArrays internally
 }
 
-void Model::draw() const
+void    Model::draw() const
 {
     m_vertexArray.bind();
     glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());
     m_vertexArray.unbind();
 }
 
-void Model::draw(LibMath::Matrix4& transform, Shader* shader) const
+void    Model::draw(LibMath::Matrix4& transform, Shader* shader) const
 {
     shader->setMat4("model", transform);
 

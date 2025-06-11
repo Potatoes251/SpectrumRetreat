@@ -11,11 +11,12 @@ public:
         : m_label(label), m_position(position), m_size(size), m_onClick(onClick) {
     }
 
-    void draw() const override;
+    void    draw() const override;
 
 private:
-    std::string m_label;
-    ImVec2 m_position;
-    ImVec2 m_size;
-    std::function<void()> m_onClick;
+    std::string     m_label;
+    ImVec2          m_position;
+    ImVec2          m_size;
+
+    std::function<void()>   m_onClick;
 };

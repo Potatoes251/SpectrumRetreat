@@ -9,15 +9,15 @@ class UIManager
 public:
     ~UIManager();
 
-    void addElement(std::unique_ptr<UIElement> element);
-    void drawAll() const;
+    void    addElement(std::unique_ptr<UIElement> element);
+    void    drawAll() const;
 
-    ImFont* fontSmall;
-    ImFont* fontMedium;
-    ImFont* fontLarge;
+    ImFont*     fontSmall;
+    ImFont*     fontMedium;
+    ImFont*     fontLarge;
 
 private:
-    std::vector<std::unique_ptr<UIElement>> m_elements;
+    std::vector<std::unique_ptr<UIElement>>     m_elements;
 };
 
 /* EXAMPLE OF USE IN THE CODE

@@ -5,16 +5,17 @@
 
 struct Light
 {
-    LibMath::Vector4 ambient;
-    LibMath::Vector4 diffuse;
-    LibMath::Vector4 specular;
+    LibMath::Vector4    ambient;
+    LibMath::Vector4    diffuse;
+    LibMath::Vector4    specular;
 };
 
 
 struct DirectionalLight 
 {
-    Light base;
-    LibMath::Vector3 direction;
+    Light   base;
+
+    LibMath::Vector3    direction;
 };
 
 
@@ -22,22 +23,22 @@ struct PointLight : Light
 {
     LibMath::Vector3 position;
 
-    float constant;
-    float linear;
-    float quadratic;
+    float   constant;
+    float   linear;
+    float   quadratic;
 };
 
 
 struct SpotLight : Light 
 {
-    LibMath::Vector3 position;
-    LibMath::Vector3 direction;
+    LibMath::Vector3    position;
+    LibMath::Vector3    direction;
 
-    float cutOff;
-    float outerCutOff;
-    float constant;
-    float linear;
-    float quadratic;
+    float   cutOff;
+    float   outerCutOff;
+    float   constant;
+    float   linear;
+    float   quadratic;
 };
 
 LibMath::Vector3 getRGB(const LibMath::Vector4& color);

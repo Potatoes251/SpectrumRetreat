@@ -4,7 +4,7 @@
 
 struct Vertex 
 {
-    LibMath::Vector3 Position;
-    LibMath::Vector3 Normal;
-    LibMath::Vector2 TextureUV;
+    LibMath::Vector3    Position;
+    LibMath::Vector3    Normal;
+    LibMath::Vector2    TextureUV;
 };

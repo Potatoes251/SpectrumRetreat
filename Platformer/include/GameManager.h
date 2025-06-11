@@ -50,19 +50,27 @@ public:
     void    processMouseMovement(double xpos, double ypos);
 
     SceneGraph<GameObject>  scene;
+
     Player      player;
+
     Shader*     shader = nullptr;
+
     UIManager   uiManager;
+
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
+
     ButtonUI*   resumeButton = nullptr;
     ButtonUI*   restartButton = nullptr;
     ButtonUI*   quitButton = nullptr;
+
     SoundManager    soundManager;
     float           totalTime = 0.0f;
 
 private:
     ResourceManager     resourceManager;
+
     Application*    application = nullptr;
-    bool firstLoad = true;
+
+    bool    firstLoad = true;
 };

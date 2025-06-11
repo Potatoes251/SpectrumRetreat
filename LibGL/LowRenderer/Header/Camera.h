@@ -6,17 +6,17 @@
 class CameraFPS
 {
 public:
-    LibMath::Vector3 position;
-    LibMath::Vector3 front;
-    LibMath::Vector3 up;
-    LibMath::Vector3 right;
-    LibMath::Vector3 worldUp;
+    LibMath::Vector3    position;
+    LibMath::Vector3    front;
+    LibMath::Vector3    up;
+    LibMath::Vector3    right;
+    LibMath::Vector3    worldUp;
 
-    LibMath::Degree yaw;
-    LibMath::Degree pitch;
+    LibMath::Degree     yaw;
+    LibMath::Degree     pitch;
+    LibMath::Degree     fov;
 
-    float mouseSensitivity;
-    LibMath::Degree fov;
+    float   mouseSensitivity;
 
     CameraFPS(
         LibMath::Vector3 startPosition,
@@ -25,12 +25,12 @@ public:
         float startPitch = 0.0f
     );
 
-    LibMath::Matrix4 GetViewMatrix();
-    LibMath::Matrix4 GetProjectionMatrix(float aspectRatio);
+    LibMath::Matrix4    GetViewMatrix();
+    LibMath::Matrix4    GetProjectionMatrix(float aspectRatio);
 
-    void ProcessMouseMovement(float xoffset, float yoffset);
-    float GetSensitivity();
+    void    ProcessMouseMovement(float xoffset, float yoffset);
+    float   GetSensitivity();
 
 private:
-    void UpdateCameraVectors();
+    void    UpdateCameraVectors();
 };

@@ -10,17 +10,19 @@ template<typename T>
 class SceneNode
 {
 public:
+    bool    dirty = true;
+    
+    Shader*     shader = nullptr;
+
+    SceneNode*  parent = nullptr;
+
     using Ptr = std::shared_ptr<SceneNode<T>>;
+    std::shared_ptr<T>  object;
 
-    std::shared_ptr<T> object;
-    Shader* shader = nullptr;
+    LibMath::Matrix4    localTransform = LibMath::Matrix4::getIdentity();
+    LibMath::Matrix4    worldTransform = LibMath::Matrix4::getIdentity();
 
-    LibMath::Matrix4 localTransform = LibMath::Matrix4::getIdentity();
-    LibMath::Matrix4 worldTransform = LibMath::Matrix4::getIdentity();
-    bool dirty = true;
-
-    SceneNode* parent = nullptr;
-    std::vector<Ptr> children;
+    std::vector<Ptr>    children;
 
     SceneNode() = default;
 
@@ -32,31 +34,31 @@ public:
     {
     }
 
-    void setParent(SceneNode<T>* newParent)
+    void    setParent(SceneNode<T>* newParent)
     {
         parent = newParent;
         markDirty();
     }
 
-    void addChild(const Ptr& child)
+    void    addChild(const Ptr& child)
     {
         child->setParent(this);
         children.push_back(child);
     }
 
-    void removeChild(const Ptr& child)
+    void    removeChild(const Ptr& child)
     {
         children.erase(std::remove(children.begin(), children.end(), child), children.end());
     }
 
-    void removeAllChildren()
+    void    removeAllChildren()
     {
         children.clear();
     }
 
     // Mark this node and descendants as needing world transform recomputation
 
-    void markDirty()
+    void    markDirty()
     {
         dirty = true;
         for (auto& c : children)
@@ -67,7 +69,7 @@ public:
     // Update the logic of the object and children
     // param deltaTime elapsed time since last frame
 
-    void update(float deltaTime)
+    void    update(float deltaTime)
     {
         if (object)
             object->update(deltaTime);
@@ -79,7 +81,7 @@ public:
     
     // Recompute worldTransform if dirty or parent changed
     
-    void updateTransform()
+    void    updateTransform()
     {
         if (dirty || (parent && parent->dirty))
         {
@@ -95,7 +97,7 @@ public:
     // Draw this node's object and its children using overrideShader if this node has none
     // param overrideShader fallback shader if node has none
     
-    void draw(Shader* overrideShader)
+    void    draw(Shader* overrideShader)
     {
         Shader* useShader = shader ? shader : overrideShader;
 

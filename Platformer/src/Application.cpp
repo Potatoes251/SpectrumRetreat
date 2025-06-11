@@ -13,9 +13,9 @@ Application::~Application()
 
     // Optional: Clear font atlas data
     ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
-    fontAtlas->Clear();
-    fontAtlas->ClearInputData();
-    fontAtlas->ClearTexData();
+    fontAtlas -> Clear();
+    fontAtlas -> ClearInputData();
+    fontAtlas -> ClearTexData();
 
     // 2. Destroy the ImGui context
     ImGui::DestroyContext();
@@ -24,7 +24,7 @@ Application::~Application()
     glfwTerminate();
 }
 
-bool Application::init()
+bool    Application::init()
 {
     if (!initGLFW()) return false;
     if (!createWindow()) return false;
@@ -46,7 +46,7 @@ bool Application::init()
     return true;
 }
 
-bool Application::initGLFW() 
+bool    Application::initGLFW() 
 {
     if (!glfwInit()) 
     {
@@ -63,7 +63,7 @@ bool Application::initGLFW()
     return true;
 }
 
-void Application::initImGuiContext()
+void    Application::initImGuiContext()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -73,12 +73,12 @@ void Application::initImGuiContext()
     ImGui_ImplOpenGL3_Init("#version 330");
 
 
-    gameManager.uiManager.fontSmall = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
-    gameManager.uiManager.fontMedium = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
-    gameManager.uiManager.fontLarge = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
+    gameManager.uiManager.fontSmall = io -> Fonts -> AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
+    gameManager.uiManager.fontMedium = io -> Fonts -> AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
+    gameManager.uiManager.fontLarge = io -> Fonts -> AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
 }
 
-bool Application::createWindow() 
+bool    Application::createWindow() 
 {
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
@@ -100,7 +100,7 @@ bool Application::createWindow()
     return true;
 }
 
-bool Application::initGLAD() 
+bool    Application::initGLAD() 
 {
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
     {
@@ -112,7 +112,7 @@ bool Application::initGLAD()
     return true;
 }
 
-void Application::initGLContext() 
+void    Application::initGLContext() 
 {
     //Set callbacks
     glfwMakeContextCurrent(window);
@@ -129,7 +129,7 @@ void Application::initGLContext()
     glfwSetCursorPosCallback(window, mouse_callback);
 }
 
-bool Application::initShaderAndResources()
+bool    Application::initShaderAndResources()
 {
     if (!setupResources()) // Load shaders, model, textures, set lighting and OpenGL states
     {
@@ -141,7 +141,7 @@ bool Application::initShaderAndResources()
     return true;
 }
 
-void Application::run() 
+void    Application::run() 
 {
     while (!glfwWindowShouldClose(window)) 
     {
@@ -152,8 +152,8 @@ void Application::run()
         {
             bool restart;
             gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
-            gameManager.player.Update(deltaTime);
-            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor(), restart);
+            gameManager.player.update(deltaTime);
+            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr -> getColor(), restart);
             gameManager.player.move(deltaTime);
 
             // Update game logic
@@ -175,7 +175,7 @@ void Application::run()
     glfwTerminate();
 }
 
-void Application::updateDeltaTime() 
+void    Application::updateDeltaTime() 
 {
     float currentFrame = static_cast<float>(glfwGetTime());
 
@@ -193,13 +193,13 @@ void Application::updateDeltaTime()
     gameManager.totalTime += deltaTime;
 }
 
-void Application::clearScreen() 
+void    Application::clearScreen() 
 {
     glClearColor(0.35f, 0.32f, 0.42f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Application::drawUI()
+void    Application::drawUI()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -227,7 +227,7 @@ void Application::drawUI()
 
 }
 
-void Application::renderFrame()
+void    Application::renderFrame()
 {
     gameManager.shader -> Use(); // Bind shader program
 
@@ -243,7 +243,7 @@ void Application::renderFrame()
     drawUI();
 }
 
-void Application::updatePause()
+void    Application::updatePause()
 {
     bool escapePressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 
@@ -265,21 +265,26 @@ void Application::updatePause()
     }
 }
 
-void Application::exitPause()
+void    Application::exitPause()
 {
     isPaused = false;
     glfwSetCursorPos(window, windowWidth / 2.0, windowHeight / 2.0);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Application::restartGame()
+void    Application::restartGame()
 {
     gameManager.restart(windowWidth, windowHeight);
     exitPause();
 }
 
+void Application::quitGame()
+{
+    glfwSetWindowShouldClose(getWindow(), true);
+}
 
-void Application::setMatrices()
+
+void    Application::setMatrices()
 {
     // Calculate the view, projection, and model matrices
     LibMath::Matrix4 view = gameManager.player.getCamera().GetViewMatrix();
@@ -287,45 +292,45 @@ void Application::setMatrices()
     LibMath::Matrix4 model = LibMath::Matrix4::getIdentity(); // Identity for root
     
     // Upload matrices to shader uniforms
-    gameManager.shader->setMat4("view", view);
-    gameManager.shader->setMat4("projection", projection);
-    gameManager.shader->setMat4("model", model);
+    gameManager.shader -> setMat4("view", view);
+    gameManager.shader -> setMat4("projection", projection);
+    gameManager.shader -> setMat4("model", model);
 }
 
-void Application::bindTexture()
+void    Application::bindTexture()
 {
-    glUniform1i(glGetUniformLocation(gameManager.shader->GetID(), "useTexture"), false); // Tell shader to use texture
+    glUniform1i(glGetUniformLocation(gameManager.shader -> GetID(), "useTexture"), false); // Tell shader to use texture
     glActiveTexture(GL_TEXTURE0);      // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, texture1); // Bind texture to unit 0
 }
 
-void Application::configureCulling()
+void    Application::configureCulling()
 {
     glEnable(GL_CULL_FACE);  // Enable face culling
     glCullFace(GL_BACK);     // Cull back faces (do not draw polygons facing away)
     glFrontFace(GL_CCW);     // Define front face as counter-clockwise winding order
 }
 
-void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
+void    Application::mouse_callback(GLFWwindow* window, double xpos, double ypos) 
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-    if (!app || app->isPaused) return;
+    if (!app || app -> isPaused) return;
 
-    float centerX = app->windowWidth / 2.0f;
-    float centerY = app->windowHeight / 2.0f;
+    float centerX = app -> windowWidth / 2.0f;
+    float centerY = app -> windowHeight / 2.0f;
 
     float xoffset = xpos - centerX;
     float yoffset = centerY - ypos; // inversé pour l’axe Y
 
-    app->gameManager.processMouseMovement(xoffset, yoffset);
+    app -> gameManager.processMouseMovement(xoffset, yoffset);
 
     // Recentrer la souris
     glfwSetCursorPos(window, centerX, centerY);
 }
 
-void Application::setLightUniforms()
+void    Application::setLightUniforms()
 {
-    GLuint shaderID = gameManager.shader->GetID();
+    GLuint shaderID = gameManager.shader -> GetID();
 
     // Pass all point light parameters to shader uniforms
     for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
@@ -345,17 +350,17 @@ void Application::setLightUniforms()
     glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), gameManager.scene.pointLights.size());
 }
 
-void Application::setCameraUniforms()
+void    Application::setCameraUniforms()
 {
     LibMath::Vector3 camPos = gameManager.player.getCamera().position;
 
-    GLint viewPosLoc = glGetUniformLocation(gameManager.shader->GetID(), "viewPos");
+    GLint viewPosLoc = glGetUniformLocation(gameManager.shader -> GetID(), "viewPos");
 
     // Pass camera position to shader for specular lighting calculations
     glUniform3fv(viewPosLoc, 1, &camPos.m_x);
 }
 
-unsigned int Application::loadTexture(const char* path)
+unsigned int    Application::loadTexture(const char* path)
 {
     unsigned int textureID;
 
@@ -392,7 +397,7 @@ unsigned int Application::loadTexture(const char* path)
     return textureID;
 }
 
-bool Application::setupResources()
+bool    Application::setupResources()
 {
     setupLighting();  // Initialize lighting parameters
     setupOpenGLStates();
@@ -402,7 +407,7 @@ bool Application::setupResources()
 }
 
 
-void Application::setupLighting()
+void    Application::setupLighting()
 {
     PointLight p;
     p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );

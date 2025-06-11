@@ -23,7 +23,7 @@ GameObject::GameObject(const std::string& name, const std::string& tag, std::sha
     computeColliderFromModel();
 }
 
-void GameObject::computeColliderFromModel()
+void    GameObject::computeColliderFromModel()
 {
     //this->model;
     LibMath::Vector3 minPointCollider = this->model->vertices[0].Position;
@@ -68,7 +68,7 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 
-    this->position = LibMath::Vector3(worldTransform[3][0], worldTransform[3][1], worldTransform[3][2]);
+    this -> position = LibMath::Vector3(worldTransform[3][0], worldTransform[3][1], worldTransform[3][2]);
 }
 
 void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
@@ -76,11 +76,11 @@ void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform)
     updateCollider(worldTransform);
     if (!model) return;
 
-    shader->setMat4("model", worldTransform);
-    model->draw();
+    shader -> setMat4("model", worldTransform);
+    model -> draw();
 }
 
-const std::string& GameObject::getName() const
+const   std::string& GameObject::getName() const
 {
 	return name;
 }

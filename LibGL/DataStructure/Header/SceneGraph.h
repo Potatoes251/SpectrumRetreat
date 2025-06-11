@@ -11,6 +11,7 @@ public:
     using Ptr = typename Node::Ptr;
 
     Ptr root;
+
     std::vector<PointLight> pointLights;
     //todo: add spotlight
 
@@ -36,7 +37,7 @@ public:
         }
     }
 
-    void clear()
+    void     clear()
     {
         if (root)
         {
