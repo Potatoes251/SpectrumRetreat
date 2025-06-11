@@ -6,23 +6,19 @@ GameObject::GameObject()
     : name(""),
     model(nullptr),
     position(0.0f, 0.0f, 0.0f),
-    rotation(0.0f, 0.0f, 0.0f),
-    scale(1.0f, 1.0f, 1.0f),
     collider(),
-    color(0, 0, 0, 1),
-    localTransform(LibMath::Matrix4::getIdentity()),
-    worldTransform(LibMath::Matrix4::getIdentity())
+    color(0, 0, 0, 1)
 {
 }
 
 GameObject::GameObject(const std::string& name, std::shared_ptr<Model> model)
-    : name(name), tag("null"), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+    : name(name), tag("null"), model(std::move(model)), position(0), color(1, 1, 1, 1)
 {
     computeColliderFromModel();
 }
 
 GameObject::GameObject(const std::string& name, const std::string& tag, std::shared_ptr<Model> model)
-    : name(name), tag(tag), model(std::move(model)), position(0), rotation(0), scale(1), color(1, 1, 1, 1)
+    : name(name), tag(tag), model(std::move(model)), position(0), color(1, 1, 1, 1)
 {
     computeColliderFromModel();
 }
@@ -58,11 +54,6 @@ void GameObject::computeColliderFromModel()
     colliderAtOrigin = collider;
 }
 
-void GameObject::update(float deltaTime)
-{
-	rotation.m_y += 1.0f * deltaTime;
-}
-
 void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 {
     LibMath::Point3D position(
@@ -78,21 +69,6 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
     collider = LibMath::Prism(position, colliderSize.m_x, colliderSize.m_y, colliderSize.m_z);
 
     this->position = LibMath::Vector3(worldTransform[3][0], worldTransform[3][1], worldTransform[3][2]);
-}
-
-
-	
-void GameObject::draw(Shader* shader)
-{
-    if (!model) return;
-
-    LibMath::Matrix4 modelMatrix =
-        LibMath::Matrix4::createScale(scale) *
-        LibMath::Matrix4::createRotationY(rotation.m_y) *
-        LibMath::Matrix4::createTranslation(position);
-
-    shader->setMat4("model", modelMatrix);
-    model->draw();
 }
 
 void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 

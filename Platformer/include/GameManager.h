@@ -41,6 +41,7 @@ public:
 
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
+    void    updateMovingObjects();
 
     // Render the scene
     void    draw();
@@ -58,6 +59,8 @@ public:
     ButtonUI*   restartButton = nullptr;
     ButtonUI*   quitButton = nullptr;
     SoundManager    soundManager;
+    float           totalTime = 0.0f;
+
 private:
     ResourceManager     resourceManager;
     Application*    application = nullptr;

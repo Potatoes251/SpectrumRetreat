@@ -195,7 +195,7 @@ void GameManager::loadSceneFromFile(const std::string& path,
         {
             model = defaultModel;
         }
-
+        std::cout << name << std::endl;
         addGameObject(name, tag, model, color, transform);
     }
 }
@@ -217,6 +217,28 @@ void    GameManager::update(float deltaTime)
 {
     // Update scene (logic + transform)
     scene.update();
+    updateMovingObjects();
+
+}
+
+void GameManager::updateMovingObjects()
+{
+    float amplitude = 2.0f;
+    float speed = 1.0f;
+    float offset = amplitude * std::sin(totalTime * speed);
+
+    LibMath::Vector3 direction = { 1.0f, 0.0f, 0.0f };
+    LibMath::Vector3 startPosition = { 0.0f, 7.5f, -20.0f };
+    LibMath::Vector3 newPos = startPosition + direction * offset;
+
+    std::shared_ptr<SceneNode<GameObject>> node = scene.findNodeByName("Cube3");
+
+    if (node != nullptr)
+    {
+        std::cout << node->object->position << std::endl;
+        node->localTransform = LibMath::Matrix4::createTranslation(newPos);
+        node->markDirty();
+    }
 }
 
 void    GameManager::draw()

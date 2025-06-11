@@ -84,7 +84,7 @@ bool Application::createWindow()
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
     windowWidth = 2560;
-    windowHeight = 1600;
+    windowHeight = 1440;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
@@ -189,6 +189,8 @@ void Application::updateDeltaTime()
     }
 
     lastFrame = currentFrame;
+
+    gameManager.totalTime += deltaTime;
 }
 
 void Application::clearScreen() 
