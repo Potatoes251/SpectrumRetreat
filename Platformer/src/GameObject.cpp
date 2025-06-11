@@ -27,7 +27,7 @@ GameObject::GameObject(const std::string& name, const std::string& tag, std::sha
     computeColliderFromModel();
 }
 
-void GameObject::computeColliderFromModel()
+void    GameObject::computeColliderFromModel()
 {
     //this->model;
     LibMath::Vector3 minPointCollider = this->model->vertices[0].Position;
@@ -58,12 +58,12 @@ void GameObject::computeColliderFromModel()
     colliderAtOrigin = collider;
 }
 
-void GameObject::update(float deltaTime)
+void    GameObject::update(float deltaTime)
 {
 	rotation.m_y += 1.0f * deltaTime;
 }
 
-void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
+void    GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 {
     LibMath::Point3D position(
         worldTransform[3][0] + colliderAtOrigin.getCenter().getX(),
@@ -82,7 +82,7 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 
 
 	
-void GameObject::draw(Shader* shader)
+void    GameObject::draw(Shader* shader)
 {
     if (!model) return;
 
@@ -95,7 +95,7 @@ void GameObject::draw(Shader* shader)
     model->draw();
 }
 
-void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
+void    GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
 {
     updateCollider(worldTransform);
     if (!model) return;
@@ -104,7 +104,7 @@ void GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform)
     model->draw();
 }
 
-const std::string& GameObject::getName() const
+const   std::string& GameObject::getName() const
 {
 	return name;
 }

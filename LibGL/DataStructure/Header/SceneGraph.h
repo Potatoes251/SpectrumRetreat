@@ -10,8 +10,9 @@ public:
     using Node = SceneNode<T>;
     using Ptr = typename Node::Ptr;
 
-    Ptr root;
-    std::vector<PointLight> pointLights;
+    Ptr     root;
+
+    std::vector<PointLight>     pointLights;
 
     SceneGraph()
     {
@@ -35,7 +36,7 @@ public:
         }
     }
 
-    void clear()
+    void     clear()
     {
         if (root)
         {
