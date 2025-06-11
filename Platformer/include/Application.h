@@ -27,63 +27,62 @@ class Application
 public:
     ~Application();
 
-    bool init();
-    bool setupResources();
-    bool initShaderAndResources();
-    void run();
-    void initImGuiContext();
-    void drawUI();
-    void setMatrices();
-    void bindTexture();
-    void configureCulling();
-    void setLightUniforms();
-    void setCameraUniforms();
-    void setupLighting();
-    void setupOpenGLStates();
-    void renderFrame();
-    void updatePause();
-    void exitPause();
-    void restartGame();
-    unsigned int loadTexture(const char* path);
+    bool    init();
+    bool    setupResources();
+    bool    initShaderAndResources();
+    void    run();
+    void    initImGuiContext();
+    void    drawUI();
+    void    setMatrices();
+    void    bindTexture();
+    void    configureCulling();
+    void    setLightUniforms();
+    void    setCameraUniforms();
+    void    setupLighting();
+    void    setupOpenGLStates();
+    void    renderFrame();
+    void    updatePause();
+    void    exitPause();
+    void    restartGame();
+    unsigned int    loadTexture(const char* path);
+    GLFWwindow*     getWindow() const { return m_window; }
 
-    GameManager gameManager;
-    GLFWwindow* getWindow() const { return window; }
+    GameManager     m_gameManager;
+    
 
 private:
-    GLFWwindow* window = nullptr;
-    ImGuiIO* io;
+    GLFWwindow*     m_window = nullptr;
+    ImGuiIO*        m_io;
     
-    bool escapePressedLastFrame = false;
-    bool isPaused = false;
+    bool    m_escapePressedLastFrame = false;
+    bool    m_isPaused = false;
 
     // Timing
-    float lastFrame = 0.0f;
-    float deltaTime = 0.0f;
+    float   m_lastFrame = 0.0f;
+    float   m_deltaTime = 0.0f;
 
-    bool firstMouse = true;
-    float lastX = 0.0f, lastY = 0.0f;
+    bool    m_firstMouse = true;
+    float   m_lastX = 0.0f, m_lastY = 0.0f;
 
-    float sensitivity = 0.1f;
+    float   m_sensitivity = 0.1f;
 
-    float m_rotationAngle = 0.0f;
+    unsigned int    m_texture1;
+    unsigned int    m_texture2;
 
-    unsigned int texture1;
-    unsigned int texture2;
-
-    int windowWidth;
-    int windowHeight;
+    int     m_windowWidth;
+    int     windowHeight;
 
     // Callbacks
-    static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+    static void     mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
     // Helpers
-    bool initGLFW();
-    bool createWindow();
-    bool initGLAD();
-    void initGLContext();
-    void processInput();
-    void updateDeltaTime();
-    void clearScreen();
+    bool    initGLFW();
+    bool    createWindow();
+    bool    initGLAD();
+    void    initGLContext();
+    void    processInput();
+    void    updateDeltaTime();
+    void    clearScreen();
 };
 
 #endif

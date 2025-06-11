@@ -6,9 +6,9 @@
 class UIElement
 {
 public:
-    virtual ~UIElement() = default;
+    virtual     ~UIElement() = default;
 
-    virtual void draw() const = 0;
+    virtual void    draw() const = 0;
 
-    bool isActive = true;
+    bool    m_isActive = true;
 };

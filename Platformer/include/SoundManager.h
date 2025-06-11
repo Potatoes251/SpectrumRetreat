@@ -9,11 +9,11 @@ public:
     SoundManager();
     ~SoundManager();
 
-    void playSound(const std::string& filePath, bool loop = false);
-    void playMusic(const std::string& filePath, bool loop = true);
-    void stopMusic();
-    void setMusicVolume(float volume); // 0.0 to 1.0
-    void setSoundVolume(float volume); // 0.0 to 1.0
+    void    playSound(const std::string& filePath, bool loop = false);
+    void    playMusic(const std::string& filePath, bool loop = true);
+    void    stopMusic();
+    void    setMusicVolume(float volume); // 0.0 to 1.0
+    void    setSoundVolume(float volume); // 0.0 to 1.0
 
 private:
     irrklang::ISoundEngine* m_engine;

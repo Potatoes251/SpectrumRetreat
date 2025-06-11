@@ -5,6 +5,8 @@ void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, Im
 {
     LibMath::Vector3 vecColor(color.Value.x, color.Value.y, color.Value.z);
     restart = false;
+
+    // check
     for (auto& child : gameObjectList.root->children)
     {
         checkWall(player, child, vecColor, restart);
@@ -39,9 +41,7 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
     LibMath::Vector3 normal;
     float penetrationDepth;
 
-    LibMath::Vector3 correction = LibMath::Vector3::zero();
-
-    LibMath::Prism wallCollider = gameObject->object->collider;
+    LibMath::Prism wallCollider = gameObject->object->m_collider;
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal, penetrationDepth))    // look for collision
     {
@@ -52,8 +52,6 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
         }
         if (!doorOpened)  // dont apply collision for door of same color
         {
-            player.move(correction);
-
             if (normal.dot(LibMath::Vector3::up()) >= 0.5f && player.velocity.m_y <= 0)  // detecting collision under the player
             {
                 player.isJumping = false;
