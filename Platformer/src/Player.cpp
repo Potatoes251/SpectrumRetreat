@@ -18,7 +18,7 @@ Player::Player()
     velocity = LibMath::Vector3(0.0f);
 }
 
-void    Player::Update(float deltaTime)
+void    Player::update(float deltaTime)
 {
 
     velocity.m_y += gravity * deltaTime;
@@ -83,7 +83,7 @@ void    Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<Gam
     
     checkForwardRaycast(window);
 
-    Update(deltaTime);
+    update(deltaTime);
 }
 
 void    Player::ProcessKeyboard(char direction, float deltaTime)

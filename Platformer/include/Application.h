@@ -44,6 +44,7 @@ public:
     void    updatePause();
     void    exitPause();
     void    restartGame();
+    void    quitGame();
 
     unsigned int    loadTexture(const char* path);
 

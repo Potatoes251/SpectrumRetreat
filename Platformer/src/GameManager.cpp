@@ -125,7 +125,7 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         "Restart",
         ImVec2(baseX, baseY + buttonHeight + spacing),
         ImVec2(buttonWidth, buttonHeight),
-        [this]() { application->restartGame(); }
+        [this]() { application -> restartGame(); }
     );
     restartButton -> isActive = false;
     uiManager.addElement(std::unique_ptr<ButtonUI>(restartButton));
@@ -134,12 +134,7 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         "Quit",
         ImVec2(baseX, baseY + 2 * (buttonHeight + spacing)),
         ImVec2(buttonWidth, buttonHeight),
-        [this]() {
-            if (application)
-            {
-                glfwSetWindowShouldClose(application->getWindow(), true);
-            }
-        }
+        [this]() { application -> quitGame(); }
     );
     quitButton -> isActive = false;
     uiManager.addElement(std::unique_ptr<ButtonUI>(quitButton));

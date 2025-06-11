@@ -41,7 +41,8 @@ public:
 	bool	isJumping = false;
 
 	Player();
-	void	Update(float deltaTime);
+
+	void	update(float deltaTime);
 	void	move(float deltaTime);
 	void	move(LibMath::Vector3 correction);
 	void	processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);

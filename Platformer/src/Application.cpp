@@ -13,9 +13,9 @@ Application::~Application()
 
     // Optional: Clear font atlas data
     ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
-    fontAtlas->Clear();
-    fontAtlas->ClearInputData();
-    fontAtlas->ClearTexData();
+    fontAtlas -> Clear();
+    fontAtlas -> ClearInputData();
+    fontAtlas -> ClearTexData();
 
     // 2. Destroy the ImGui context
     ImGui::DestroyContext();
@@ -152,8 +152,8 @@ void    Application::run()
         {
             bool restart;
             gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
-            gameManager.player.Update(deltaTime);
-            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor(), restart);
+            gameManager.player.update(deltaTime);
+            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr -> getColor(), restart);
             gameManager.player.move(deltaTime);
 
             // Update game logic
@@ -274,6 +274,11 @@ void    Application::restartGame()
 {
     gameManager.restart(windowWidth, windowHeight);
     exitPause();
+}
+
+void Application::quitGame()
+{
+    glfwSetWindowShouldClose(getWindow(), true);
 }
 
 
