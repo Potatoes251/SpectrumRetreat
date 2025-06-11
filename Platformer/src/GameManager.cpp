@@ -5,34 +5,71 @@
 
 
 GameManager::GameManager() {}
-GameManager::~GameManager() {}
+GameManager::~GameManager()
+{
+    if (shader)
+    {
+        delete shader;
+        shader = nullptr;
+    }
+
+    resumeButton = nullptr;
+    restartButton = nullptr;
+    quitButton = nullptr;
+
+    phonePtr = nullptr;
+    crosshairPtr = nullptr;
+
+    scene.clear();
+}
 
 void GameManager::init(float windowWidth, float windowHeight)
 {
     // Load shader
-    shader = new Shader();
-    shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
-    shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
-    shader->Link();
+    if (shader == nullptr)
+    {
+        shader = new Shader();
+        shader->SetVertexShader("../../Assets/Shaders/vertex.glsl");
+        shader->SetFragmentShader("../../Assets/Shaders/fragment.glsl");
+        shader->Link();
+    }
 
-    auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
-    cubeModel->uploadToGPU();
+    std::shared_ptr<Model> cubeModelShared;
+    std::shared_ptr<Model> roundCubeModelShared;
+    if (firstLoad)
+    {
+        auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
 
-    auto cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+        cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+        cubeModelShared->uploadToGPU();
 
-    auto roundCubeModel = resourceManager.Create<Model>("../../Assets/Meshes/rounded_cube.obj");
-    roundCubeModel->uploadToGPU();
+        auto roundCubeModel = resourceManager.Create<Model>("../../Assets/Meshes/rounded_cube.obj");
+        roundCubeModel->uploadToGPU();
 
-    auto roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
+        roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
 
-    loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
+        soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
 
-    initUI(windowWidth, windowHeight);
-    soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
+        initUI(windowWidth, windowHeight);
+        soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
+        soundManager.setMusicVolume(0.6f);
+        firstLoad = false;
+    }
+    else
+    {
+        auto cubeModel = resourceManager.Get<Model>("../../Assets/Meshes/cube.obj");
 
-    soundManager.setMusicVolume(0.6f);
+        cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
+
+        auto roundCubeModel = resourceManager.Get<Model>("../../Assets/Meshes/rounded_cube.obj");
+
+        roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
+
+        phonePtr->setColor(ImColor(255, 255, 255, 255));
+    }
 
     player.setGameManager(this);
+    loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 }
 
 void	GameManager::initUI(float windowWidth, float windowHeight)
@@ -88,7 +125,7 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         "Restart",
         ImVec2(baseX, baseY + buttonHeight + spacing),
         ImVec2(buttonWidth, buttonHeight),
-        [this]() { application->exitPause(); }
+        [this]() { application->restartGame(); }
     );
     restartButton->isActive = false;
     uiManager.addElement(std::unique_ptr<ButtonUI>(restartButton));
@@ -123,21 +160,6 @@ void	GameManager::addGameObject(const std::string& name,
     scene.addNode(node);
 }
 
-void	GameManager::addDoorObject(const std::string& name,
-    const std::shared_ptr<Model>& model,
-    const LibMath::Vector4& color,
-    const LibMath::Matrix4& transform)
-{
-    auto doorGO = std::make_shared<GameObject>(name, model);
-    doorGO->isDoor = true;
-    doorGO->color = color;
-
-    auto doorNode = std::make_shared<SceneNode<GameObject>>(doorGO, shader);
-    doorNode->localTransform = transform;
-
-    scene.addNode(doorNode);
-}
-
 void GameManager::loadSceneFromFile(const std::string& path, 
     const std::shared_ptr<Model>& defaultModel, 
     const std::shared_ptr<Model>& roundedModel)
@@ -158,7 +180,7 @@ void GameManager::loadSceneFromFile(const std::string& path,
         float sx, sy, sz;
         bool isDoor;
 
-        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz >> isDoor;
+        iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz;
 
         LibMath::Vector4 color(r, g, b, a);
         LibMath::Matrix4 transform = LibMath::Matrix4::createTranslation({ tx, ty, tz }) *
@@ -174,14 +196,7 @@ void GameManager::loadSceneFromFile(const std::string& path,
             model = defaultModel;
         }
 
-        if (isDoor)
-        {
-            addDoorObject(name, model, color, transform);
-        }
-        else
-        {
-            addGameObject(name, tag, model, color, transform);
-        }
+        addGameObject(name, tag, model, color, transform);
     }
 }
 
@@ -190,8 +205,17 @@ void GameManager::setApplication(Application* app)
     application = app;
 }
 
+void GameManager::restart(float windowWidth, float windowHeight)
+{
+    player.~Player();
+    new (&player) Player();
+    scene.clear();
+    init(windowWidth, windowHeight);
+}
+
 void    GameManager::update(float deltaTime) 
 {
+    // Update scene (logic + transform)
     scene.update();
 }
 

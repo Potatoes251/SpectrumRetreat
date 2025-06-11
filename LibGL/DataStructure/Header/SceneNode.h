@@ -24,9 +24,9 @@ public:
 
     SceneNode() = default;
 
-    /**
-     * Construct a node with an object and optional shader
-     */
+    
+    // Construct a node with an object and optional shader
+    
     SceneNode(std::shared_ptr<T> obj, Shader* shader = nullptr)
         : object(obj), shader(shader) 
     {
@@ -49,9 +49,13 @@ public:
         children.erase(std::remove(children.begin(), children.end(), child), children.end());
     }
 
-    /**
-     * Mark this node and descendants as needing world transform recomputation
-     */
+    void removeAllChildren()
+    {
+        children.clear();
+    }
+
+    // Mark this node and descendants as needing world transform recomputation
+
     void markDirty()
     {
         dirty = true;
@@ -59,10 +63,10 @@ public:
             c->markDirty();
     }
 
-    /**
-     * Update the logic of the object and children
-     * @param deltaTime elapsed time since last frame
-     */
+    
+    // Update the logic of the object and children
+    // param deltaTime elapsed time since last frame
+
     void update(float deltaTime)
     {
         if (object)
@@ -72,9 +76,9 @@ public:
             c->update(deltaTime);
     }
 
-    /**
-     * Recompute worldTransform if dirty or parent changed
-     */
+    
+    // Recompute worldTransform if dirty or parent changed
+    
     void updateTransform()
     {
         if (dirty || (parent && parent->dirty))
@@ -87,10 +91,10 @@ public:
             c->updateTransform();
     }
 
-    /**
-     * Draw this node's object and its children using overrideShader if this node has none
-     * @param overrideShader fallback shader if node has none
-     */
+    
+    // Draw this node's object and its children using overrideShader if this node has none
+    // param overrideShader fallback shader if node has none
+    
     void draw(Shader* overrideShader)
     {
         Shader* useShader = shader ? shader : overrideShader;

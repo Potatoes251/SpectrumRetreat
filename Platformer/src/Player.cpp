@@ -5,7 +5,7 @@ Player::Player()
     : collider(
         LibMath::Point3D(0.0f, 0.0f, 0.0f),
         LibMath::Point3D(0.0f, -1.5f, 0.0f),
-        0.2f
+        0.5f
     ),
     camera(
         LibMath::Vector3(0.0f, 2.0f, 5.0f),
@@ -35,7 +35,14 @@ void Player::move(float deltaTime)
     position = camera.position;
 }
 
-void Player::processInput(GLFWwindow* window, float deltaTime)
+void Player::move(LibMath::Vector3 correction)
+{
+    camera.position += correction;
+
+    position = camera.position;
+}
+
+void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
 {
     LibMath::Vector3 inputVelocity(0.0f, 0.0f, 0.0f);
 
@@ -122,7 +129,7 @@ void Player::checkForwardRaycast(GLFWwindow* window)
     LibMath::Line3D ray(rayOrigin, rayDirection);
     RaycastHit hit;
 
-    const float maxRange = 10.0f;
+    const float maxRange = 100.0f;
 
     if (raycast(ray, gameManager->scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
     {

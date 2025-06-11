@@ -26,7 +26,7 @@ private:
 	float yVelocity = 0.0f;
 
 	const float gravity = -9.8f;
-	const float jumpStrength = 10.0f;
+	const float jumpStrength = 7.5f;
 	float movementSpeed = 10.f;
 	bool EKeyAlreadyPressed = false;
 	GameManager* gameManager = nullptr;
@@ -38,7 +38,8 @@ public:
 	Player();
 	void Update(float deltaTime);
 	void move(float deltaTime);
-	void processInput(GLFWwindow* window, float deltaTime);
+	void move(LibMath::Vector3 correction);
+	void processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
 	void ProcessKeyboard(char direction, float deltaTime);
 	void checkForwardRaycast(GLFWwindow* window);
 	void setGameManager(GameManager* gm) { gameManager = gm; }

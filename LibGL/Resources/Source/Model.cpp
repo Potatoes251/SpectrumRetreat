@@ -143,6 +143,12 @@ void Model::uploadToGPU()
     m_vertexArray.unbind();
 }
 
+void Model::unloadFromGPU()
+{
+    m_vertexBuffer.destroy();   // Calls glDeleteBuffers internally
+    m_vertexArray.destroy();    // Calls glDeleteVertexArrays internally
+}
+
 void Model::draw() const
 {
     m_vertexArray.bind();

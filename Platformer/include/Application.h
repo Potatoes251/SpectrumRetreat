@@ -1,4 +1,5 @@
-#pragma once
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -24,6 +25,8 @@
 class Application
 {
 public:
+    ~Application();
+
     bool init();
     bool setupResources();
     bool initShaderAndResources();
@@ -82,3 +85,5 @@ private:
     void updateDeltaTime();
     void clearScreen();
 };
+
+#endif

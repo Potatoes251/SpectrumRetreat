@@ -3,7 +3,28 @@
 #include "Player.h"
 
 
-bool Application::init() 
+Application::~Application()
+{
+    // 1. Destroy ImGui resources (order matters)
+    ImGui_ImplOpenGL3_DestroyDeviceObjects();
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+
+    // Optional: Clear font atlas data
+    ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
+    fontAtlas->Clear();
+    fontAtlas->ClearInputData();
+    fontAtlas->ClearTexData();
+
+    // 2. Destroy the ImGui context
+    ImGui::DestroyContext();
+
+    // 3. Only now terminate GLFW
+    glfwTerminate();
+}
+
+bool Application::init()
 {
     if (!initGLFW()) return false;
     if (!createWindow()) return false;
@@ -51,11 +72,10 @@ void Application::initImGuiContext()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    ImGuiIO& io = ImGui::GetIO();
 
-    gameManager.uiManager.fontSmall = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
-    gameManager.uiManager.fontMedium = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
-    gameManager.uiManager.fontLarge = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
+    gameManager.uiManager.fontSmall = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 16.0f);
+    gameManager.uiManager.fontMedium = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 22.0f);
+    gameManager.uiManager.fontLarge = io->Fonts->AddFontFromFileTTF("../../Assets/Fonts/Play-Regular.ttf", 32.0f);
 }
 
 bool Application::createWindow() 
@@ -63,10 +83,10 @@ bool Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    windowWidth = 1920;
-    windowHeight = 1080;
+    windowWidth = 2560;
+    windowHeight = 1600;
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", nullptr, nullptr);
+    window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
     if (!window) 
     {
@@ -130,18 +150,18 @@ void Application::run()
 
         if (!isPaused)
         {
+            bool restart;
+            gameManager.player.processInput(window, deltaTime, gameManager.scene, *gameManager.phonePtr, *gameManager.crosshairPtr);
             gameManager.player.Update(deltaTime);
-            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor());
+            checkWalls(gameManager.player, gameManager.scene, gameManager.phonePtr->getColor(), restart);
             gameManager.player.move(deltaTime);
-            gameManager.player.processInput(window, deltaTime);
 
             // Update game logic
             gameManager.update(deltaTime);
-        }
-
-        else
-        {
-
+            if (restart)
+            {
+                restartGame();
+            }
         }
 
         // Render
@@ -173,7 +193,7 @@ void Application::updateDeltaTime()
 
 void Application::clearScreen() 
 {
-    glClearColor(1.f, 1.f, 1.f, 1.0f);
+    glClearColor(0.35f, 0.32f, 0.42f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -252,6 +272,8 @@ void Application::exitPause()
 
 void Application::restartGame()
 {
+    gameManager.restart(windowWidth, windowHeight);
+    exitPause();
 }
 
 
@@ -381,19 +403,37 @@ bool Application::setupResources()
 void Application::setupLighting()
 {
     PointLight p;
-    p.position = { 1.0f, 1.0f, 1.0f };
+    p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
     gameManager.scene.pointLights.push_back(p);
-    //PointLight p2;
-    //p2.position = { 1.0f, 5.0f, 20.0f };
-    //gameManager.scene.pointLights.push_back(p);
+    PointLight p2;
+    p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
+    gameManager.scene.pointLights.push_back(p2);
+    PointLight p3;
+    p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
+    gameManager.scene.pointLights.push_back(p3);
+    PointLight p4;
+    p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
+    gameManager.scene.pointLights.push_back(p4);    
+    PointLight p5;
+    p5.position = LibMath::Vector3(1.0f, 5.0f, 1.0f);
+    gameManager.scene.pointLights.push_back(p5);
+    PointLight p6;
+    p6.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
+    gameManager.scene.pointLights.push_back(p6);
+    PointLight p7;
+    p7.position = LibMath::Vector3(1.0f, 5.0f, -100.0f);
+    gameManager.scene.pointLights.push_back(p7);
+    PointLight p8;
+    p8.position = LibMath::Vector3(1.0f, 5.0f, -120.0f);
+    gameManager.scene.pointLights.push_back(p8);
 
     // Initialize point light position and color properties (ambient, diffuse, specular)
     for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
     {
-        gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, .0f);
-        gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.3f, 0.3f, 0.3f, 1.0f);
-        gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.9f, 0.9f, 0.9f, 1.0f);
-        gameManager.scene.pointLights[i].specular = LibMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+        //gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, -200.0f);
+        gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+        gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
+        gameManager.scene.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
         gameManager.scene.pointLights[i].constant = 1.0f;
         gameManager.scene.pointLights[i].linear = 0.09f;
         gameManager.scene.pointLights[i].quadratic = 0.f;

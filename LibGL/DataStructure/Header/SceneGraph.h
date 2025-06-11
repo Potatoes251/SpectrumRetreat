@@ -22,13 +22,25 @@ public:
     void    update()
     {
         if (root)
+        {
             root->updateTransform();
+        }
     }
 
     void    draw(Shader* shader)
     {
         if (root)
+        {
             root->draw(shader);
+        }
+    }
+
+    void clear()
+    {
+        if (root)
+        {
+            root->children.clear();
+        }
     }
 
     void    addNode(const Ptr& node, const Ptr& parent = nullptr)

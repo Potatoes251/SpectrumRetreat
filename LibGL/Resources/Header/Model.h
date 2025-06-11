@@ -19,6 +19,11 @@ public:
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
 
+    ~Model()
+    {
+        unloadFromGPU();
+    }
+
     bool load(const std::string& filename);
     void reset();
     void processLine(const std::string& line);
@@ -30,6 +35,7 @@ public:
 
     // GPU integration
     void uploadToGPU();
+    void unloadFromGPU();
     void draw() const;
     void draw(LibMath::Matrix4& transform, Shader* shader) const;
 
