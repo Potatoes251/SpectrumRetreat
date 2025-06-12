@@ -1,16 +1,31 @@
 #version 330 core
 
 #define MAX_POINT_LIGHTS 8
+#define MAX_SPOT_LIGHTS 1
 
-struct Light {
+struct Light 
+{
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 };
 
-struct PointLight {
+struct PointLight 
+{
     vec3 position;
     Light base;
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+struct SpotLight
+{
+    vec3 position;
+    vec3 direction;
+    Light base;
+    float cutOff;
+    float outerCutOff;
     float constant;
     float linear;
     float quadratic;
@@ -29,8 +44,12 @@ uniform sampler2D texture1;
 uniform bool useTexture;
 
 uniform vec3 viewPos;
+
 uniform int numPointLights;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
+
+uniform int numSpotLights;
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -54,6 +73,33 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+
+    vec3 directionLight = normalize(-light.direction);
+    float theta = (dot(lightDir, directionLight));
+
+
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
+
+    float diff = max(dot(normal, lightDir), 0.0f);
+
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
+    float spec = pow(max(dot(normal, halfwayDir), 0.0f), 32.0f);
+
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * distance * distance);
+
+    vec3 ambient = light.base.ambient;
+    vec3 diffuse = light.base.diffuse * diff;
+    vec3 specular = light.base.specular * spec;
+
+    return (ambient + diffuse + specular) * attenuation * intensity;
+}
+
 void main()
 {
     vec3 norm = normalize(Normal);
@@ -66,10 +112,10 @@ void main()
         lighting += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     }
 
-//    if (numPointLights > 0)
-//    {
-//        lighting /= float(numPointLights);
-//    }
+    for (int i = 0; i < numSpotLights; i++)
+    {
+        lighting += CalcSpotLight(spotLights[i], norm, FragPos, viewDir);
+    }
 
     vec4 baseColor = useTexture ? texture(texture1, TexCoords) : objectColor;
 

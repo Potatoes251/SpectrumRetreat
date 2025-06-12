@@ -84,7 +84,7 @@ bool    Application::createWindow()
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
     windowWidth = 2560;
-    windowHeight = 1440;
+    windowHeight = 1600;
 
     window = glfwCreateWindow(windowWidth, windowHeight, "3D Game", primary, nullptr);
 
@@ -348,6 +348,25 @@ void    Application::setLightUniforms()
     }
 
     glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), gameManager.scene.pointLights.size());
+
+    for (size_t i = 0; i < gameManager.scene.spotLights.size(); ++i)
+    {
+        const SpotLight& light = gameManager.scene.spotLights[i];
+        std::string baseName = "spotLights[" + std::to_string(i) + "]";
+
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".direction").c_str()), 1, &light.direction.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()), 1, &light.ambient.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()), 1, &light.diffuse.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1, &light.specular.m_x);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".constant").c_str()), light.constant);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".linear").c_str()), light.linear);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".quadratic").c_str()), light.quadratic);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".cutOff").c_str()), light.cutOff);
+        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".outerCutOff").c_str()), light.outerCutOff);
+    }
+
+    glUniform1i(glGetUniformLocation(shaderID, "numSpotLights"), gameManager.scene.spotLights.size());
 }
 
 void    Application::setCameraUniforms()
@@ -409,41 +428,65 @@ bool    Application::setupResources()
 
 void    Application::setupLighting()
 {
-    PointLight p;
-    p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
-    gameManager.scene.pointLights.push_back(p);
-    PointLight p2;
-    p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
-    gameManager.scene.pointLights.push_back(p2);
-    PointLight p3;
-    p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
-    gameManager.scene.pointLights.push_back(p3);
-    PointLight p4;
-    p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
-    gameManager.scene.pointLights.push_back(p4);    
-    PointLight p5;
-    p5.position = LibMath::Vector3(1.0f, 5.0f, 1.0f);
-    gameManager.scene.pointLights.push_back(p5);
-    PointLight p6;
-    p6.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
-    gameManager.scene.pointLights.push_back(p6);
-    PointLight p7;
-    p7.position = LibMath::Vector3(1.0f, 5.0f, -100.0f);
-    gameManager.scene.pointLights.push_back(p7);
-    PointLight p8;
-    p8.position = LibMath::Vector3(1.0f, 5.0f, -120.0f);
-    gameManager.scene.pointLights.push_back(p8);
+    //PointLight p;
+    //p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
+    //gameManager.scene.pointLights.push_back(p);
+    //PointLight p2;
+    //p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
+    //gameManager.scene.pointLights.push_back(p2);
+    //PointLight p3;
+    //p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
+    //gameManager.scene.pointLights.push_back(p3);
+    //PointLight p4;
+    //p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
+    //gameManager.scene.pointLights.push_back(p4);    
+    //PointLight p5;
+    //p5.position = LibMath::Vector3(1.0f, 5.0f, 1.0f);
+    //gameManager.scene.pointLights.push_back(p5);
+    //PointLight p6;
+    //p6.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
+    //gameManager.scene.pointLights.push_back(p6);
+    //PointLight p7;
+    //p7.position = LibMath::Vector3(1.0f, 5.0f, -100.0f);
+    //gameManager.scene.pointLights.push_back(p7);
+    //PointLight p8;
+    //p8.position = LibMath::Vector3(1.0f, 5.0f, -120.0f);
+    //gameManager.scene.pointLights.push_back(p8);
 
     // Initialize point light position and color properties (ambient, diffuse, specular)
     for (size_t i = 0; i < gameManager.scene.pointLights.size(); ++i)
     {
-        //gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, -200.0f);
         gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
         gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
         gameManager.scene.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
         gameManager.scene.pointLights[i].constant = 1.0f;
         gameManager.scene.pointLights[i].linear = 0.09f;
         gameManager.scene.pointLights[i].quadratic = 0.f;
+    }
+
+    SpotLight p9;
+    p9.position = LibMath::Vector3(1.0f, 1.0f, 1.0f);
+    p9.direction = LibMath::Vector3(0.0f, 0.0f, -1.0f);
+
+    float innerAngleDeg = 1.5f;
+    float outerAngleDeg = 2.5f;
+
+    p9.cutOff = cos(LibMath::Radian(innerAngleDeg).raw());
+    p9.outerCutOff = cos(LibMath::Radian(outerAngleDeg).raw());
+
+    gameManager.scene.spotLights.push_back(p9);
+
+    // Initialize spot light position and color properties (ambient, diffuse, specular)
+    for (size_t i = 0; i < gameManager.scene.spotLights.size(); ++i)
+    {
+        gameManager.scene.spotLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+        gameManager.scene.spotLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
+        gameManager.scene.spotLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
+        gameManager.scene.spotLights[i].constant = 1.0f;
+        gameManager.scene.spotLights[i].linear = 0.09f;
+        gameManager.scene.spotLights[i].quadratic = 0.f;
+        //gameManager.scene.spotLights[i].cutOff = 10.0f;
+        //gameManager.scene.spotLights[i].outerCutOff = 50.0f;
     }
 }
 

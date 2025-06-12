@@ -13,7 +13,7 @@ public:
     Ptr root;
 
     std::vector<PointLight> pointLights;
-    //todo: add spotlight
+    std::vector<SpotLight> spotLights;
 
     SceneGraph()
     {
