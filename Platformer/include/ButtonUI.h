@@ -15,7 +15,8 @@ public:
 
 private:
     std::string     m_label;
-    ImVec2      m_position;
-    ImVec2      m_size;
+    ImVec2          m_position;
+    ImVec2          m_size;
+
     std::function<void()>   m_onClick;
 };

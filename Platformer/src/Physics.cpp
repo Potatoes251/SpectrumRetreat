@@ -1,7 +1,7 @@
 #include "Physics.h"
 
 
-void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, ImColor color, bool& restart)
+void    checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, ImColor color, bool& restart)
 {
     LibMath::Vector3 vecColor(color.Value.x, color.Value.y, color.Value.z);
     restart = false;
@@ -17,21 +17,22 @@ void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, Im
     }
 }
 
-void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color, bool& restart)
+void    checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color, bool& restart)
 {
-    LibMath::Vector3 objectColor(gameObject -> object -> color.m_x, gameObject -> object -> color.m_y, gameObject -> object -> color.m_z);
+    LibMath::Vector3 objectColor(gameObject -> object -> m_color.m_x, gameObject -> object -> m_color.m_y,
+                                 gameObject -> object -> m_color.m_z);
     bool doorOpened = false;
     float doorOpacity;
-    if (objectColor == color && gameObject -> object -> tag == "door")
+    if (objectColor == color && gameObject -> object -> m_tag == "door")
     {
         doorOpacity = 0.2f;
-        gameObject -> object -> color.m_w = doorOpacity;
+        gameObject -> object -> m_color.m_w = doorOpacity;
         doorOpened = true;
     }
-    else if (gameObject -> object -> tag == "door")
+    else if (gameObject -> object -> m_tag == "door")
     {
         doorOpacity = 0.5f;
-        gameObject -> object -> color.m_w = doorOpacity;
+        gameObject -> object -> m_color.m_w = doorOpacity;
     }
 
     //move collider to player position
@@ -48,7 +49,7 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal, penetrationDepth))    // look for collision
     {
-        if (gameObject -> object -> tag == "endzone")
+        if (gameObject -> object -> m_tag == "endzone")
         {
             restart = true;
             return;

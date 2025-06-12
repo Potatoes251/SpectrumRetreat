@@ -44,6 +44,7 @@ public:
 
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
+    void    updateMovingObjects();
 
     // Render the scene
     void    draw();
@@ -52,19 +53,25 @@ public:
     void    processMouseMovement(double xpos, double ypos);
 
     SceneGraph<GameObject>  scene;
+
     Player      player;
+
     Shader*     shader = nullptr;
 
     // UI
     UIManager   uiManager;
+
     CircleUI*   phonePtr = nullptr; 
     CircleUI*   crosshairPtr = nullptr;
+
     ButtonUI*   resumeButton = nullptr;
     ButtonUI*   restartButton = nullptr;
     ButtonUI*   quitButton = nullptr;
 
     // Sound
     SoundManager    soundManager;
+    float           totalTime = 0.0f;
+
 private:
     ResourceManager     resourceManager;
     Application*    application = nullptr;

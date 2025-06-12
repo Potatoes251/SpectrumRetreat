@@ -44,11 +44,13 @@ public:
     void    updatePause();
     void    exitPause();
     void    restartGame();
+    void    quitGame();
+
     unsigned int    loadTexture(const char* path);
+
     GLFWwindow*     getWindow() const { return m_window; }
 
     GameManager     m_gameManager;
-    
 
 private:
     GLFWwindow*     m_window = nullptr;
@@ -70,7 +72,7 @@ private:
     unsigned int    m_texture2;
 
     int     m_windowWidth;
-    int     windowHeight;
+    int     m_windowHeight;
 
     // Callbacks
     static void     mouse_callback(GLFWwindow* window, double xpos, double ypos);

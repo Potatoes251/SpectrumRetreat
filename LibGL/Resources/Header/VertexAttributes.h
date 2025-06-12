@@ -9,11 +9,11 @@ public:
     VertexAttributes();
     ~VertexAttributes();
 
-    void init();
-    void bind() const;
-    void unbind() const;
-    void destroy();
+    void    init();
+    void    bind() const;
+    void    unbind() const;
+    void    destroy();
 
-    void enableAttribute(GLuint index);
-    void setAttributePointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer);
+    void    enableAttribute(GLuint index);
+    void    setAttributePointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer);
 };

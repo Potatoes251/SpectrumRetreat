@@ -16,8 +16,9 @@ public:
     void    setSoundVolume(float volume); // 0.0 to 1.0
 
 private:
-    irrklang::ISoundEngine* m_engine;
-    irrklang::ISound* m_currentMusic = nullptr;
-    float m_musicVolume = 1.0f;
-    float m_soundVolume = 1.0f;
+    irrklang::ISoundEngine*     m_engine;
+    irrklang::ISound*           m_currentMusic = nullptr;
+
+    float   m_musicVolume = 1.0f;
+    float   m_soundVolume = 1.0f;
 };

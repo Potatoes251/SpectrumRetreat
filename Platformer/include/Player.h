@@ -12,28 +12,33 @@
 #include "SceneGraph.h"
 #include "CircleUI.h"
 
+#define RAYCASTRANGE 100.0f;
+
 class GameManager;
 
 class Player
 {
 private:
 	LibMath::Capsule	collider;
-	CameraFPS			camera;
-
 	LibMath::Vector3	position;
 
-	
-	float	yVelocity = 0.0f;
+	CameraFPS		camera;
+
+	GameManager*	gameManager = nullptr;
+
+	float			movementSpeed = 10.f;
+	float			yVelocity = 0.0f;
 
 	const float		gravity = -9.8f;
 	const float		jumpStrength = 7.5f;
-	float	movementSpeed = 10.f;
-	bool	EKeyAlreadyPressed = false;
-	GameManager*	gameManager = nullptr;
+
+	bool			EKeyAlreadyPressed = false;
 
 public:
+
 	LibMath::Vector3	velocity;
-	bool		isJumping = false;
+
+	bool	isJumping = false;
 
 	Player();
 

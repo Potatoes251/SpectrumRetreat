@@ -19,7 +19,7 @@ Player::Player()
     position = camera.position;
 }
 
-void Player::update(float deltaTime)
+void    Player::update(float deltaTime)
 {
     // apply gravity
     velocity.m_y += gravity * deltaTime;
@@ -30,7 +30,7 @@ void Player::update(float deltaTime)
     position = camera.position;
 }
 
-void Player::move(float deltaTime)
+void    Player::move(float deltaTime)
 {
     // apply the velocity
     camera.position += velocity * deltaTime;
@@ -56,18 +56,15 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
     flatRight.m_y = 0;
     flatRight.normalize();
 
-    // Check for escape key to close the window
-    //if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    //{
-    //    glfwSetWindowShouldClose(window, true);
-    //}
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         inputVelocity += flatFront;
+
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         inputVelocity -= flatFront;
+
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         inputVelocity -= flatRight;
+
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         inputVelocity += flatRight;
 
@@ -86,29 +83,31 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
     update(deltaTime);
 }
 
-void Player::checkForwardRaycast(GLFWwindow* window)
+void    Player::checkForwardRaycast(GLFWwindow* window)
 {
     bool isEKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
 
     LibMath::Point3D rayOrigin = camera.position;
     LibMath::Vector3 rayDirection = camera.front;
+
     rayDirection.normalize();
 
     LibMath::Line3D ray(rayOrigin, rayDirection);
+
     RaycastHit hit;
 
-    const float maxRange = 100.0f;
+    const float maxRange = 1000.0f;
 
-    if (raycast(ray, gameManager->scene, hit, maxRange) && hit.m_gameObject->tag == "interactable")
+    if (raycast(ray, gameManager -> scene, hit, maxRange) && hit.m_gameObject -> m_tag == "interactable")
     {
-        gameManager->crosshairPtr->setRadius(4);
+        gameManager -> crosshairPtr -> setRadius(4);
 
-        LibMath::Vector4 objColor = hit.m_gameObject->color;
+        LibMath::Vector4 objColor = hit.m_gameObject -> m_color;
         LibMath::Vector4 phoneColor(
-            gameManager->phonePtr->getColor().Value.x,
-            gameManager->phonePtr->getColor().Value.y,
-            gameManager->phonePtr->getColor().Value.z,
-            gameManager->phonePtr->getColor().Value.w
+            gameManager -> phonePtr -> getColor().Value.x,
+            gameManager -> phonePtr -> getColor().Value.y,
+            gameManager -> phonePtr -> getColor().Value.z,
+            gameManager -> phonePtr -> getColor().Value.w
         );
 
         // Only swap colors on E press
@@ -117,10 +116,10 @@ void Player::checkForwardRaycast(GLFWwindow* window)
             if (objColor != phoneColor)
             {
                 // Swap colors
-                hit.m_gameObject->color = phoneColor;
-                gameManager->phonePtr->setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
+                hit.m_gameObject -> m_color = phoneColor;
+                gameManager -> phonePtr -> setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
 
-                gameManager->soundManager.playSound("../../Assets/Sounds/changeColor.wav");
+                gameManager -> soundManager.playSound("../../Assets/Sounds/changeColor.wav");
             }
         }
 
@@ -128,15 +127,14 @@ void Player::checkForwardRaycast(GLFWwindow* window)
         if (objColor == phoneColor && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         {
             // Pull player toward object
-            LibMath::Vector3 toObject = hit.m_gameObject->position - camera.position;
-
-            //toObject.m_y = 0; // Ignore vertical
+            LibMath::Vector3 toObject = hit.m_gameObject -> m_position - camera.position;
 
             float distance = toObject.magnitude();
 
             if (distance > 1.0f) // stop pulling when close
             {
                 toObject.normalize();
+
                 const float attractionSpeed = 15.0f;
 
                 velocity.m_x = toObject.m_x * attractionSpeed;
@@ -147,7 +145,7 @@ void Player::checkForwardRaycast(GLFWwindow* window)
     }
     else
     {
-        gameManager->crosshairPtr->setRadius(2);
+        gameManager -> crosshairPtr -> setRadius(2);
     }
 
     EKeyAlreadyPressed = isEKeyPressed;

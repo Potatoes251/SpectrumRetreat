@@ -22,7 +22,7 @@ GameManager::~GameManager()
     scene.clear();
 }
 
-void GameManager::init(float windowWidth, float windowHeight)
+void    GameManager::init(float windowWidth, float windowHeight)
 {
     // Load shader
     if (shader == nullptr)
@@ -67,8 +67,7 @@ void GameManager::init(float windowWidth, float windowHeight)
 
         roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
 
-        // reset the color
-        phonePtr->setColor(ImColor(255, 255, 255, 255));
+        phonePtr -> setColor(ImColor(255, 255, 255, 255));
     }
     // reference the game manager in the player
     player.setGameManager(this);
@@ -122,19 +121,19 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         "Resume",                               // name
         ImVec2(baseX, baseY),                   // coordinate
         ImVec2(buttonWidth, buttonHeight),      // size
-        [this]() { application->exitPause(); }  // function pointer (for when the button is clicked)
+        [this]() { application -> exitPause(); }  // function pointer (for when the button is clicked)
     );
-    resumeButton->m_isActive = false; // Start inactive
-    uiManager.addElement(std::unique_ptr<ButtonUI>(resumeButton));  // put into the UI manager
+    resumeButton -> m_isActive = false; // Start inactive
+    uiManager.addElement(std::unique_ptr<ButtonUI>(resumeButton));
 
     // create restart Button
     restartButton = new ButtonUI(
         "Restart",
         ImVec2(baseX, baseY + buttonHeight + spacing),
         ImVec2(buttonWidth, buttonHeight),
-        [this]() { application->restartGame(); }
+        [this]() { application -> restartGame(); }
     );
-    restartButton->m_isActive = false; // Start inactive
+    restartButton -> m_isActive = false;
     uiManager.addElement(std::unique_ptr<ButtonUI>(restartButton));
 
     // create quit Button
@@ -142,14 +141,9 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         "Quit",
         ImVec2(baseX, baseY + 2 * (buttonHeight + spacing)),
         ImVec2(buttonWidth, buttonHeight),
-        [this]() {
-            if (application)
-            {
-                glfwSetWindowShouldClose(application->getWindow(), true);
-            }
-        }
+        [this]() { application -> quitGame(); }
     );
-    quitButton->m_isActive = false; // Start inactive
+    quitButton -> m_isActive = false; // Start inactive
     uiManager.addElement(std::unique_ptr<ButtonUI>(quitButton));
 }
 
@@ -160,15 +154,15 @@ void	GameManager::addGameObject(const std::string& name,
     const LibMath::Matrix4& transformMatrix)
 {
     auto gameObject = std::make_shared<GameObject>(name, tag, model);
-    gameObject->color = color;
+    gameObject -> m_color = color;
 
     auto node = std::make_shared<SceneNode<GameObject>>(gameObject, shader);
-    node->localTransform = transformMatrix;
+    node -> localTransform = transformMatrix;
 
     scene.addNode(node);
 }
 
-void GameManager::loadSceneFromFile(const std::string& path, 
+void    GameManager::loadSceneFromFile(const std::string& path, 
     const std::shared_ptr<Model>& defaultModel, 
     const std::shared_ptr<Model>& roundedModel)
 {
@@ -214,12 +208,12 @@ void GameManager::loadSceneFromFile(const std::string& path,
     }
 }
 
-void GameManager::setApplication(Application* app)
+void    GameManager::setApplication(Application* app)
 {
     application = app;
 }
 
-void GameManager::restart(float windowWidth, float windowHeight)
+void    GameManager::restart(float windowWidth, float windowHeight)
 {
     // reset the game Manager
     player.~Player();
@@ -232,6 +226,27 @@ void    GameManager::update(float deltaTime)
 {
     // Update scene (transforms)
     scene.update();
+    updateMovingObjects();
+
+}
+
+void GameManager::updateMovingObjects()
+{
+    float amplitude = 2.0f;
+    float speed = 1.0f;
+    float offset = amplitude * std::sin(totalTime * speed);
+
+    LibMath::Vector3 direction = { 1.0f, 0.0f, 0.0f };
+    LibMath::Vector3 startPosition = { 0.0f, 7.5f, -20.0f };
+    LibMath::Vector3 newPos = startPosition + direction * offset;
+
+    std::shared_ptr<SceneNode<GameObject>> node = scene.findNodeByName("Cube3");
+
+    if (node != nullptr)
+    {
+        node->localTransform = LibMath::Matrix4::createTransform(newPos, { 0, 0, 0 }, LibMath::Radian(0), {0.5f, 0.5f, 0.5f});
+        node->markDirty();
+    }
 }
 
 void    GameManager::draw()
@@ -239,9 +254,9 @@ void    GameManager::draw()
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
-    shader->Use();
-    shader->setMat4("view", view);
-    shader->setMat4("projection", projection);
+    shader -> Use();
+    shader -> setMat4("view", view);
+    shader -> setMat4("projection", projection);
 
     // Render scene graph
     scene.draw(shader);
