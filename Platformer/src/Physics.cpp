@@ -7,7 +7,7 @@ void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, Im
     restart = false;
 
     // check
-    for (auto& child : gameObjectList.root->children)
+    for (auto& child : gameObjectList.root -> children)
     {
         checkWall(player, child, vecColor, restart);
         if (restart)
@@ -19,16 +19,19 @@ void checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList, Im
 
 void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color, bool& restart)
 {
-    LibMath::Vector3 objectColor(gameObject->object->color.m_x, gameObject->object->color.m_y, gameObject->object->color.m_z);
+    LibMath::Vector3 objectColor(gameObject -> object -> color.m_x, gameObject -> object -> color.m_y, gameObject -> object -> color.m_z);
     bool doorOpened = false;
-    if (objectColor == color && gameObject->object->tag == "door")
+    float doorOpacity;
+    if (objectColor == color && gameObject -> object -> tag == "door")
     {
-        gameObject->object->color.m_w = 0.2f;
+        doorOpacity = 0.2f;
+        gameObject -> object -> color.m_w = doorOpacity;
         doorOpened = true;
     }
-    else if (gameObject->object->tag == "door")
+    else if (gameObject -> object -> tag == "door")
     {
-        gameObject->object->color.m_w = 0.5f;
+        doorOpacity = 0.5f;
+        gameObject -> object -> color.m_w = doorOpacity;
     }
 
     //move collider to player position
@@ -41,11 +44,11 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
     LibMath::Vector3 normal;
     float penetrationDepth;
 
-    LibMath::Prism wallCollider = gameObject->object->m_collider;
+    LibMath::Prism wallCollider = gameObject -> object -> m_collider;
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal, penetrationDepth))    // look for collision
     {
-        if (gameObject->object->tag == "endzone")
+        if (gameObject -> object -> tag == "endzone")
         {
             restart = true;
             return;
@@ -66,7 +69,7 @@ void checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gam
         }
     }
 
-    for (auto& child : gameObject->children)    // go through its children
+    for (auto& child : gameObject -> children)    // go through its children
     {
         checkWall(player, child, color, restart);
     }
