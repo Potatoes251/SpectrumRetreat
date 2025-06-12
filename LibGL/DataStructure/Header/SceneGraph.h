@@ -12,9 +12,6 @@ public:
 
     Ptr root;
 
-    std::vector<PointLight> pointLights;
-    //todo: add spotlight
-
     SceneGraph()
     {
         root = std::make_shared<Node>();

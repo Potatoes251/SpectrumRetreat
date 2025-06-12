@@ -72,6 +72,10 @@ public:
     SoundManager    soundManager;
     float           totalTime = 0.0f;
 
+    // Lighting
+    std::vector<PointLight> pointLights;
+    std::vector<SpotLight> spotLights;
+
 private:
     ResourceManager     resourceManager;
     Application*    application = nullptr;
