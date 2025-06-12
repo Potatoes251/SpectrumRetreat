@@ -339,9 +339,9 @@ void    Application::setLightUniforms()
     GLuint shaderID = m_gameManager.shader -> GetID();
 
     // Pass all point light parameters to shader uniforms
-    for (size_t i = 0; i < m_gameManager.scene.pointLights.size(); ++i)
+    for (size_t i = 0; i < m_gameManager.pointLights.size(); ++i)
     {
-        const PointLight& light = m_gameManager.scene.pointLights[i];
+        const PointLight& light = m_gameManager.pointLights[i];
         std::string baseName = "pointLights[" + std::to_string(i) + "]";
 
         glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
@@ -353,11 +353,11 @@ void    Application::setLightUniforms()
         glUniform1f(glGetUniformLocation(shaderID, (baseName + ".quadratic").c_str()), light.quadratic);
     }
 
-    glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), m_gameManager.scene.pointLights.size());
+    glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), m_gameManager.pointLights.size());
 
-    for (size_t i = 0; i < m_gameManager.scene.spotLights.size(); ++i)
+    for (size_t i = 0; i < m_gameManager.spotLights.size(); ++i)
     {
-        const SpotLight& light = m_gameManager.scene.spotLights[i];
+        const SpotLight& light = m_gameManager.spotLights[i];
         std::string baseName = "spotLights[" + std::to_string(i) + "]";
 
         glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
@@ -372,7 +372,7 @@ void    Application::setLightUniforms()
         glUniform1f(glGetUniformLocation(shaderID, (baseName + ".outerCutOff").c_str()), light.outerCutOff);
     }
 
-    glUniform1i(glGetUniformLocation(shaderID, "numSpotLights"), m_gameManager.scene.spotLights.size());
+    glUniform1i(glGetUniformLocation(shaderID, "numSpotLights"), m_gameManager.spotLights.size());
 }
 
 void    Application::setCameraUniforms()
@@ -436,39 +436,39 @@ void    Application::setupLighting()
 {
     //PointLight p;
     //p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
-    //gameManager.scene.pointLights.push_back(p);
+    //m_gameManager.pointLights.push_back(p);
     //PointLight p2;
     //p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
-    //gameManager.scene.pointLights.push_back(p2);
+    //m_gameManager.pointLights.push_back(p2);
     //PointLight p3;
     //p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
-    //gameManager.scene.pointLights.push_back(p3);
+    //m_gameManager.pointLights.push_back(p3);
     //PointLight p4;
     //p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
-    //gameManager.scene.pointLights.push_back(p4);    
+    //m_gameManager.pointLights.push_back(p4);
     //PointLight p5;
     //p5.position = LibMath::Vector3(1.0f, 5.0f, 1.0f);
-    //gameManager.scene.pointLights.push_back(p5);
+    //m_gameManager.pointLights.push_back(p5);
     //PointLight p6;
     //p6.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
-    //gameManager.scene.pointLights.push_back(p6);
+    //m_gameManager.pointLights.push_back(p6);
     //PointLight p7;
     //p7.position = LibMath::Vector3(1.0f, 5.0f, -100.0f);
-    //gameManager.scene.pointLights.push_back(p7);
+    //m_gameManager.pointLights.push_back(p7);
     //PointLight p8;
     //p8.position = LibMath::Vector3(1.0f, 5.0f, -120.0f);
-    //gameManager.scene.pointLights.push_back(p8);
+    //m_gameManager.pointLights.push_back(p8);
 
     // Initialize point light position and color properties (ambient, diffuse, specular)
-    for (size_t i = 0; i < m_gameManager.scene.pointLights.size(); ++i)
+    for (size_t i = 0; i < m_gameManager.pointLights.size(); ++i)
     {
         //gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, -200.0f);
-        m_gameManager.scene.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
-        m_gameManager.scene.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
-        m_gameManager.scene.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
-        m_gameManager.scene.pointLights[i].constant = 1.0f;
-        m_gameManager.scene.pointLights[i].linear = 0.09f;
-        m_gameManager.scene.pointLights[i].quadratic = 0.f;
+        m_gameManager.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+        m_gameManager.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
+        m_gameManager.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
+        m_gameManager.pointLights[i].constant = 1.0f;
+        m_gameManager.pointLights[i].linear = 0.09f;
+        m_gameManager.pointLights[i].quadratic = 0.f;
     }
 
     SpotLight p9;
@@ -481,17 +481,17 @@ void    Application::setupLighting()
     p9.cutOff = cos(LibMath::Radian(innerAngleDeg).raw());
     p9.outerCutOff = cos(LibMath::Radian(outerAngleDeg).raw());
 
-    m_gameManager.scene.spotLights.push_back(p9);
+    m_gameManager.spotLights.push_back(p9);
 
     // Initialize spot light position and color properties (ambient, diffuse, specular)
-    for (size_t i = 0; i < m_gameManager.scene.spotLights.size(); ++i)
+    for (size_t i = 0; i < m_gameManager.spotLights.size(); ++i)
     {
-        m_gameManager.scene.spotLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
-        m_gameManager.scene.spotLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
-        m_gameManager.scene.spotLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
-        m_gameManager.scene.spotLights[i].constant = 1.0f;
-        m_gameManager.scene.spotLights[i].linear = 0.09f;
-        m_gameManager.scene.spotLights[i].quadratic = 0.f;
+        m_gameManager.spotLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
+        m_gameManager.spotLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
+        m_gameManager.spotLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
+        m_gameManager.spotLights[i].constant = 1.0f;
+        m_gameManager.spotLights[i].linear = 0.09f;
+        m_gameManager.spotLights[i].quadratic = 0.f;
     }
 }
 
