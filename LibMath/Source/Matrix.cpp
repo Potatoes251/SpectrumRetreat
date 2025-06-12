@@ -793,7 +793,7 @@ LibMath::Matrix4 LibMath::Matrix4::createTransform(Vector3 position, Vector3 axi
 		scale[1] * rotationMatrix[1][0], scale[1] * rotationMatrix[1][1], scale[1] * rotationMatrix[1][2], 0.f,
 		scale[2] * rotationMatrix[2][0], scale[2] * rotationMatrix[2][1], scale[2] * rotationMatrix[2][2], 0.f,
 		position[0], position[1], position[2], 1.0f
-	);
+	).transpose();
 }
 
 LibMath::Matrix4 LibMath::Matrix4::createTransform(LibMath::Vector3 translate, LibMath::Radian rotation, LibMath::Vector3 scale, LibMath::Vector3 axis)

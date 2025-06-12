@@ -10,9 +10,10 @@ public:
     using Node = SceneNode<T>;
     using Ptr = typename Node::Ptr;
 
-    Ptr     root;
+    Ptr root;
 
-    std::vector<PointLight>     pointLights;
+    std::vector<PointLight> pointLights;
+    //todo: add spotlight
 
     SceneGraph()
     {
@@ -36,7 +37,7 @@ public:
         }
     }
 
-    void     clear()
+    void    clear()
     {
         if (root)
         {
@@ -56,8 +57,7 @@ public:
 
         return findRec(root, name);
     }
-
-
+    
     Ptr     findNodeByName(const std::string& name) {
         if (!root) return nullptr;
         return findNodeRec(root, name);

@@ -11,8 +11,7 @@ bool    raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, Rayca
     traverseSceneGraph<GameObject>(scene.root, [&](std::shared_ptr<GameObject>& obj)
         {
             LibMath::Vector3 intersectionPoint;
-
-            if (LibMath::intersectionRayPrism(ray, obj -> collider, intersectionPoint))
+            if (LibMath::intersectionRayPrism(ray, obj -> m_collider, intersectionPoint))
             {
                 float distSq = intersectionPoint.distanceSquaredFrom(rayOrigin);
                 if (distSq < minDistance)

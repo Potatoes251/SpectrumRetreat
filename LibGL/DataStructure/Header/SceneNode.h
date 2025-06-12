@@ -104,7 +104,7 @@ public:
         if (object && useShader)
         {
             shader->Use();
-            shader->setVec4("objectColor", object->color);
+            shader->setVec4("objectColor", object -> m_color);
             object->draw(useShader, worldTransform);
         }
 

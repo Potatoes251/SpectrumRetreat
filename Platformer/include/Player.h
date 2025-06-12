@@ -42,14 +42,19 @@ public:
 
 	Player();
 
+	// change the velocity
 	void	update(float deltaTime);
+
+	// move the player using the velocity
 	void	move(float deltaTime);
-	void	move(LibMath::Vector3 correction);
+
 	void	processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair);
-	void	ProcessKeyboard(char direction, float deltaTime);
 	void	checkForwardRaycast(GLFWwindow* window);
+
+	// set the reference to the gameManager
 	void	setGameManager(GameManager* gm) { gameManager = gm; }
 
+	// getters
 	CameraFPS&			getCamera() { return camera; };
 	LibMath::Vector3&	getPosition() { return position; };
 	LibMath::Capsule&	getCapsule() { return collider; };

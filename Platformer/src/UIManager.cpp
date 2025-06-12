@@ -20,7 +20,7 @@ void UIManager::drawAll() const
 {
     for (const auto& element : m_elements)
     {
-        if (element -> isActive)
+        if (element -> m_isActive)
             element -> draw();
     }
 }

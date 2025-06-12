@@ -17,7 +17,7 @@ class Application;
 class GameManager 
 {
 public:
-    GameManager();
+    GameManager() = default;
     ~GameManager();
 
     // Initialize resources and scene
@@ -25,8 +25,9 @@ public:
     void    loadSceneFromFile(const std::string& path, 
         const std::shared_ptr<Model>& defaultModel, 
         const std::shared_ptr<Model>& roundedModel);
+
     // initUI
-    void initUI(float windowWidth, float windowHeight);
+    void    initUI(float windowWidth, float windowHeight);
 
     // add a GO to the scene
     void	addGameObject(const std::string& name,
@@ -35,12 +36,15 @@ public:
         const LibMath::Vector4& color,
         const LibMath::Matrix4& transformMatrix);
 
+    // reference the application in gameManager
     void    setApplication(Application* app);
 
+    // reset the gameManager
     void    restart(float windowWidth, float windowHeight);
 
     // Update logic (scene, camera) each frame
     void    update(float deltaTime);
+    void    updateMovingObjects();
 
     // Render the scene
     void    draw();
@@ -54,6 +58,7 @@ public:
 
     Shader*     shader = nullptr;
 
+    // UI
     UIManager   uiManager;
 
     CircleUI*   phonePtr = nullptr; 
@@ -63,11 +68,12 @@ public:
     ButtonUI*   restartButton = nullptr;
     ButtonUI*   quitButton = nullptr;
 
+    // Sound
     SoundManager    soundManager;
+    float           totalTime = 0.0f;
+
 private:
     ResourceManager     resourceManager;
-
     Application*    application = nullptr;
-
     bool    firstLoad = true;
 };
