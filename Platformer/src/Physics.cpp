@@ -5,6 +5,8 @@ void    checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList,
 {
     LibMath::Vector3 vecColor(color.Value.x, color.Value.y, color.Value.z);
     restart = false;
+
+    // check
     for (auto& child : gameObjectList.root -> children)
     {
         checkWall(player, child, vecColor, restart);
@@ -17,19 +19,20 @@ void    checkWalls(Player& player, const SceneGraph<GameObject>& gameObjectList,
 
 void    checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& gameObject, LibMath::Vector3 color, bool& restart)
 {
-    LibMath::Vector3 objectColor(gameObject -> object -> color.m_x, gameObject -> object -> color.m_y, 
-                                 gameObject -> object -> color.m_z);
-
+    LibMath::Vector3 objectColor(gameObject -> object -> m_color.m_x, gameObject -> object -> m_color.m_y,
+                                 gameObject -> object -> m_color.m_z);
     bool doorOpened = false;
-
-    if (objectColor == color && gameObject -> object -> tag == "door")
+    float doorOpacity;
+    if (objectColor == color && gameObject -> object -> m_tag == "door")
     {
-        gameObject -> object -> color.m_w = 0.2f;
+        doorOpacity = 0.2f;
+        gameObject -> object -> m_color.m_w = doorOpacity;
         doorOpened = true;
     }
-    else if (gameObject -> object -> tag == "door")
+    else if (gameObject -> object -> m_tag == "door")
     {
-        gameObject -> object -> color.m_w = 0.5f;
+        doorOpacity = 0.5f;
+        gameObject -> object -> m_color.m_w = doorOpacity;
     }
 
     //move collider to player position
@@ -42,21 +45,17 @@ void    checkWall(Player& player, const std::shared_ptr<SceneNode<GameObject>>& 
     LibMath::Vector3 normal;
     float penetrationDepth;
 
-    LibMath::Vector3 correction = LibMath::Vector3::zero();
-
-    LibMath::Prism wallCollider = gameObject -> object -> collider;
+    LibMath::Prism wallCollider = gameObject -> object -> m_collider;
 
     if (LibMath::intersectionCapsulePrism(playerCollider, wallCollider, normal, penetrationDepth))    // look for collision
     {
-        if (gameObject -> object -> tag == "endzone")
+        if (gameObject -> object -> m_tag == "endzone")
         {
             restart = true;
             return;
         }
         if (!doorOpened)  // dont apply collision for door of same color
         {
-            player.move(correction);
-
             if (normal.dot(LibMath::Vector3::up()) >= 0.5f && player.velocity.m_y <= 0)  // detecting collision under the player
             {
                 player.isJumping = false;

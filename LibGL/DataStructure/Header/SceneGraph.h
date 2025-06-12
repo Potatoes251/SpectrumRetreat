@@ -37,7 +37,7 @@ public:
         }
     }
 
-    void     clear()
+    void    clear()
     {
         if (root)
         {

@@ -16,34 +16,31 @@ Player::Player()
 {
     
     velocity = LibMath::Vector3(0.0f);
+    position = camera.position;
 }
 
 void    Player::update(float deltaTime)
 {
-
+    // apply gravity
     velocity.m_y += gravity * deltaTime;
 
     // Damp horizontal movement
     velocity.m_x *= 0.8f;
     velocity.m_z *= 0.8f;
+    position = camera.position;
 }
 
 void    Player::move(float deltaTime)
 {
+    // apply the velocity
     camera.position += velocity * deltaTime;
 
     position = camera.position;
 }
 
-void    Player::move(LibMath::Vector3 correction)
+void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
 {
-    camera.position += correction;
-
-    position = camera.position;
-}
-
-void    Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameObject>& scene, CircleUI& phone, CircleUI& crosshair)
-{
+    // process the inpus
     LibMath::Vector3 inputVelocity(0.0f, 0.0f, 0.0f);
 
     float speed = movementSpeed;
@@ -86,35 +83,6 @@ void    Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<Gam
     update(deltaTime);
 }
 
-void    Player::ProcessKeyboard(char direction, float deltaTime)
-{
-    float velocity = movementSpeed * deltaTime;
-
-    // Project front and right onto the XZ plane
-    LibMath::Vector3 flatFront = camera.front;
-    flatFront.m_y = 0;
-    flatFront.normalize();
-
-    LibMath::Vector3 flatRight = camera.right;
-    flatRight.m_y = 0;
-    flatRight.normalize();
-
-    if (direction == 'W') camera.position += flatFront * velocity;
-    if (direction == 'S') camera.position -= flatFront * velocity;
-    if (direction == 'A') camera.position -= flatRight * velocity;
-    if (direction == 'D') camera.position += flatRight * velocity;
-
-    // Jump
-    if (direction == ' ') // Space key
-    {
-        if (!isJumping)
-        {
-            yVelocity = jumpStrength;
-            isJumping = true;
-        }
-    }
-}
-
 void    Player::checkForwardRaycast(GLFWwindow* window)
 {
     bool isEKeyPressed = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
@@ -130,11 +98,11 @@ void    Player::checkForwardRaycast(GLFWwindow* window)
 
     const float maxRange = 1000.0f;
 
-    if (raycast(ray, gameManager -> scene, hit, maxRange) && hit.m_gameObject -> tag == "interactable")
+    if (raycast(ray, gameManager -> scene, hit, maxRange) && hit.m_gameObject -> m_tag == "interactable")
     {
         gameManager -> crosshairPtr -> setRadius(4);
 
-        LibMath::Vector4 objColor = hit.m_gameObject -> color;
+        LibMath::Vector4 objColor = hit.m_gameObject -> m_color;
         LibMath::Vector4 phoneColor(
             gameManager -> phonePtr -> getColor().Value.x,
             gameManager -> phonePtr -> getColor().Value.y,
@@ -148,7 +116,7 @@ void    Player::checkForwardRaycast(GLFWwindow* window)
             if (objColor != phoneColor)
             {
                 // Swap colors
-                hit.m_gameObject -> color = phoneColor;
+                hit.m_gameObject -> m_color = phoneColor;
                 gameManager -> phonePtr -> setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
 
                 gameManager -> soundManager.playSound("../../Assets/Sounds/changeColor.wav");
@@ -159,7 +127,7 @@ void    Player::checkForwardRaycast(GLFWwindow* window)
         if (objColor == phoneColor && glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         {
             // Pull player toward object
-            LibMath::Vector3 toObject = hit.m_gameObject -> position - camera.position;
+            LibMath::Vector3 toObject = hit.m_gameObject -> m_position - camera.position;
 
             float distance = toObject.magnitude();
 

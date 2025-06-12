@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 
 
-GameManager::GameManager() {}
 GameManager::~GameManager()
 {
     if (shader)
@@ -38,6 +37,7 @@ void    GameManager::init(float windowWidth, float windowHeight)
     std::shared_ptr<Model> roundCubeModelShared;
     if (firstLoad)
     {
+        // create the assets if first time loading
         auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
 
         cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
@@ -48,15 +48,17 @@ void    GameManager::init(float windowWidth, float windowHeight)
 
         roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
 
-        soundManager.playMusic("../../Assets/Sounds/fragments of hope.ogg", true);
-
+        // init the ui elements
         initUI(windowWidth, windowHeight);
+
+        // start music at the beginning of the game
         soundManager.playMusic("../../Assets/Sounds/calmPiano.ogg", true);
         soundManager.setMusicVolume(0.6f);
         firstLoad = false;
     }
     else
     {
+        // get the assets if restarting
         auto cubeModel = resourceManager.Get<Model>("../../Assets/Meshes/cube.obj");
 
         cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
@@ -67,8 +69,10 @@ void    GameManager::init(float windowWidth, float windowHeight)
 
         phonePtr -> setColor(ImColor(255, 255, 255, 255));
     }
-
+    // reference the game manager in the player
     player.setGameManager(this);
+
+    // load the scene from the file
     loadSceneFromFile("../../Assets/scene.txt", cubeModelShared, roundCubeModelShared);
 }
 
@@ -112,31 +116,34 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
     float totalHeight = 3 * buttonHeight + 2 * spacing;
     float baseY = (float)windowHeight / 2.0f - totalHeight / 2.0f;
 
+    // create resume Button
     resumeButton = new ButtonUI(
-        "Resume",
-        ImVec2(baseX, baseY),
-        ImVec2(buttonWidth, buttonHeight),
-        [this]() { application -> exitPause(); }
+        "Resume",                               // name
+        ImVec2(baseX, baseY),                   // coordinate
+        ImVec2(buttonWidth, buttonHeight),      // size
+        [this]() { application -> exitPause(); }  // function pointer (for when the button is clicked)
     );
-    resumeButton -> isActive = false; // Start inactive
+    resumeButton -> m_isActive = false; // Start inactive
     uiManager.addElement(std::unique_ptr<ButtonUI>(resumeButton));
 
+    // create restart Button
     restartButton = new ButtonUI(
         "Restart",
         ImVec2(baseX, baseY + buttonHeight + spacing),
         ImVec2(buttonWidth, buttonHeight),
         [this]() { application -> restartGame(); }
     );
-    restartButton -> isActive = false;
+    restartButton -> m_isActive = false;
     uiManager.addElement(std::unique_ptr<ButtonUI>(restartButton));
 
+    // create quit Button
     quitButton = new ButtonUI(
         "Quit",
         ImVec2(baseX, baseY + 2 * (buttonHeight + spacing)),
         ImVec2(buttonWidth, buttonHeight),
         [this]() { application -> quitGame(); }
     );
-    quitButton -> isActive = false;
+    quitButton -> m_isActive = false; // Start inactive
     uiManager.addElement(std::unique_ptr<ButtonUI>(quitButton));
 }
 
@@ -147,7 +154,7 @@ void	GameManager::addGameObject(const std::string& name,
     const LibMath::Matrix4& transformMatrix)
 {
     auto gameObject = std::make_shared<GameObject>(name, tag, model);
-    gameObject -> color = color;
+    gameObject -> m_color = color;
 
     auto node = std::make_shared<SceneNode<GameObject>>(gameObject, shader);
     node -> localTransform = transformMatrix;
@@ -159,28 +166,33 @@ void    GameManager::loadSceneFromFile(const std::string& path,
     const std::shared_ptr<Model>& defaultModel, 
     const std::shared_ptr<Model>& roundedModel)
 {
+    // open the file
     std::ifstream file(path);
     if (!file.is_open()) return;
 
+    // analyze the file line per line
     std::string line;
     while (std::getline(file, line))
     {
+        // skip empty or commented lines
         if (line.empty() || line[0] == '#') continue;
 
         std::istringstream iss(line);
 
+        // create variable to store the data in the line
         std::string name, tag;
         float r, g, b, a;
         float tx, ty, tz;
         float sx, sy, sz;
-        bool isDoor;
 
+        // extract data from the line
         iss >> name >> tag >> r >> g >> b >> a >> tx >> ty >> tz >> sx >> sy >> sz;
 
         LibMath::Vector4 color(r, g, b, a);
         LibMath::Matrix4 transform = LibMath::Matrix4::createTranslation({ tx, ty, tz }) *
             LibMath::Matrix4::createScale({ sx, sy, sz });
 
+        // give a different model to the objects with the tag "interactable"
         std::shared_ptr<Model> model;
         if (tag == "interactable")
         {
@@ -190,7 +202,8 @@ void    GameManager::loadSceneFromFile(const std::string& path,
         {
             model = defaultModel;
         }
-        std::cout << name << std::endl;
+
+        // create the gameObject
         addGameObject(name, tag, model, color, transform);
     }
 }
@@ -202,6 +215,7 @@ void    GameManager::setApplication(Application* app)
 
 void    GameManager::restart(float windowWidth, float windowHeight)
 {
+    // reset the game Manager
     player.~Player();
     new (&player) Player();
     scene.clear();
@@ -210,7 +224,7 @@ void    GameManager::restart(float windowWidth, float windowHeight)
 
 void    GameManager::update(float deltaTime) 
 {
-    // Update scene (logic + transform)
+    // Update scene (transforms)
     scene.update();
     updateMovingObjects();
 
@@ -230,7 +244,6 @@ void GameManager::updateMovingObjects()
 
     if (node != nullptr)
     {
-        std::cout << node->object->position << std::endl;
         node->localTransform = LibMath::Matrix4::createTransform(newPos, { 0, 0, 0 }, LibMath::Radian(0), {0.5f, 0.5f, 0.5f});
         node->markDirty();
     }
