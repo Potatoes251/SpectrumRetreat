@@ -14,7 +14,7 @@ SoundManager::~SoundManager()
     }
 }
 
-void SoundManager::playSound(const std::string& filePath, bool loop)
+void    SoundManager::playSound(const std::string& filePath, bool loop)
 {
     if (m_engine)
     {
@@ -22,7 +22,7 @@ void SoundManager::playSound(const std::string& filePath, bool loop)
     }
 }
 
-void SoundManager::playMusic(const std::string& filePath, bool loop)
+void    SoundManager::playMusic(const std::string& filePath, bool loop)
 {
     stopMusic(); // stop previous music
     if (m_engine)
@@ -34,7 +34,7 @@ void SoundManager::playMusic(const std::string& filePath, bool loop)
     }
 }
 
-void SoundManager::stopMusic()
+void    SoundManager::stopMusic()
 {
     if (m_currentMusic)
     {
@@ -44,7 +44,7 @@ void SoundManager::stopMusic()
     }
 }
 
-void SoundManager::setMusicVolume(float volume)
+void    SoundManager::setMusicVolume(float volume)
 {
     m_musicVolume = volume;
 
@@ -52,7 +52,7 @@ void SoundManager::setMusicVolume(float volume)
         m_currentMusic -> setVolume(volume);
 }
 
-void SoundManager::setSoundVolume(float volume)
+void    SoundManager::setSoundVolume(float volume)
 {
     m_soundVolume = volume;
 }

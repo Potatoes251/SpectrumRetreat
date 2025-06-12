@@ -83,10 +83,10 @@ bool    Application::createWindow()
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
-    m_windowWidth = 2560;
-    m_windowHeight = 1600;
+    m_windowWidth = 1920;
+    m_windowHeight = 1080;
 
-    m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "3D Game", primary, nullptr);
+    m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "3D Game", nullptr, nullptr);
 
     if (!m_window) 
     {
