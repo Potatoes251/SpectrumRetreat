@@ -74,10 +74,10 @@ public:
 
     // Lighting
     std::vector<PointLight> pointLights;
-    std::vector<SpotLight> spotLights;
+    std::vector<SpotLight>  spotLights;
 
 private:
-    ResourceManager     resourceManager;
-    Application*    application = nullptr;
-    bool    firstLoad = true;
+    ResourceManager         resourceManager;
+    Application*            application = nullptr;
+    bool                    firstLoad = true;
 };

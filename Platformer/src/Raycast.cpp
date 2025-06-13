@@ -5,6 +5,7 @@ bool    raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, Rayca
 {
     bool foundHit = false;
     float minDistance = maxRange * maxRange;  // squared max range for comparison
+
     LibMath::Vector3 rayOrigin(ray.getCenter().getX(), ray.getCenter().getY(), ray.getCenter().getZ());
 
     // Use traverseSceneGraph to iterate all objects
@@ -14,6 +15,7 @@ bool    raycast(const LibMath::Line3D& ray, SceneGraph<GameObject>& scene, Rayca
             if (LibMath::intersectionRayPrism(ray, obj -> m_collider, intersectionPoint))
             {
                 float distSq = intersectionPoint.distanceSquaredFrom(rayOrigin);
+
                 if (distSq < minDistance)
                 {
                     minDistance = distSq;

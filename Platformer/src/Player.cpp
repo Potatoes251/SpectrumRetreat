@@ -49,11 +49,13 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
     LibMath::Vector3 flatFront = camera.front;
 
     flatFront.m_y = 0;
+
     flatFront.normalize();
 
     LibMath::Vector3 flatRight = camera.right;
 
     flatRight.m_y = 0;
+
     flatRight.normalize();
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -69,6 +71,7 @@ void Player::processInput(GLFWwindow* window, float deltaTime, SceneGraph<GameOb
         inputVelocity += flatRight;
 
     inputVelocity.normalize();
+
     velocity.m_x = inputVelocity.m_x * speed;
     velocity.m_z = inputVelocity.m_z * speed;
 
@@ -117,8 +120,8 @@ void    Player::checkForwardRaycast(GLFWwindow* window)
             {
                 // Swap colors
                 hit.m_gameObject -> m_color = phoneColor;
-                gameManager -> phonePtr -> setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
 
+                gameManager -> phonePtr -> setColor(ImColor(objColor.m_x, objColor.m_y, objColor.m_z, objColor.m_w));
                 gameManager -> soundManager.playSound("../../Assets/Sounds/changeColor.wav");
             }
         }

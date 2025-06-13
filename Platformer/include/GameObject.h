@@ -23,16 +23,16 @@ public:
 	const std::string&		getName() const;
 
 	// transform
-	LibMath::Vector3 m_position;
+	LibMath::Vector3		m_position;
 
-	LibMath::Prism m_collider;
+	LibMath::Prism			m_collider;
 
 
-	LibMath::Vector4	m_color = LibMath::Vector4(0, 0, 0, 1);
-	std::string		m_tag;
+	LibMath::Vector4		m_color = LibMath::Vector4(0, 0, 0, 1);
+	std::string				m_tag;
 private:
-	LibMath::Prism		m_colliderAtOrigin;
-	std::string			m_name;
+	LibMath::Prism			m_colliderAtOrigin;
+	std::string				m_name;
 
 	std::shared_ptr<Model>	m_model;
 };

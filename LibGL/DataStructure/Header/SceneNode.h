@@ -89,6 +89,7 @@ public:
             worldTransform = parent ? parent->worldTransform * localTransform : localTransform;
             dirty = false;
         }
+
         for (auto& c : children)
             c->updateTransform();
     }

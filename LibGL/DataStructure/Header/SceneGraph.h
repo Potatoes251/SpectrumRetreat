@@ -55,7 +55,8 @@ public:
         return findRec(root, name);
     }
     
-    Ptr     findNodeByName(const std::string& name) {
+    Ptr     findNodeByName(const std::string& name) 
+    {
         if (!root) return nullptr;
         return findNodeRec(root, name);
     }
@@ -75,13 +76,17 @@ private:
         return nullptr;
     }
 
-    Ptr     findNodeRec(const Ptr& node, const std::string& name) {
+    Ptr     findNodeRec(const Ptr& node, const std::string& name) 
+    {
         if (node->object && node->object->getName() == name)
             return node;
-        for (auto& child : node->children) {
+
+        for (auto& child : node->children) 
+        {
             if (auto found = findNodeRec(child, name))
                 return found;
         }
+
         return nullptr;
     }
 };
