@@ -8,11 +8,13 @@ inline LibMath::Vector3 getRGB(const LibMath::Vector4& color)
 LibMath::Vector3 CalcDirectionalLight(const DirectionalLight& light, const LibMath::Vector3& normal, const LibMath::Vector3& viewDir)
 {
     LibMath::Vector3 lightDir = -light.direction;
+
     lightDir.normalize();
 
     float diff = std::max(normal.dot(lightDir), 0.0f);
 
     LibMath::Vector3 halfwayDir = lightDir + viewDir;
+
     halfwayDir.normalize();
 
     float spec = pow(std::max(normal.dot(halfwayDir), 0.0f), 32.0f);
@@ -27,11 +29,13 @@ LibMath::Vector3 CalcDirectionalLight(const DirectionalLight& light, const LibMa
 LibMath::Vector3 CalcPointLight(const PointLight& light, const LibMath::Vector3& normal, const LibMath::Vector3& fragPos, const LibMath::Vector3& viewDir)
 {
     LibMath::Vector3 lightDir = light.position - fragPos;
+
     lightDir.normalize();
 
     float diff = std::max(normal.dot(lightDir), 0.0f);
 
     LibMath::Vector3 halfwayDir = lightDir + viewDir;
+
     halfwayDir.normalize();
 
     float spec = pow(std::max(normal.dot(halfwayDir), 0.0f), 32.0f);
@@ -49,10 +53,13 @@ LibMath::Vector3 CalcPointLight(const PointLight& light, const LibMath::Vector3&
 LibMath::Vector3 CalcSpotLight(const SpotLight& light, const LibMath::Vector3& normal, const LibMath::Vector3& fragPos, const LibMath::Vector3& viewDir)
 {
     LibMath::Vector3 lightDir = light.position - fragPos;
+
     lightDir.normalize();
 
     LibMath::Vector3 directionLight = -light.direction;
+
     directionLight.normalize();
+
     float theta = (lightDir.dot(directionLight));
 
 
@@ -62,6 +69,7 @@ LibMath::Vector3 CalcSpotLight(const SpotLight& light, const LibMath::Vector3& n
     float diff = std::max(normal.dot(lightDir), 0.0f);
 
     LibMath::Vector3 halfwayDir = (lightDir + viewDir);
+
     halfwayDir.normalize();
 
     float spec = pow(std::max(normal.dot(halfwayDir), 0.0f), 32.0f);

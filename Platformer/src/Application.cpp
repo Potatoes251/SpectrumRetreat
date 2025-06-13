@@ -214,19 +214,19 @@ void    Application::drawUI()
 
     if (m_isPaused) // screen darkening in pause
     {
-        m_gameManager.quitButton -> m_isActive = true;
-        m_gameManager.restartButton -> m_isActive = true;
-        m_gameManager.resumeButton -> m_isActive = true;
-        m_gameManager.crosshairPtr -> m_isActive = false;
-        m_gameManager.phonePtr -> m_isActive = false;
+        m_gameManager.quitButton -> m_isActive      = true;
+        m_gameManager.restartButton -> m_isActive   = true;
+        m_gameManager.resumeButton -> m_isActive    = true;
+        m_gameManager.crosshairPtr -> m_isActive    = false;
+        m_gameManager.phonePtr -> m_isActive        = false;
     }
     else
     {
-        m_gameManager.quitButton -> m_isActive = false;
-        m_gameManager.restartButton -> m_isActive = false;
-        m_gameManager.resumeButton -> m_isActive = false;
-        m_gameManager.crosshairPtr -> m_isActive = true;
-        m_gameManager.phonePtr -> m_isActive = true;
+        m_gameManager.quitButton -> m_isActive      = false;
+        m_gameManager.restartButton -> m_isActive   = false;
+        m_gameManager.resumeButton -> m_isActive    = false;
+        m_gameManager.crosshairPtr -> m_isActive    = true;
+        m_gameManager.phonePtr -> m_isActive        = true;
     }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -235,13 +235,13 @@ void    Application::drawUI()
 
 void    Application::renderFrame()
 {
-    m_gameManager.shader -> Use(); // Bind shader program
+    m_gameManager.shader -> Use();  // Bind shader program
 
-    setMatrices();              // Send model/view/projection matrices to shader
-    setCameraUniforms();        // Send camera position to shader for lighting calculations
-    setLightUniforms();         // Send lighting parameters to shader
-    bindTexture();              // Bind texture and tell shader to use it
-    configureCulling();         // Enable face culling (to improve performance)
+    setMatrices();                  // Send model/view/projection matrices to shader
+    setCameraUniforms();            // Send camera position to shader for lighting calculations
+    setLightUniforms();             // Send lighting parameters to shader
+    bindTexture();                  // Bind texture and tell shader to use it
+    configureCulling();             // Enable face culling (to improve performance)
 
     m_gameManager.scene.draw(m_gameManager.shader);
 
@@ -295,7 +295,8 @@ void    Application::setMatrices()
     // Calculate the view, projection, and model matrices
     LibMath::Matrix4 view = m_gameManager.player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = m_gameManager.player.getCamera().GetProjectionMatrix((float)m_windowWidth / m_windowHeight);
-    LibMath::Matrix4 model = LibMath::Matrix4::getIdentity(); // Identity for root
+    // Identity for root
+    LibMath::Matrix4 model = LibMath::Matrix4::getIdentity(); 
     
     // Upload matrices to shader uniforms
     m_gameManager.shader->setMat4("view", view);
@@ -305,7 +306,8 @@ void    Application::setMatrices()
 
 void    Application::bindTexture()
 {
-    glUniform1i(glGetUniformLocation(m_gameManager.shader->GetID(), "useTexture"), false); // Tell shader to use texture
+    // Tell shader to use texture
+    glUniform1i(glGetUniformLocation(m_gameManager.shader->GetID(), "useTexture"), false); 
     glActiveTexture(GL_TEXTURE0);      // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, m_texture1); // Bind texture to unit 0
 }
@@ -326,7 +328,8 @@ void    Application::mouse_callback(GLFWwindow* window, double xpos, double ypos
     float centerY = app->m_windowHeight / 2.0f;
 
     float xoffset = xpos - centerX;
-    float yoffset = centerY - ypos; // inversé pour l’axe Y
+    // inversed for Y axis
+    float yoffset = centerY - ypos;
 
     app -> m_gameManager.processMouseMovement(xoffset, yoffset);
 
@@ -344,13 +347,13 @@ void    Application::setLightUniforms()
         const PointLight& light = m_gameManager.pointLights[i];
         std::string baseName = "pointLights[" + std::to_string(i) + "]";
 
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()), 1, &light.ambient.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()), 1, &light.diffuse.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1, &light.specular.m_x);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".constant").c_str()), light.constant);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".linear").c_str()), light.linear);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".quadratic").c_str()), light.quadratic);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()),      1,  &light.position.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()),  1,  &light.ambient.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()),  1,  &light.diffuse.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1,  &light.specular.m_x);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".constant").c_str()),          light.constant);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".linear").c_str()),            light.linear);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".quadratic").c_str()),         light.quadratic);
     }
 
     glUniform1i(glGetUniformLocation(shaderID, "numPointLights"), m_gameManager.pointLights.size());
@@ -360,16 +363,16 @@ void    Application::setLightUniforms()
         const SpotLight& light = m_gameManager.spotLights[i];
         std::string baseName = "spotLights[" + std::to_string(i) + "]";
 
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()), 1, &light.position.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".direction").c_str()), 1, &light.direction.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()), 1, &light.ambient.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()), 1, &light.diffuse.m_x);
-        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1, &light.specular.m_x);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".constant").c_str()), light.constant);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".linear").c_str()), light.linear);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".quadratic").c_str()), light.quadratic);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".cutOff").c_str()), light.cutOff);
-        glUniform1f(glGetUniformLocation(shaderID, (baseName + ".outerCutOff").c_str()), light.outerCutOff);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".position").c_str()),      1,  &light.position.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".direction").c_str()),     1,  &light.direction.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.ambient").c_str()),  1,  &light.ambient.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.diffuse").c_str()),  1,  &light.diffuse.m_x);
+        glUniform3fv(glGetUniformLocation(shaderID, (baseName + ".base.specular").c_str()), 1,  &light.specular.m_x);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".constant").c_str()),          light.constant);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".linear").c_str()),            light.linear);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".quadratic").c_str()),         light.quadratic);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".cutOff").c_str()),            light.cutOff);
+        glUniform1f(glGetUniformLocation( shaderID, (baseName + ".outerCutOff").c_str()),       light.outerCutOff);
     }
 
     glUniform1i(glGetUniformLocation(shaderID, "numSpotLights"), m_gameManager.spotLights.size());
@@ -389,10 +392,13 @@ unsigned int    Application::loadTexture(const char* path)
 {
     unsigned int textureID;
 
-    glGenTextures(1, &textureID); // Generate OpenGL texture ID
+    // Generate OpenGL texture ID
+    glGenTextures(1, &textureID); 
 
     int width, height, nrChannels;
-    unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0); // Load image file
+
+    // Load image file
+    unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0); 
 
     if (data)
     {
@@ -417,16 +423,19 @@ unsigned int    Application::loadTexture(const char* path)
         std::cout << "Failed to load texture: " << path << std::endl;
     }
 
-    stbi_image_free(data); // Free image memory
+    // Free image memory
+    stbi_image_free(data); 
 
     return textureID;
 }
 
 bool    Application::setupResources()
 {
-    setupLighting();  // Initialize lighting parameters
+    // Initialize lighting parameters
+    setupLighting();  
     setupOpenGLStates();
-    bindTexture();         // Load and bind texture for rendering
+    // Load and bind texture for rendering
+    bindTexture();         
 
     return true;
 }
@@ -434,15 +443,15 @@ bool    Application::setupResources()
 
 void    Application::setupLighting()
 {
-    //PointLight p;
-    //p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
-    //m_gameManager.pointLights.push_back(p);
-    //PointLight p2;
-    //p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
-    //m_gameManager.pointLights.push_back(p2);
-    //PointLight p3;
-    //p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
-    //m_gameManager.pointLights.push_back(p3);
+    PointLight p;
+    p.position = LibMath::Vector3(1.0f, 1.0f, 1.0f );
+    m_gameManager.pointLights.push_back(p);
+    PointLight p2;
+    p2.position = LibMath::Vector3(1.0f, 5.0f, -20.0f);
+    m_gameManager.pointLights.push_back(p2);
+    PointLight p3;
+    p3.position = LibMath::Vector3(1.0f, 5.0f, -40.0f);
+    m_gameManager.pointLights.push_back(p3);
     //PointLight p4;
     //p4.position = LibMath::Vector3(1.0f, 5.0f, -60.0f);
     //m_gameManager.pointLights.push_back(p4);
@@ -462,7 +471,6 @@ void    Application::setupLighting()
     // Initialize point light position and color properties (ambient, diffuse, specular)
     for (size_t i = 0; i < m_gameManager.pointLights.size(); ++i)
     {
-        //gameManager.scene.pointLights[i].position = LibMath::Vector3(.0f, .0f, -200.0f);
         m_gameManager.pointLights[i].ambient = LibMath::Vector4(0.15f, 0.15f, 0.15f, 1.0f);
         m_gameManager.pointLights[i].diffuse = LibMath::Vector4(0.35f, 0.35f, 0.35f, 1.0f);
         m_gameManager.pointLights[i].specular = LibMath::Vector4(0.1f, 0.1f, 0.1f, 0.0f);
@@ -472,11 +480,11 @@ void    Application::setupLighting()
     }
 
     SpotLight p9;
-    p9.position = LibMath::Vector3(1.0f, 1.0f, 1.0f);
-    p9.direction = LibMath::Vector3(0.0f, 0.0f, -1.0f);
+    p9.position = LibMath::Vector3(1.0f, 5.0f, -80.0f);
+    p9.direction = LibMath::Vector3(0.0f, -1.0f, 0.0f);
 
-    float innerAngleDeg = 1.5f;
-    float outerAngleDeg = 2.5f;
+    float innerAngleDeg = 1;
+    float outerAngleDeg = 3;
 
     p9.cutOff = cos(LibMath::Radian(innerAngleDeg).raw());
     p9.outerCutOff = cos(LibMath::Radian(outerAngleDeg).raw());
@@ -497,6 +505,8 @@ void    Application::setupLighting()
 
 void Application::setupOpenGLStates()
 {
-    glEnable(GL_DEPTH_TEST);  // Enable depth testing (hidden surface removal)
-    glDepthFunc(GL_LESS);     // Accept fragment if closer than existing one
+    // Enable depth testing (hidden surface removal)
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if closer than existing one
+    glDepthFunc(GL_LESS);     
 }

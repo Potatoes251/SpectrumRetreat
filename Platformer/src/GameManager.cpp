@@ -9,6 +9,7 @@ GameManager::~GameManager()
     if (shader)
     {
         delete shader;
+
         shader = nullptr;
     }
 
@@ -35,16 +36,17 @@ void    GameManager::init(float windowWidth, float windowHeight)
 
     std::shared_ptr<Model> cubeModelShared;
     std::shared_ptr<Model> roundCubeModelShared;
+
     if (firstLoad)
     {
         // create the assets if first time loading
         auto cubeModel = resourceManager.Create<Model>("../../Assets/Meshes/cube.obj");
 
         cubeModelShared = std::shared_ptr<Model>(cubeModel, [](Model*) {});
-        cubeModelShared->uploadToGPU();
+        cubeModelShared -> uploadToGPU();
 
         auto roundCubeModel = resourceManager.Create<Model>("../../Assets/Meshes/rounded_cube.obj");
-        roundCubeModel->uploadToGPU();
+        roundCubeModel -> uploadToGPU();
 
         roundCubeModelShared = std::shared_ptr<Model>(roundCubeModel, [](Model*) {});
 
@@ -118,12 +120,12 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
 
     // create resume Button
     resumeButton = new ButtonUI(
-        "Resume",                               // name
-        ImVec2(baseX, baseY),                   // coordinate
-        ImVec2(buttonWidth, buttonHeight),      // size
+        "Resume",                                 // name
+        ImVec2(baseX, baseY),                     // coordinate
+        ImVec2(buttonWidth, buttonHeight),        // size
         [this]() { application -> exitPause(); }  // function pointer (for when the button is clicked)
     );
-    resumeButton -> m_isActive = false; // Start inactive
+    resumeButton -> m_isActive = false;           // Start inactive
     uiManager.addElement(std::unique_ptr<ButtonUI>(resumeButton));
 
     // create restart Button
@@ -144,6 +146,7 @@ void	GameManager::initUI(float windowWidth, float windowHeight)
         [this]() { application -> quitGame(); }
     );
     quitButton -> m_isActive = false; // Start inactive
+
     uiManager.addElement(std::unique_ptr<ButtonUI>(quitButton));
 }
 
@@ -168,10 +171,12 @@ void    GameManager::loadSceneFromFile(const std::string& path,
 {
     // open the file
     std::ifstream file(path);
+
     if (!file.is_open()) return;
 
     // analyze the file line per line
     std::string line;
+
     while (std::getline(file, line))
     {
         // skip empty or commented lines
@@ -245,6 +250,7 @@ void GameManager::updateMovingObjects()
     if (node != nullptr)
     {
         node->localTransform = LibMath::Matrix4::createTransform(newPos, { 0, 0, 0 }, LibMath::Radian(0), {0.5f, 0.5f, 0.5f});
+
         node->markDirty();
     }
 }
@@ -254,6 +260,7 @@ void    GameManager::draw()
     // Activate shader and set camera matrices
     LibMath::Matrix4 view = player.getCamera().GetViewMatrix();
     LibMath::Matrix4 projection = player.getCamera().GetProjectionMatrix((float)2560 / 1440);
+
     shader -> Use();
     shader -> setMat4("view", view);
     shader -> setMat4("projection", projection);

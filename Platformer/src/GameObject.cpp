@@ -78,6 +78,7 @@ void GameObject::updateCollider(LibMath::Matrix4& worldTransform)
 void    GameObject::draw(Shader* shader, LibMath::Matrix4& worldTransform) 
 {
     updateCollider(worldTransform);
+
     if (!m_model) return;
 
     shader -> setMat4("model", worldTransform);
