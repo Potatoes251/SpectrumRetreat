@@ -2,7 +2,7 @@
 
 ## About The Project
 
-**Spectrum Retreat** is a first-person puzzle game developed as our First Year End of Year Project. Inspired by *The Spectrum Retreat* (2018), this game challenges players to navigate through color-based puzzles where your "phone" determines which doors and walls you can pass through.
+**Spectrum Retreat** is a first-person puzzle game developed as our First Year End of Year Project (3 weeks, team of 3). Inspired by *The Spectrum Retreat* (2018), this game challenges players to navigate through color-based puzzles where your "phone" determines which doors and walls you can pass through.
 
 The core mechanic revolves around swapping colors between your phone and interactive color cubes, allowing you to traverse doors matching your current phone color.
 
