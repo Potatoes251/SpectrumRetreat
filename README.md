@@ -6,6 +6,8 @@
 
 The core mechanic revolves around swapping colors between your phone and interactive color cubes, allowing you to traverse doors matching your current phone color.
 
+![Gameplay screenshot](Screenshot.png)
+
 ## Features
 
 ### Core Gameplay
@@ -28,17 +30,17 @@ The core mechanic revolves around swapping colors between your phone and interac
 - **Audio system** - irrKlang for sound effects and music
 - **ImGui integration** - ESC menu with Restart/Quit options
 
-## Built With
+## Tech Stack
 
 | Category | Technologies |
 |----------|-------------|
 | **Language** | C++17 |
-| **Graphics API** | OpenGL 3.3 Core (GLAD) |
-| **Windowing** | GLFW |
-| **Mathematics** | Custom `libmaths` library |
-| **UI** | ImGui |
-| **Audio** | irrKlang |
-| **Image Loading** | stb_image |
+| **Graphics API** | [OpenGL](https://registry.khronos.org/OpenGL/) 3.3 Core ([GLAD](https://glad.dav1d.de/)) |
+| **Windowing** | [GLFW](https://www.glfw.org/) |
+| **Mathematics** | [LibMath](https://github.com/Potatoes251/LibMath) (custom, in-house) |
+| **UI** | [Dear ImGui](https://github.com/ocornut/imgui) |
+| **Audio** | [irrKlang](https://www.ambiera.com/irrklang/) |
+| **Image Loading** | [stb_image](https://github.com/nothings/stb) |
 | **3D Model Loading** | Custom obj loader |
 
 
@@ -51,19 +53,19 @@ The core mechanic revolves around swapping colors between your phone and interac
 
 ### Controls
 
-| Action | Key (QWERTY) | Key (AZERTY) |
-|--------|--------------|--------------|
-| Move | WASD | ZQSD |
-| Look Around | Mouse |
-| Interact (Click color cube) | Left Click |
-| Menu | ESC |
+| Action | Key (QWERTY) |
+|--------|--------------|
+| Move | `WASD` |
+| Look Around | `Mouse` |
+| Interact (Click color cube) | `LMB` |
+| Menu | `ESC` |
 
 
 ##  Getting Started
 
 ### Prerequisites
 - **Windows OS** (10 or later)
-- **CMake** 3.10+
+- **CMake** 3.20+
 - **C++ Compiler** (Visual Studio 2019/2022)
 - **OpenGL 3.3+** compatible GPU
 
